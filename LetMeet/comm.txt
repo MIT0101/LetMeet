@@ -1,0 +1,9 @@
+"ConnectionStrings": {
+    "IdentityConnection": "Data Source=.\\SQLEXPRESS;Initial Catalog=LetMeetIdentityDb;Integrated Security=True;",
+    "MainConnection": "",
+    "LetMeetContextConnection": "Server=(localdb)\\mssqllocaldb;Database=LetMeet;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+
+add-migration IdentityMigration -Context MainIdentityDbContext
+
+Update-Database -Context MainIdentityDbContext
