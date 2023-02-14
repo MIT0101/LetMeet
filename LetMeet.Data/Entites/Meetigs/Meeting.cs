@@ -2,7 +2,7 @@
 
 namespace LetMeet.Data.Entites.Meetigs
 {
-    public class Meeting :GenrricEntity<Guid>
+    public class Meeting 
     {
         public static List<ValidationResult> validate<T>(T obj) {
 

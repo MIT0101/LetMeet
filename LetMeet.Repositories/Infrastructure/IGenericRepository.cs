@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace LetMeet.Repositories.Infrastructure
 {
-    public interface IGenericRepository<TEntity,TKey> where TEntity  : class where TKey : IEquatable<TKey>
+    public interface IGenericRepository<TEntity,TKey>  
+        where TEntity  : class 
+        where TKey : IEquatable<TKey>
     {
         Task<RepositoryResult<TEntity>> CreateAsync(TEntity entity);
         Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id);

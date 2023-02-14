@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using LetMeet.Repositories;
 using System.Collections;
 using LetMeet.Repositories.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace LetMeet.Controllers
 {
@@ -15,11 +18,13 @@ namespace LetMeet.Controllers
 
         private readonly RepositoryDataSettings _settings;
 
+        private readonly SignInManager<AppIdentityUser> _signInManager;
 
-        public TestController(IGenericRepository<UserInfo, Guid> userRepository, RepositoryDataSettings settings)
+        public TestController(IGenericRepository<UserInfo, Guid> userRepository, RepositoryDataSettings settings, SignInManager<AppIdentityUser> signInManager)
         {
             _userRepository = userRepository;
             _settings = settings;
+            _signInManager = signInManager;
         }
 
         public IActionResult test1()
@@ -83,7 +88,8 @@ namespace LetMeet.Controllers
 
         // if repo is accessed
         public async Task< IActionResult> repository() {
-
+            _signInManager.SignOutAsync();
+            SignInResult signInResult = await _signInManager.PasswordSignInAsync(new AppIdentityUser(), "aa",isPersistent:false, lockoutOnFailure: true);
             await _userRepository.FirstOrDefaultAsync();
             return Json(new { isvalid = true });
         }

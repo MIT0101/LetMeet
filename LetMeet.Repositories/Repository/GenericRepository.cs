@@ -10,11 +10,14 @@ using System.Threading.Tasks;
 
 namespace LetMeet.Repositories.Repository
 {
-    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class where TKey : IEquatable<TKey>
+    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> 
+        where TEntity : class 
+        where TKey : IEquatable<TKey>
     {
         private readonly RepositoryDataSettings _settings;
         private readonly MainDbContext _mainDb;
         private readonly DbSet<TEntity> _entities;
+
 
         public GenericRepository(MainDbContext mainDb, RepositoryDataSettings _settings)
         {
