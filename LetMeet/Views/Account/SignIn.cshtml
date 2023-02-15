@@ -1,0 +1,130 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In</title>
+
+
+</head>
+
+
+<body class="body-bg">
+
+
+    @*this parial to show loading until the page is loaded *@
+    @*its loaded befor css to show load and then load css *@
+    <partial name="Partials/MainLoadingPartial" />
+
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+    <link rel="stylesheet" href="~/lib/material-dashboard/material-dashboard-mini.css">
+
+    <link rel="stylesheet" href="~/css/Me/dark.css">
+
+    <link rel="stylesheet" href="~/css/signIn/sginInStyle.css">
+
+
+  
+  <div class="container ">
+  <div class="row">
+    <div class="col-12 col-lg-8 col-xl-8 col-md-8 mx-auto">
+      <h1 class="header mt-3 text-center p-2">Let Meet</h1>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <div class="container ">
+@*    <form method="post" class="row mt-5">
+*@
+      <div class="col-12 col-lg-5 col-xl-4 col-md-8  mx-auto">
+        <div class="card">
+          <div class=" card-header card-header-primary text-center border-radius-lg">
+            <p class="category">Let Meet</p>
+            <h4 class="card-title"> Sign in  </h4>
+
+          </div>
+
+          <div class="card-body">
+            <form method="post" role="form" class="text-start">
+
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="material-icons">person</i>
+                  </span>
+                </div>
+                <input type="email" class="form-control" id="inputEmail4" placeholder="Email or Username">
+              </div>
+
+
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="material-icons">lock</i>
+                  </span>
+                </div>
+                <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
+              </div>
+
+              <div class="togglebutton pl-1">
+                <label>
+                  <input type="checkbox" checked="">
+                  <span class="toggle"></span>
+                  Remember me
+                </label>
+              </div>
+
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary w-100 my-4 mb-2">Sign in</button>
+
+              </div>
+              <p class="mt-4 text-sm text-center">
+                Don't have an account?
+                <a href="../pages/sign-up.html" class="text-primary text-gradient font-weight-bold">Sign up</a>
+              </p>
+                </form>
+          </div>
+
+        </div>
+      </div>
+
+
+  </div>
+
+
+
+
+  <footer class="copyright text-center text-sm text-white text-lg-start w-100 mt-auto mx-auto">
+    ©
+    <script>
+      document.write(new Date().getFullYear())
+    </script> 2023,
+    made with <i class="fa fa-heart" aria-hidden="true"></i> by
+    <a href="https://www.instagram.com/m_it_01/" class="font-weight-bold text-white" target="_blank">M_IT_01</a>
+    for a better web.
+  </footer>
+
+
+
+</body>
+
+</html>

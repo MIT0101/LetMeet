@@ -59,7 +59,8 @@ builder.Services.AddDbContext<MainDbContext>(options => {
 
 //add repositores
 
-builder.Services.AddScoped<IGenericRepository<UserInfo,Guid>,GenericRepository<UserInfo, Guid>> ();
+builder.Services.AddScoped<IGenericRepository<UserInfo, Guid>, GenericRepository<UserInfo, Guid>>();
+
 
 
 

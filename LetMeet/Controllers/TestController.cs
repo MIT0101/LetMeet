@@ -16,6 +16,7 @@ namespace LetMeet.Controllers
     {
         private readonly IGenericRepository<UserInfo,Guid> _userRepository;
 
+
         private readonly RepositoryDataSettings _settings;
 
         private readonly SignInManager<AppIdentityUser> _signInManager;
@@ -27,6 +28,11 @@ namespace LetMeet.Controllers
             _signInManager = signInManager;
         }
 
+        public async Task<IActionResult> ovverride1()
+        {
+           var user= await _userRepository.CreateAsync(new UserInfo { fullName="use genric repo"});
+            return Json(new {user });
+        }
         public IActionResult test1()
         {
             UserInfo user = new UserInfo();
@@ -88,8 +94,8 @@ namespace LetMeet.Controllers
 
         // if repo is accessed
         public async Task< IActionResult> repository() {
-            _signInManager.SignOutAsync();
-            SignInResult signInResult = await _signInManager.PasswordSignInAsync(new AppIdentityUser(), "aa",isPersistent:false, lockoutOnFailure: true);
+            //_signInManager.SignOutAsync();
+            //SignInResult signInResult = await _signInManager.PasswordSignInAsync(new AppIdentityUser(), "aa",isPersistent:false, lockoutOnFailure: true);
             await _userRepository.FirstOrDefaultAsync();
             return Json(new { isvalid = true });
         }

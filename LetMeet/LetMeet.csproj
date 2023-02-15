@@ -25,4 +25,10 @@
     <ProjectReference Include="..\LetMeet.Repositories\LetMeet.Repositories.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\mini\" />
+    <Folder Include="wwwroot\lib\material-dashboard\" />
+    <Folder Include="wwwroot\img\" />
+  </ItemGroup>
+
 </Project>

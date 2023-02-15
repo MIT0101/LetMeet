@@ -1,4 +1,5 @@
 ﻿using LetMeet.Data;
+using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,34 +24,34 @@ namespace LetMeet.Repositories.Repository
         {
             this._mainDb = mainDb;
             this._entities = _mainDb.Set<TEntity>();
-            _settings = _settings;
+            this._settings = _settings;
         }
-        public Task<RepositoryResult<TEntity>> CreateAsync(TEntity entity)
+        public virtual Task<RepositoryResult<TEntity>> CreateAsync(TEntity entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepositoryResult<TEntity>> DeleteAsync(TKey id)
+        public virtual Task<RepositoryResult<TEntity>> DeleteAsync(TKey id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepositoryResult<TEntity>> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null)
+        public virtual Task<RepositoryResult<TEntity>> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id)
+        public virtual Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepositoryResult<IQueryable<TEntity>>> QueryAsync(Expression<Func<TEntity, bool>> filter = null)
+        public virtual Task<RepositoryResult<IQueryable<TEntity>>> QueryAsync(Expression<Func<TEntity, bool>> filter = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RepositoryResult<TEntity>> UpdateAsync(TKey id, TEntity entity)
+        public virtual Task<RepositoryResult<TEntity>> UpdateAsync(TKey id, TEntity entity)
         {
             throw new NotImplementedException();
         }

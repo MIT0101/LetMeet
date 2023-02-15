@@ -5,12 +5,44 @@
       "PackagePath": "staticwebassets\\LetMeet.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Me\\dark.css",
+      "PackagePath": "staticwebassets\\css\\Me\\dark.css"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Me\\mainloadiersStyle.css",
+      "PackagePath": "staticwebassets\\css\\Me\\mainloadiersStyle.css"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\signIn\\sginInStyle.css",
+      "PackagePath": "staticwebassets\\css\\signIn\\sginInStyle.css"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\loading.gif",
+      "PackagePath": "staticwebassets\\img\\loading.gif"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\loading2.gif",
+      "PackagePath": "staticwebassets\\img\\loading2.gif"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\loading3.gif",
+      "PackagePath": "staticwebassets\\img\\loading3.gif"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\sgin_bg-min.jpeg",
+      "PackagePath": "staticwebassets\\img\\sgin_bg-min.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\sgin_bg.jpeg",
+      "PackagePath": "staticwebassets\\img\\sgin_bg.jpeg"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\site.js",
@@ -243,6 +275,14 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\material-dashboard\\material-dashboard-mini.css",
+      "PackagePath": "staticwebassets\\lib\\material-dashboard\\material-dashboard-mini.css"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\material-dashboard\\material-dashboard.css",
+      "PackagePath": "staticwebassets\\lib\\material-dashboard\\material-dashboard.css"
     },
     {
       "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.LetMeet.Microsoft.AspNetCore.StaticWebAssets.props",
