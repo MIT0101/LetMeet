@@ -15,22 +15,19 @@ builder.Services.AddControllersWithViews();
 
 //configure settings
 
-//repository settings
+//repository settings;
 
-//builder.Services.Configure<RepositoryDataSettings>(builder.Configuration.GetSection("RepositoryDataSettings"));
-//builder.Services.AddSingleton<RepositoryDataSettings>();
-//builder.Services.Configure<RepositoryDataSettings>(options => {
-
-//    options.skip = builder.Configuration.GetValue<int>("RepositoryDataSettings:skip");
-//    options.take = builder.Configuration.GetValue<int>("RepositoryDataSettings:take");
-
-//});
 // working
-builder.Services.AddSingleton<RepositoryDataSettings>(new RepositoryDataSettings()
-{
-    skip = builder.Configuration.GetValue<int>("RepositoryDataSettings:skip"),
-    take = builder.Configuration.GetValue<int>("RepositoryDataSettings:take")
-});
+//builder.Services.AddSingleton<RepositoryDataSettings>(new RepositoryDataSettings()
+//{
+//    skip = builder.Configuration.GetValue<int>("RepositoryDataSettings:skip"),
+//    take = builder.Configuration.GetValue<int>("RepositoryDataSettings:take")
+//});
+
+// working
+builder.Services.AddOptions<RepositoryDataSettings>()
+    .Bind(builder.Configuration.GetRequiredSection(RepositoryDataSettings.NameOfSection))
+    .ValidateDataAnnotations().ValidateOnStart();
 
 
 //add identity 

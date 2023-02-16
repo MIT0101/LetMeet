@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LetMeet.Data.Entites.UsersInfo
+{
+    public class DayFree
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+
+        [Required(ErrorMessage ="Day is Required")]
+        [Range(minimum:1,maximum:7)]
+        public int? day { get; set; }
+
+        [Required(ErrorMessage = "Free Day Hour Start is Required")]
+        [Range(minimum: 0, maximum: 23,ErrorMessage = "Free Day Hour Start Must be Between 0 and 23")]
+        public int? startHour { get; set; }
+
+        [Required(ErrorMessage = "Free Day Hour End is Required")]
+        [Range(minimum: 0, maximum: 23, ErrorMessage = "Free Day Hour End Must be Between 0 and 23")]
+        public int? endHour { get; set; }
+
+
+
+    }
+}

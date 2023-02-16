@@ -1,0 +1,14 @@
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\LetMeet.Data.deps.json
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\LetMeet.Data.runtimeconfig.json
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\LetMeet.Data.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\LetMeet.Data.pdb
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.csproj.AssemblyReference.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.AssemblyInfoInputs.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.AssemblyInfo.cs
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.csproj.CoreCompileInputs.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\refint\LetMeet.Data.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.pdb
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.genruntimeconfig.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\ref\LetMeet.Data.dll

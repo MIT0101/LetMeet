@@ -9,6 +9,7 @@ using LetMeet.Repositories.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+using Microsoft.Extensions.Options;
 
 namespace LetMeet.Controllers
 {
@@ -17,27 +18,34 @@ namespace LetMeet.Controllers
         private readonly IGenericRepository<UserInfo,Guid> _userRepository;
 
 
-        private readonly RepositoryDataSettings _settings;
+        private readonly IOptions<RepositoryDataSettings> _settings;
 
         private readonly SignInManager<AppIdentityUser> _signInManager;
 
-        public TestController(IGenericRepository<UserInfo, Guid> userRepository, RepositoryDataSettings settings, SignInManager<AppIdentityUser> signInManager)
+        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager)
         {
             _userRepository = userRepository;
             _settings = settings;
             _signInManager = signInManager;
         }
 
+        [HttpGet]
+        public IActionResult grandTime() {
+        return Json(new { new DateTime(2023, 1, 25).AddDays(40).Date });
+        }
+
+        //test ovverrid
         public async Task<IActionResult> ovverride1()
         {
            var user= await _userRepository.CreateAsync(new UserInfo { fullName="use genric repo"});
             return Json(new {user });
         }
-        public IActionResult test1()
+        //test validation
+        public IActionResult dataAnotationValidation()
         {
             UserInfo user = new UserInfo();
             user.emailAddress = "abc";
-            return Json(new { isvalid =Meeting.validate(user)});
+            return Json(new {result= RepositoryValidationResult.DataAnnotationsValidation(user)});
         }
         public IActionResult state() {
             return Json(new { state= ResultState.Created });
@@ -49,7 +57,7 @@ namespace LetMeet.Controllers
 
             UserInfo user = new UserInfo();
             user.emailAddress = "abc@";
-            List<ValidationResult> validationResults = Meeting.validate(user);
+            List<ValidationResult> validationResults = RepositoryValidationResult.DataAnnotationsValidation(user).ValidationErrors;
 
             ModelState.AddModelError("aa","");
             if (validationResults.Count>0) {
@@ -89,7 +97,7 @@ namespace LetMeet.Controllers
         //test RepositoryDataSettings for skip and take
         public async Task<IActionResult> repositorySettings()
         {
-            return Json(new { _settings.skip,_settings.take });
+            return Json(new { _settings});
         }
 
         // if repo is accessed

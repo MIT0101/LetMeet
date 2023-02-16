@@ -6,4 +6,6 @@
 
 add-migration IdentityMigration -Context MainIdentityDbContext
 
+Drop-Database -Context MainIdentityDbContext
+
 Update-Database -Context MainIdentityDbContext

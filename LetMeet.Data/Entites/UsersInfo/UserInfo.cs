@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LetMeet.Data.Entites.Identity;
+using LetMeet.Data.Entites.Meetigs;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,7 +14,7 @@ namespace LetMeet.Data.Entites.UsersInfo
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public Guid id { get; set; }
 
         [Required(ErrorMessage = "Full Name Is Required")]
         [StringLength(maximumLength: 100, MinimumLength = 4, ErrorMessage = "Full Name Must Be Between 4 and 100 for length")]
@@ -27,9 +29,12 @@ namespace LetMeet.Data.Entites.UsersInfo
         public string? phoneNumber { get; set; }
 
         [DataType(nameof(Stage), ErrorMessage = nameof(Stage)+ " Not a Valid " + nameof(Stage)+".")]
+        [EnumDataType(typeof(UserPostion), ErrorMessage = "User Stage Is Invalid.")]
+
         public Stage? stage { get; set; } = Stage.Unknown;
 
         [Required(ErrorMessage = "Postion Is Required")]
+        [EnumDataType(typeof(UserPostion),ErrorMessage ="User Postion Is Invalid.")]
         public UserPostion userPostion { get; set; } = UserPostion.Unknown;
 
         [DataType(DataType.ImageUrl)]
@@ -39,6 +44,7 @@ namespace LetMeet.Data.Entites.UsersInfo
 
 
         [DataType(nameof(Level), ErrorMessage = nameof(Level)+ " Not a Valid " + nameof(Level) + ".")]
+        [EnumDataType(typeof(Level), ErrorMessage = "User Level Is Invalid.")]
 
         public Level level { get; set; }= Level.Unknown;
 
@@ -48,14 +54,15 @@ namespace LetMeet.Data.Entites.UsersInfo
         [Required(ErrorMessage = "User Identity Role Is Required")]
         public Guid identityRoleId { get; set; }
 
-        //public List<Meet> meets { get; set; }
-
-        //public List<DayFree> freeTimes { get; set; }
-
-
+        [Required(ErrorMessage = "User Role Is Required")]
+        [EnumDataType(typeof(UserRole),ErrorMessage ="Invalid User Role")]
+        public UserRole userRole { get; set; }
 
 
+        //public List<Meeting>? meets { get; set; }
 
+
+        public List<DayFree>? freeDays { get; set; }
 
     }
 

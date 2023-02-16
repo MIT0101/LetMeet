@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -22,6 +23,10 @@ namespace LetMeet.Repositories.Infrastructure
         Task<RepositoryResult<TEntity>> UpdateAsync(TKey id,TEntity entity);
 
         Task<RepositoryResult<TEntity>> DeleteAsync(TKey id);
+
+        Task<RepositoryValidationResult> IsValid(TEntity entity);
+        Task<RepositoryValidationResult> IsValid(IEnumerable<TEntity> entities);
+
 
     }
 }
