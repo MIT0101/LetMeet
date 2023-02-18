@@ -29,33 +29,23 @@ namespace LetMeet.Data.Entites.UsersInfo
         public string? phoneNumber { get; set; }
 
         [DataType(nameof(Stage), ErrorMessage = nameof(Stage)+ " Not a Valid " + nameof(Stage)+".")]
-        [EnumDataType(typeof(UserPostion), ErrorMessage = "User Stage Is Invalid.")]
-
+        [EnumDataType(typeof(Stage), ErrorMessage = "User Stage Is Invalid.")]
         public Stage? stage { get; set; } = Stage.Unknown;
-
-        [Required(ErrorMessage = "Postion Is Required")]
-        [EnumDataType(typeof(UserPostion),ErrorMessage ="User Postion Is Invalid.")]
-        public UserPostion userPostion { get; set; } = UserPostion.Unknown;
 
         [DataType(DataType.ImageUrl)]
         public string? profileImage { get; set; }
 
-        public UserInfo? supervisorOrStudent { get; set; }
+        //public UserInfo? supervisorOrStudent { get; set; }
 
-
-        [DataType(nameof(Level), ErrorMessage = nameof(Level)+ " Not a Valid " + nameof(Level) + ".")]
-        [EnumDataType(typeof(Level), ErrorMessage = "User Level Is Invalid.")]
-
-        public Level level { get; set; }= Level.Unknown;
 
         [Required(ErrorMessage = "User Identity Is Required")]
         public Guid identityId { get; set; }
 
-        [Required(ErrorMessage = "User Identity Role Is Required")]
-        public Guid identityRoleId { get; set; }
+        //[Required(ErrorMessage = "User Identity Role Is Required")]
+        //public Guid identityRoleId { get; set; }
 
         [Required(ErrorMessage = "User Role Is Required")]
-        [EnumDataType(typeof(UserRole),ErrorMessage ="Invalid User Role")]
+        [EnumDataType(typeof(UserRole), ErrorMessage = "Invalid User Role")]
         public UserRole userRole { get; set; }
 
 
@@ -66,22 +56,15 @@ namespace LetMeet.Data.Entites.UsersInfo
 
     }
 
-    public enum Level { 
-    
-        High,
-        Low,
-        Unknown,
 
-    }
-
-    public enum UserPostion
-    {
-        Admin,
-        Employee,
-        Student,
-        Supervisor,
-        Unknown
-    }
+    //public enum UserPostion
+    //{
+    //    Admin,
+    //    Employee,
+    //    Student,
+    //    Supervisor,
+    //    Unknown
+    //}
 
     public enum Stage
     {

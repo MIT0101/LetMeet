@@ -1,4 +1,5 @@
-﻿using LetMeet.Data.Entites.Meetigs;
+﻿using LetMeet.Data.Dtos;
+using LetMeet.Data.Entites.Meetigs;
 using LetMeet.Data.Entites.UsersInfo;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,6 +18,7 @@ namespace LetMeet.Data
 
         public DbSet<UserInfo> UserInfos { get; set; }
 
+        public DbSet<StudentSupervisors> StudentSupervisors { get; set; }
         public DbSet<DayFree> DayFrees { get; set; }
 
 
@@ -25,6 +27,9 @@ namespace LetMeet.Data
         public DbSet<SubMeeting> SubMeetings { get; set; }
 
         public DbSet<MeetingTask > MeetingTasks { get; set; }
+
+        // temprary for front code gen
+        //public DbSet<RegisterUserDto> registerUserDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

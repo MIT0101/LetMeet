@@ -12,7 +12,15 @@ namespace LetMeet.Repositories.Infrastructure
         where TEntity  : class 
         where TKey : IEquatable<TKey>
     {
+        //when secsess return State.Created
+        //when validtion return validation error
+        //or db error
         Task<RepositoryResult<TEntity>> CreateAsync(TEntity entity);
+
+        //when secsess return State.Created
+        //when validtion return validation error
+        //when item exsist return item alrady exsist db error
+        Task<RepositoryResult<TEntity>> CreateUniqeByAsync(TEntity entity, Expression<Func<TEntity, bool>> filter);
         Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id);
 
         Task<RepositoryResult<IQueryable<TEntity>>> QueryAsync(Expression<Func<TEntity, bool>> filter = null);

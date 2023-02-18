@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Microsoft.Extensions.Options;
+using System.ComponentModel.Design;
 
 namespace LetMeet.Controllers
 {
@@ -22,11 +23,28 @@ namespace LetMeet.Controllers
 
         private readonly SignInManager<AppIdentityUser> _signInManager;
 
-        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager)
+        private readonly IPasswordGenrationRepository _passwordGenration;
+        private readonly ISelectionRepository _selectionRepository;
+
+        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager, IPasswordGenrationRepository passwordGenration, ISelectionRepository selectionRepository)
         {
             _userRepository = userRepository;
             _settings = settings;
             _signInManager = signInManager;
+            _passwordGenration = passwordGenration;
+            _selectionRepository = selectionRepository;
+        }
+
+        public ActionResult stage()
+        {
+
+            return Json(new {stages= _selectionRepository.GetStages() });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> passwordGen(int length=16) {
+            string pass=await _passwordGenration.GenerateRandomPassword(length);
+            return Json(pass);
         }
 
         [HttpGet]

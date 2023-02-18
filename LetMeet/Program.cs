@@ -1,9 +1,9 @@
 global using LetMeet.Data;
 global using LetMeet.Data.Entites.Identity;
-using LetMeet.Data.Entites.UsersInfo;
-using LetMeet.Repositories;
-using LetMeet.Repositories.Infrastructure;
-using LetMeet.Repositories.Repository;
+global using LetMeet.Data.Entites.UsersInfo;
+global using LetMeet.Repositories;
+global using LetMeet.Repositories.Infrastructure;
+global using LetMeet.Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -25,6 +25,9 @@ builder.Services.AddControllersWithViews();
 //});
 
 // working
+string validPasswordChars = builder.Configuration.GetValue<string>("ValidPasswordChars") ??
+PasswordGenrationRepository.DefaultValidChars;
+
 builder.Services.AddOptions<RepositoryDataSettings>()
     .Bind(builder.Configuration.GetRequiredSection(RepositoryDataSettings.NameOfSection))
     .ValidateDataAnnotations().ValidateOnStart();
@@ -35,12 +38,19 @@ builder.Services.AddOptions<RepositoryDataSettings>()
 builder.Services.AddIdentity<AppIdentityUser, AppIdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
+
+    options.Password.RequireNonAlphanumeric= false;
+    options.Password.RequireDigit= false;
+    options.Password.RequireLowercase= false;
+    options.Password.RequireUppercase= false;
+    options.Password.RequireDigit = false;
+
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber= false;  
     options.Lockout.MaxFailedAccessAttempts = builder.Configuration.GetValue<int>("IdentitySettings:MaxFailedAccessAttempts");
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(builder.Configuration.GetValue<int>("IdentitySettings:DefaultLockoutTimeSpanInMinutes"));
 
-}).AddEntityFrameworkStores<MainIdentityDbContext>();
+}).AddRoles<AppIdentityRole>().AddEntityFrameworkStores<MainIdentityDbContext>();
 
 //add db contexts
 
@@ -54,9 +64,18 @@ builder.Services.AddDbContext<MainDbContext>(options => {
 
 });
 
-//add repositores
-
+//Add repositores
+//Genric Repository of user Info
 builder.Services.AddScoped<IGenericRepository<UserInfo, Guid>, GenericRepository<UserInfo, Guid>>();
+
+//password genration repository
+builder.Services.AddSingleton<IPasswordGenrationRepository, PasswordGenrationRepository>(options =>
+{
+    return new PasswordGenrationRepository(validPasswordChars);
+});
+
+//Enums Selction repository
+builder.Services.AddSingleton<ISelectionRepository, SelectionRepository>();
 
 
 

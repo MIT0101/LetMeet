@@ -1,49 +1,269 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - LetMeet</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LetMeet.styles.css" asp-append-version="true" />
+
+    @*<link rel="stylesheet" href="../css/material-dashboard.css">*@
+    <link rel="stylesheet" href="~/lib/material-dashboard/css/material-dashboard-mini.css" />
+
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+    @*<link rel="stylesheet" href="~/css/Main/dark.css">*@
+    <link rel="stylesheet" href="~/css/Main/dark.css" />
+
+
+    <!-- Js Files  -->
+    <!-- For select elemnts and js operations -->
+    @*<script defer src="../js/jquery.min.js"></script>*@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @*<script defer src="../js/popper.min.js"></script>*@
+    <script src="~/lib/jquery/dist/popper.min.js"></script>
+
+    <!-- For side bar and scrollers -->
+    @*<script defer src="../js/perfect-scrollbar.jquery.min.js"></script>*@
+    <script defer src="~/lib/jquery/dist/perfect-scrollbar.jquery.min.js"></script>
+
+
+    <!-- For desgin js (boostrap and meaterial) -->
+    @*<script defer src="../js/material-dashboard.min.js"></script>*@
+    <script defer src="~/lib/material-dashboard/js/material-dashboard.min.js"></script>
+
+    @*<script defer src="../js/bootstrap-material-design.min.js"></script>*@
+    <script defer src="~/lib/material-dashboard/js/bootstrap-material-design.min.js"></script>
+
+    <!-- For Theme Switching (Dark | Light) -->
+    @*<script defer src="../js/Me/Theme.js"></script>*@
+    <script defer src="~/js/Main/Theme.js"></script>
+
+    
+
+    <!-- For RTL Switching -->
+    @*<script defer src="../js/Me/Rtl.js"></script>*@
+    <script defer src="~/js/Main/Rtl.js"></script>
+
+
+
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LetMeet</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+<!-- for dark mode add "dark-version" class to body and data-background-color="black"
+   for icons and check box also .md-dark -->
+
+<body class="">
+
+    <!-- side bar start -->
+
+    <div class="wrapper">
+
+        <!-- side bar start -->
+
+        <div class="sidebar" data-color="purple" data-background-color="white" data-image="/img/sidebar-bg-1.jpg">
+            <!--
+                Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+                Tip 2: you can also add an image using data-image tag
+            -->
+            <div class="logo">
+                <a href="/" class="simple-text logo-normal">
+                    Let Meet
+                </a>
+            </div>
+            <div class="sidebar-wrapper ps-container ps-theme-default" data-ps-id="06937b24-6def-4176-b002-d5b26197d731">
+                <ul class="nav">
+                    @*admin*@
+
+                    <li class="nav-item ">
+                        <a class="nav-link" asp-controller="Account" asp-action="ManageUsers">
+                            <i class="material-icons">people</i>
+                            <p class="side-nav-title">Manage Users</p>
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item ">
+                        <a class="nav-link" href="#">
+                            <i class="material-icons">dashboard</i>
+                            <p class="side-nav-title">Dashboard</p>
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./userProfile.html">
+                            <i class="material-icons">person</i>
+                            <p class="side-nav-title">User Profile</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./tables.html">
+                            <i class="material-icons">content_paste</i>
+                            <p class="side-nav-title">Table List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./typography.html">
+                            <i class="material-icons">library_books</i>
+                            <p class="side-nav-title">Typography</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./icons.html">
+                            <i class="material-icons">bubble_chart</i>
+                            <p class="side-nav-title">Icons</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./map.html">
+                            <i class="material-icons">location_ons</i>
+                            <p class="side-nav-title">Maps</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./notifications.html">
+                            <i class="material-icons">notifications</i>
+                            <p class="side-nav-title">Notifications</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a id="rtl1" class="nav-link" href="#">
+                            <i class="material-icons">language</i>
+                            <p class="side-nav-title">RTL Support</p>
+                        </a>
+                    </li>
+                    <li class="nav-item active-pro ">
+                        <a class="nav-link" href="./upgrade.html">
+                            <i class="material-icons">unarchive</i>
+                            <p class="side-nav-title">Upgrade to PRO</p>
+                        </a>
+                    </li>
+                </ul>
+                <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 0px;">
+                    <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                </div>
+                <div class="ps-scrollbar-y-rail" style="top: 0px; right: 0px;">
+                    <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 0px;"></div>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            <div class="sidebar-background" style="background-image: url(/img/sidebar-bg-1.jpg) "></div>
+        </div>
+
+        <!-- side bar end -->
+
+        <div class="main-panel ps-container ps-theme-default ps-active-y" data-ps-id="9a1fdaef-3469-7b48-96ce-f106cd643c3f">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+                <div class="container-fluid">
+                    <div class="navbar-wrapper">
+                        <a class="navbar-brand" href="javascript:;">Notifications</a>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end">
+                        <form class="navbar-form">
+                            <span class="bmd-form-group">
+                                <div class="input-group no-border">
+                                    <input type="text" value="" class="form-control" placeholder="Search...">
+                                    <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                                        <i class="material-icons">search</i>
+                                        <div class="ripple-container"></div>
+                                    </button>
+                                </div>
+                            </span>
+                        </form>
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="javascript:;">
+                                    <i class="material-icons ">dashboard</i>
+                                    <p class="d-lg-none d-md-block">
+                                        Stats
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons ">notifications</i>
+                                    <span class="notification">5</span>
+                                    <p class="d-lg-none d-md-block">
+                                        Some Actions
+                                    </p>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item " href="#">Mike John responded to your email</a>
+                                    <a class="dropdown-item " href="#">You have 5 new tasks</a>
+                                    <a class="dropdown-item " href="#">You're now friend with Andrew</a>
+                                    <a class="dropdown-item " href="#">Another Notification</a>
+                                    <a class="dropdown-item " href="#">Another One</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="javascript:;" id="navbarDropdownProfile" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons ">person</i>
+                                    <p class="d-lg-none d-md-block">
+                                        Account
+                                    </p>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
+                                    <a class="dropdown-item" href="#">Profile</a>
+                                    <a class="dropdown-item" href="#">Settings</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Log out</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+            <div class="content">
+
+                <!-- Content Container Inside -->
+                <div class="container-fluid">
+
+                    @RenderBody()
+
+                </div>
+
+
+                <button id="themeBtn">Theme Switching</button>
+
+                <!-- End Content Container -->
+            </div>
+
+            <!--still-->
+        </div>
+
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - LetMeet - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+                        <script>
+                        let navTitlesMap = new Map();
+                        let all = document.querySelectorAll(".side-nav-title");
+
+                        for(let i=0;i<all.length;i++){
+                            navTitlesMap.set(all[i].textContent,all[i]);
+                        }
+                        let currentPage = '@ViewBag.currentPage';
+
+                        navTitlesMap.get(currentPage)?.parentElement.parentElement.classList.add("active");
+
+                    </script>
+
+
 </body>
+
 </html>

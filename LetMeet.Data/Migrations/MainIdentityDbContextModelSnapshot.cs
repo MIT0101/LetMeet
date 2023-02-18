@@ -108,10 +108,6 @@ namespace LetMeet.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("UserInfoId")
-                        .IsRequired()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -125,9 +121,6 @@ namespace LetMeet.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("UserInfoId")
-                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
                 });

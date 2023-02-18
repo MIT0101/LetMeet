@@ -30,9 +30,45 @@ namespace LetMeet.Repositories.Repository
            
            
         }
-        public virtual Task<RepositoryResult<TEntity>> CreateAsync(TEntity entity)
+        public virtual async Task<RepositoryResult<TEntity>> CreateAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var validatoinResult=RepositoryValidationResult.DataAnnotationsValidation(entity);
+                if (!validatoinResult.IsValid)
+                {
+                    return RepositoryResult<TEntity>.FailureValidationResult(validatoinResult.ValidationErrors);
+                }
+                _entities.Add(entity);
+                    
+                await _mainDb.SaveChangesAsync();
+
+                return RepositoryResult<TEntity>.SuccessResult(state:ResultState.Created,entity);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<TEntity>.FailureResult(ResultState.DbError,null,new List<string> { ex.Message});
+            }
+        }
+
+        public async Task<RepositoryResult<TEntity>> CreateUniqeByAsync(TEntity entity, Expression<Func<TEntity, bool>> filter)
+        {
+            try
+            {
+                var exsistItem = await _entities.FirstOrDefaultAsync(filter);
+                if (exsistItem is not null)
+                {
+                    return RepositoryResult<TEntity>.FailureResult(ResultState.ItemAlreadyExsist, null);
+                }
+               
+                return await CreateAsync(entity);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<TEntity>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
         }
 
         public virtual Task<RepositoryResult<TEntity>> DeleteAsync(TKey id)

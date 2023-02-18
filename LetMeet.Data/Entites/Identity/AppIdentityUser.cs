@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace LetMeet.Data.Entites.Identity {
-    [Index(nameof(UserInfoId), IsUnique =true)]
+    //[Index(nameof(UserInfoId), IsUnique =true)]
 
     public class AppIdentityUser : IdentityUser<Guid> 
     {
@@ -13,7 +13,7 @@ namespace LetMeet.Data.Entites.Identity {
         [StringLength(maximumLength:100,MinimumLength =4,ErrorMessage ="Full Name Must Be Between 4 and 100 for length")]
         public string FullName { get; set; }
 
-        [Required]
-        public  Guid? UserInfoId { get; set; }=null;
+        //[Required]
+        //public  Guid? UserInfoId { get; set; }=null;
     }
 }

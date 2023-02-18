@@ -150,6 +150,29 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.ToTable("DayFrees");
                 });
 
+            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.StudentSupervisors", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<Guid>("studentid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("supervisorid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("studentid");
+
+                    b.HasIndex("supervisorid");
+
+                    b.ToTable("StudentSupervisors");
+                });
+
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.UserInfo", b =>
                 {
                     b.Property<Guid>("id")
@@ -168,12 +191,6 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<Guid>("identityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("identityRoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("level")
-                        .HasColumnType("int");
-
                     b.Property<string>("phoneNumber")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -182,12 +199,6 @@ namespace LetMeet.Data.Migrations.MainDb
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("stage")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("supervisorOrStudentid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("userPostion")
                         .HasColumnType("int");
 
                     b.Property<int>("userRole")
@@ -200,8 +211,6 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     b.HasIndex("identityId")
                         .IsUnique();
-
-                    b.HasIndex("supervisorOrStudentid");
 
                     b.ToTable("UserInfos");
                 });
@@ -249,14 +258,23 @@ namespace LetMeet.Data.Migrations.MainDb
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
-            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.UserInfo", b =>
+            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.StudentSupervisors", b =>
                 {
-                    b.HasOne("LetMeet.Data.Entites.UsersInfo.UserInfo", "supervisorOrStudent")
+                    b.HasOne("LetMeet.Data.Entites.UsersInfo.UserInfo", "student")
                         .WithMany()
-                        .HasForeignKey("supervisorOrStudentid")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("studentid")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    b.Navigation("supervisorOrStudent");
+                    b.HasOne("LetMeet.Data.Entites.UsersInfo.UserInfo", "supervisor")
+                        .WithMany()
+                        .HasForeignKey("supervisorid")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("student");
+
+                    b.Navigation("supervisor");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.Meeting", b =>
