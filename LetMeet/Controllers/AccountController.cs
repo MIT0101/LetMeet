@@ -1,7 +1,9 @@
-﻿using LetMeet.Data.Dtos;
+﻿using LetMeet.Data.Dtos.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Drawing.Printing;
 
 namespace LetMeet.Controllers
 {
@@ -11,13 +13,18 @@ namespace LetMeet.Controllers
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly RoleManager<AppIdentityRole> _roleManager;
         private readonly IGenericRepository<UserInfo, Guid> _userRepository;
+        public  readonly IErrorMessagesRepository _errorMessages;
+        private readonly IOptions<RepositoryDataSettings> _settings;
 
-        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository)
+
+        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
             _roleManager = roleManager;
             _userRepository = userRepository;
+            _errorMessages = errorMessages;
+            _settings = settings;
         }
 
         [HttpGet]
@@ -27,11 +34,34 @@ namespace LetMeet.Controllers
         }
 
         [HttpGet]
-        public async Task<ViewResult> ManageUsers(List<string> errors=null,string message=null) {
+        public async Task<ViewResult> ManageUsers([FromQuery] int pageIndex=1,List<string> errors=null,string message=null) {
             ViewBag.errors=errors;
             ViewBag.message=message;
+            var countResult= await _userRepository.CountQueryAsync();
 
-            return View();
+            if (countResult.state!=ResultState.Seccess) {
+                ViewBag.message = _errorMessages.DbError();
+                return View(new List<RegisterUserDto>());
+            }
+
+            ViewBag.totalPages = (int)Math.Ceiling(countResult.value / (double)_settings.Value.MaxResponsesPerTime);
+
+            var repoResult = await _userRepository.QueryInRangeAsync(pageIndex);
+
+            if (repoResult.State==ResultState.MultipleNotFound) {
+                ViewBag.message = _errorMessages.MultipleItemsNotFound("NO Items Found");
+                return View(new List<RegisterUserDto>());
+      
+            }
+            if (repoResult.State == ResultState.DbError)
+            {
+                ViewBag.message = _errorMessages.DbError();
+                return View(new List<RegisterUserDto>());
+            }
+
+            var allUsers = repoResult.Result.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
+
+            return View(allUsers);
         }
 
         [HttpPost]

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace LetMeet.Repositories
 {
     public class RepositoryResult<TResult> where TResult : class 
+
     {
         public bool Success { get; set; }
 

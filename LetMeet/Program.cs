@@ -76,6 +76,9 @@ builder.Services.AddSingleton<IPasswordGenrationRepository, PasswordGenrationRep
 
 //Enums Selction repository
 builder.Services.AddSingleton<ISelectionRepository, SelectionRepository>();
+//add error message Repository
+builder.Services.AddSingleton<IErrorMessagesRepository, ErrorMessagesRepository>();
+
 
 
 

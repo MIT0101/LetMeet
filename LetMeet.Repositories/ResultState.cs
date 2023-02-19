@@ -12,10 +12,12 @@ namespace LetMeet.Repositories
         Found,
         Seccess,
         NotFound,
+        MultipleNotFound,
         ItemAlreadyExsist,
         DbError,
         ValidationError,
         UnExpectedError,
+        Error
     }
 
    
