@@ -32,6 +32,9 @@ builder.Services.AddOptions<RepositoryDataSettings>()
     .Bind(builder.Configuration.GetRequiredSection(RepositoryDataSettings.NameOfSection))
     .ValidateDataAnnotations().ValidateOnStart();
 
+//CONFFIGEURE eMAIL sETTINGS
+builder.Services.AddOptions<EmailRepositorySettings>().Bind(builder.Configuration.GetSection(EmailRepositorySettings.SectionName));
+
 
 //add identity 
 
@@ -78,6 +81,8 @@ builder.Services.AddSingleton<IPasswordGenrationRepository, PasswordGenrationRep
 builder.Services.AddSingleton<ISelectionRepository, SelectionRepository>();
 //add error message Repository
 builder.Services.AddSingleton<IErrorMessagesRepository, ErrorMessagesRepository>();
+//add email service
+builder.Services.AddSingleton<IEmailRepository,EmailRepository>();
 
 
 

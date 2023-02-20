@@ -100,6 +100,9 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<int?>("Meetingid")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");

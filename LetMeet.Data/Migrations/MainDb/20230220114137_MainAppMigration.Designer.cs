@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetMeet.Data.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230218200717_MainAppMigration")]
+    [Migration("20230220114137_MainAppMigration")]
     partial class MainAppMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +101,9 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     b.Property<int?>("Meetingid")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(500)

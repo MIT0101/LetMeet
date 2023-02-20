@@ -21,6 +21,10 @@ namespace LetMeet.Data.Entites.Meetigs
         public int totalTimeHoure { get; set; }
 
 
+        [Required(ErrorMessage = "Date is Required")]
+        public DateTime date { get; set; }
+
+
         [Required(ErrorMessage = "Meeting Start Hour is Required")]
         [Range(minimum: 0, maximum: 23, ErrorMessage = "Meeting Start Hour Must be Between 0 and 23")]
         public int startHour { get; set; }

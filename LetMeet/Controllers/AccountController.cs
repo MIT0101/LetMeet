@@ -1,9 +1,12 @@
 ﻿using LetMeet.Data.Dtos.User;
+using LetMeet.Test;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Drawing.Printing;
+
+using System.IO;
 
 namespace LetMeet.Controllers
 {
@@ -15,9 +18,12 @@ namespace LetMeet.Controllers
         private readonly IGenericRepository<UserInfo, Guid> _userRepository;
         public  readonly IErrorMessagesRepository _errorMessages;
         private readonly IOptions<RepositoryDataSettings> _settings;
+        private readonly IEmailRepository _mailRepository;
+
+        private readonly IWebHostEnvironment _env;
 
 
-        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings)
+        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
@@ -25,6 +31,8 @@ namespace LetMeet.Controllers
             _userRepository = userRepository;
             _errorMessages = errorMessages;
             _settings = settings;
+            _env = env;
+            _mailRepository = mailRepository;
         }
 
         [HttpGet]
@@ -32,9 +40,14 @@ namespace LetMeet.Controllers
         {
             return await Task.FromResult(View());
         }
+        [HttpGet()]
+        public ViewResult RegisterUser() {
+            int a = 10;
+            return View(); 
+        }
 
         [HttpGet]
-        public async Task<ViewResult> ManageUsers([FromQuery] int pageIndex=1,List<string> errors=null,string message=null) {
+        public async Task<ViewResult> ManageUsers(int pageIndex=1,List<string> errors=null,string message=null) {
             ViewBag.errors=errors;
             ViewBag.message=message;
             var countResult= await _userRepository.CountQueryAsync();
@@ -83,9 +96,10 @@ namespace LetMeet.Controllers
                 FullName = userToRegister.fullName,
                 Email = userToRegister.emailAddress,
                 UserName = userToRegister.fullName.Replace(" ",""),
+                PhoneNumber= userToRegister.phoneNumber,    
             };
-           
-           IdentityResult identityResult= await _userManager.CreateAsync(identityUser, await _passwordGenrator.GenerateRandomPassword());
+           string password = await _passwordGenrator.GenerateRandomPassword();
+           IdentityResult identityResult= await _userManager.CreateAsync(identityUser, password);
 
             if (!identityResult.Succeeded) {
                 errors.AddRange(identityResult.Errors.Select(x=>x.Description));
@@ -117,6 +131,7 @@ namespace LetMeet.Controllers
             UserInfo userInfo = new UserInfo() {
                 fullName = userToRegister.fullName,
                 emailAddress = userToRegister.emailAddress,
+                phoneNumber= userToRegister.phoneNumber,
 
                 stage = userToRegister.stage,
                 userRole = userToRegister.userRole,
@@ -140,6 +155,21 @@ namespace LetMeet.Controllers
                 return RedirectToAction("ManageUsers");
             }
             if (repoResult.State==ResultState.Created) {
+
+
+               var emailResult= await _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject:"Acount Created",
+                    body:$"You Account Cridantional is:<br>" +
+                    $"Email : {userToRegister.emailAddress} <br>" +
+                    $"Password :{password} <br>" +
+                    $"Please Change Your Password .");
+
+                if (emailResult.state!=ResultState.Seccess) {
+                    if (_env.IsDevelopment())
+                    {
+                        Test1.SaveAccountToFile(userToRegister.emailAddress, password);
+                    }
+                }
+
                 ViewBag.errors = errors;
                 ViewBag.message = "User Created Successfully";
                 return RedirectToAction("ManageUsers");
@@ -149,6 +179,9 @@ namespace LetMeet.Controllers
             TempData["errors"] = errors;
             return RedirectToAction("ManageUsers");
         }
+
+
+
 
 
     }

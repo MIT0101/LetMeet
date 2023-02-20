@@ -8,11 +8,11 @@
 }
 
 @model List<RegisterUserDto>
-@{
+@*@{
     RegisterUserDto dump=null;
     <partial name="Partials/Users/RegisterUserParitail" for="@dump" />
 
-}
+}*@
 
 <table class="table">
     <thead>
@@ -68,52 +68,6 @@
     </tbody>
 </table>
 
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-@{
-    int pageIndex = 1;
-
-    try
-    {
-        if (HttpContextAccessor.HttpContext.Request.Query.Keys.Contains("pageIndex"))
-        {
-            pageIndex = int.Parse(HttpContextAccessor.HttpContext.Request.Query["pageIndex"].ToString());
-        }
-
-    }
-    catch (Exception)
-    {
-        pageIndex = 1;
-
-    }
-    int totalPages = 0;
-    try
-    {
-        totalPages = ViewBag.totalPages;
-    }
-    catch (Exception ex)
-    {
-        
-    }
-     
-
-}
-@*pagination*@
-@{
-    var prevDisabled = !(pageIndex>1) ? "disabled" : "";
-    var nextDisabled = !(pageIndex < totalPages) ? "disabled" : "";
-}
-
-<a asp-action="ManageUsers"
-asp-controller="Account",
-   asp-route-pageNumber="@(pageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-action="ManageUsers"
-   asp-route-pageNumber="@(pageIndex + 1)"
-   class="btn btn-default @nextDisabled">
-    Next
-</a>
+<partial name="Partials/PaginationPartial">
 
 

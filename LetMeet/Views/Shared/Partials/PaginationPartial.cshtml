@@ -1,0 +1,69 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+}
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
+@{
+    int pageIndex = 1;
+    string controllerName = "";
+    string actionName = "";
+    try
+    {
+        controllerName = _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
+        actionName = _httpContextAccessor.HttpContext.Request.RouteValues["action"].ToString();
+
+    }
+    catch (Exception ex)
+    {
+
+    }
+
+    try
+    {
+        if (_httpContextAccessor.HttpContext.Request.Query.Keys.Contains("pageIndex"))
+        {
+            pageIndex = int.Parse(_httpContextAccessor.HttpContext.Request.Query["pageIndex"].ToString());
+        }
+
+    }
+    catch (Exception)
+    {
+        pageIndex = 1;
+
+    }
+    int totalPages = 0;
+    try
+    {
+        totalPages = ViewBag.totalPages;
+    }
+    catch (Exception ex)
+    {
+
+    }
+
+
+}
+@*pagination*@
+@{
+    var prevDisabled = !(pageIndex > 1) ? "disabled" : "";
+    var nextDisabled = !(pageIndex < totalPages) ? "disabled" : "";
+}
+
+<a asp-action="@actionName"
+asp-controller="@controllerName",
+   asp-route-pageIndex="@(pageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="@actionName"
+   asp-controller="@controllerName" ,
+   asp-route-pageIndex="@(pageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+
