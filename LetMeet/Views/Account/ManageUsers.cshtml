@@ -7,12 +7,187 @@
 
 }
 
-@model List<RegisterUserDto>
+
+@model RegisterUserDto
+@inject ISelectionRepository _selectionRepo
+
 @*@{
     RegisterUserDto dump=null;
     <partial name="Partials/Users/RegisterUserParitail" for="@dump" />
 
 }*@
+
+@{
+    List<RegisterUserDto> users = new List<RegisterUserDto>();
+    if (ViewData["users"] is not null)
+    {
+        users = ViewData["users"] as List<RegisterUserDto>;
+
+    }
+}
+
+<div>
+    Errors
+
+    @{
+        if (ViewBag.errors is not null)
+        {
+            foreach (string error in ViewBag.errors)
+            {
+                <span class="text-danger">@error</span>
+                <br />
+            }
+        }
+    }
+</div>
+<div>
+    Message
+
+    @{
+        if (ViewBag.message is not null)
+        {
+            <span class="text-danger">@ViewBag.message</span>
+        }
+
+    }
+</div>
+
+
+<script defer src="~/js/RegisterUser.js"></script>
+
+<button type="button" class="btn btn-primary " data-toggle="modal" data-target="#createUserModal">
+    <span class="material-icons ">
+        person_add
+    </span>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Register User</h5>
+                <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body pb-0">
+                @*contenet start *@
+
+                <form class="pb-0" id="msform" method="post" asp-asp-controller="Account" asp-action="RegisterUser">
+
+                    <fieldset>
+                        <h2 class="fs-title text-center">Fill Account Information</h2>
+                        <!-- <input type="text" name="fname" placeholder="First Name"/> -->
+
+                        <div class="form-group mb-3">
+                            <label for="fullName">Full Name</label>
+                            <input asp-for="fullName" type="text" class="form-control" id="fullName" placeholder="Name">
+                            <span asp-validation-for="fullName" class="text-danger"></span>
+
+                        </div>
+
+
+                        <div class="form-group mb-3">
+                            <label for="email">Email Address</label>
+                            <input asp-for="emailAddress" type="email" class="form-control" id="email" placeholder="Email">
+                            <span asp-validation-for="emailAddress" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-group ">
+                            <label for="confirmEmail">Confirm Email Address</label>
+                            <input asp-for="confirmEmail" type="email" class="form-control" id="confirmEmail" placeholder="Confirm Email">
+                            <span asp-validation-for="confirmEmail" class="text-danger"></span>
+
+                        </div>
+
+
+                        <div class="form-group ">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input asp-for="phoneNumber" type="text" class="form-control" id="phoneNumber" placeholder="Phone Number (Optional)">
+                            <span asp-validation-for="phoneNumber" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="d-flex justify-content-center align-content-stretch">
+
+
+                            @*for stage*@
+                            <div class="form-group w-100 mr-1">
+
+
+                                <div class="btn-group w-100">
+                                    <button id="currentStage" type="button" class="btn btn-secondary dropdown-toggle w-100 " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Stage
+                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        @{
+                                            
+                                            foreach (string stage in _selectionRepo.GetStages())
+                                            {
+
+                                                <option class="dropdown-item stageItem" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="@stage">@stage</option>
+
+                                            }
+
+                                        }
+                                    </div>
+                                </div>
+
+                                <input asp-for="stage" hidden value="@_selectionRepo.GetStages().FirstOrDefault()" name="stage" id="stage" />
+                                <span asp-validation-for="stage" class="text-danger"></span>
+
+                            </div>
+
+                            @*for postion*@
+                            <div class="form-group w-100 ml-1">
+
+                                <div class="btn-group w-100">
+                                    <button id="currentPostion" type="button" class="btn btn-secondary dropdown-toggle w-100 " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        User Role
+                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        @{
+                                            List<string> roles = _selectionRepo.GetUserRoles();
+                                            foreach (string postion in roles)
+                                            {
+
+                                                <option class="dropdown-item postionItem" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="@postion">@postion</option>
+
+                                            }
+
+                                        }
+                                    </div>
+                                </div>
+
+                                <input asp-for="userRole" hidden value="@_selectionRepo.GetUserRoles().FirstOrDefault()" name="userRole" id="userRole" />
+                                <span asp-validation-for="userRole" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+
+                </form>
+
+                @*eontent end*@
+            </div>
+            <div class="modal-footer">
+                <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="submitBtn" type="submit" class="btn btn-primary">Create User</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="_ValidationScriptsPartial" />
+
+// users table
+
 
 <table class="table">
     <thead>
@@ -39,7 +214,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in users)
         {
             <tr>
                 <td>

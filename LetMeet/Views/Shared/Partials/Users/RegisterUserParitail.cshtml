@@ -1,7 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     Layout = "";
 }
 @model RegisterUserDto
@@ -55,7 +52,7 @@
             <div class="modal-body pb-0">
                 @*contenet start *@
 
-                <form class="pb-0" id="msform" method="post" asp-asp-controller="Account" asp-action="RegisterUser" >
+                <form class="pb-0" id="msform" method="post" asp-asp-controller="Account" asp-action="RegisterUser">
 
                     <fieldset>
                         <h2 class="fs-title text-center">Fill Account Information</h2>
@@ -82,6 +79,7 @@
                             <span asp-validation-for="confirmEmail" class="text-danger"></span>
 
                         </div>
+
 
                         <div class="form-group ">
                             <label for="phoneNumber">Phone Number</label>

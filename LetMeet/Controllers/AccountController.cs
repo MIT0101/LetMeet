@@ -41,10 +41,12 @@ namespace LetMeet.Controllers
             return await Task.FromResult(View());
         }
         [HttpGet()]
-        public ViewResult RegisterUser() {
-            int a = 10;
-            return View(); 
+        public ViewResult RegisterUser()
+        {
+            return View();
         }
+
+
 
         [HttpGet]
         public async Task<ViewResult> ManageUsers(int pageIndex=1,List<string> errors=null,string message=null) {
@@ -53,8 +55,8 @@ namespace LetMeet.Controllers
             var countResult= await _userRepository.CountQueryAsync();
 
             if (countResult.state!=ResultState.Seccess) {
-                ViewBag.message = _errorMessages.DbError();
-                return View(new List<RegisterUserDto>());
+                ViewBag.message = _errorMessages.DbError();         
+                return View();
             }
 
             ViewBag.totalPages = (int)Math.Ceiling(countResult.value / (double)_settings.Value.MaxResponsesPerTime);
@@ -63,7 +65,7 @@ namespace LetMeet.Controllers
 
             if (repoResult.State==ResultState.MultipleNotFound) {
                 ViewBag.message = _errorMessages.MultipleItemsNotFound("NO Items Found");
-                return View(new List<RegisterUserDto>());
+                return View();
       
             }
             if (repoResult.State == ResultState.DbError)
@@ -72,9 +74,9 @@ namespace LetMeet.Controllers
                 return View(new List<RegisterUserDto>());
             }
 
-            var allUsers = repoResult.Result.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
-
-            return View(allUsers);
+            var users = repoResult.Result.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
+            ViewData[nameof(users)]= users;
+            return View();
         }
 
         [HttpPost]
@@ -89,8 +91,7 @@ namespace LetMeet.Controllers
 
             if (exsistUser is not null) {
                 errors.Add("Email Adress is Already Used Try Another One.");
-                ViewBag.errors = errors;
-                return RedirectToAction("ManageUsers");
+                return RedirectToAction("ManageUsers",new { errors});
             }
             var identityUser = new AppIdentityUser() {
                 FullName = userToRegister.fullName,
