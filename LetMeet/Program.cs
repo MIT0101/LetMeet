@@ -32,8 +32,9 @@ builder.Services.AddOptions<RepositoryDataSettings>()
     .Bind(builder.Configuration.GetRequiredSection(RepositoryDataSettings.NameOfSection))
     .ValidateDataAnnotations().ValidateOnStart();
 
-//CONFFIGEURE eMAIL sETTINGS
-builder.Services.AddOptions<EmailRepositorySettings>().Bind(builder.Configuration.GetSection(EmailRepositorySettings.SectionName));
+//CONFFIGEURE Email Settings
+builder.Services.AddOptions<EmailRepositorySettings>().Bind(builder.Configuration.GetSection(EmailRepositorySettings.SectionName))
+    .ValidateDataAnnotations().ValidateOnStart();
 
 
 //add identity 

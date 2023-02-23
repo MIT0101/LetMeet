@@ -1,29 +1,34 @@
 ﻿using LetMeet.Data.Dtos.User;
+using LetMeet.Helpers;
 using LetMeet.Test;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Drawing.Printing;
 
-using System.IO;
 
 namespace LetMeet.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IPasswordGenrationRepository _passwordGenrator;
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly RoleManager<AppIdentityRole> _roleManager;
+        private readonly SignInManager<AppIdentityUser> _signInManager;
+
+        private readonly ILogger<AccountController> _logger;
+
+
+        private readonly IPasswordGenrationRepository _passwordGenrator;
         private readonly IGenericRepository<UserInfo, Guid> _userRepository;
-        public  readonly IErrorMessagesRepository _errorMessages;
+        public readonly IErrorMessagesRepository _errorMessages;
         private readonly IOptions<RepositoryDataSettings> _settings;
         private readonly IEmailRepository _mailRepository;
 
         private readonly IWebHostEnvironment _env;
 
 
-        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository)
+        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
@@ -33,29 +38,86 @@ namespace LetMeet.Controllers
             _settings = settings;
             _env = env;
             _mailRepository = mailRepository;
+            _signInManager = signInManager;
+            _logger = logger;
+        }
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SiginInDto siginInDto)
+        {
+            
+            List<string> errors = new List<string>();
+            
+            ViewData[ViewStringHelper.Errors] = errors;
+
+            if (!ModelState.IsValid)
+            {
+                errors.Add(_errorMessages.ValidationError());
+                return View(siginInDto);
+            }
+
+            var exsistUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == siginInDto.emailAddress);
+
+            if (exsistUser is null) {
+                //user not found at all
+                errors.Add("Invalid login attempt.");
+                return View(siginInDto);
+
+            }
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+
+            var siginInResult =await _signInManager.PasswordSignInAsync(user: exsistUser, password: siginInDto.password, isPersistent: siginInDto.rememberMe,
+                lockoutOnFailure: false);
+
+
+            if (siginInResult.RequiresTwoFactor)
+            {
+                //return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                errors.Add("Requires Two Factor");
+                return View(siginInDto);
+            }
+
+            if (siginInResult.IsLockedOut)
+            {
+                _logger.LogWarning("User account locked out.");
+                //return RedirectToPage("./Lockout");
+                errors.Add("User account locked out.");
+                return View(siginInDto);
+            }
+            if (siginInResult.Succeeded)
+            {
+                _logger.LogInformation("User logged in.");
+                return LocalRedirect(siginInDto.returnUrl);
+            }
+
+
+            //ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            //invalid user name or password 
+
+            errors.Add("Invalid login attempt.");
+
+            return View();
+
         }
 
         [HttpGet]
         public async Task<ViewResult> SignIn()
         {
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
             return await Task.FromResult(View());
         }
-        [HttpGet()]
-        public ViewResult RegisterUser()
-        {
-            return View();
-        }
-
-
 
         [HttpGet]
-        public async Task<ViewResult> ManageUsers(int pageIndex=1,List<string> errors=null,string message=null) {
-            ViewBag.errors=errors;
-            ViewBag.message=message;
-            var countResult= await _userRepository.CountQueryAsync();
+        public async Task<ViewResult> ManageUsers(int pageIndex = 1, List<string> errors = null, List<string> messages = null)
+        {
+            ViewData[ViewStringHelper.Errors] = errors;
+            ViewData[ViewStringHelper.Messages] = messages;
+            var countResult = await _userRepository.CountQueryAsync();
 
-            if (countResult.state!=ResultState.Seccess) {
-                ViewBag.message = _errorMessages.DbError();         
+            if (countResult.state != ResultState.Seccess)
+            {
+                errors.Add(_errorMessages.DbError());
                 return View();
             }
 
@@ -63,19 +125,21 @@ namespace LetMeet.Controllers
 
             var repoResult = await _userRepository.QueryInRangeAsync(pageIndex);
 
-            if (repoResult.State==ResultState.MultipleNotFound) {
-                ViewBag.message = _errorMessages.MultipleItemsNotFound("NO Items Found");
+            if (repoResult.State == ResultState.MultipleNotFound)
+            {
+                messages.Add(_errorMessages.MultipleItemsNotFound("NO Items Found"));
                 return View();
-      
+
             }
             if (repoResult.State == ResultState.DbError)
             {
-                ViewBag.message = _errorMessages.DbError();
-                return View(new List<RegisterUserDto>());
+                messages.Add(_errorMessages.DbError());
+
+                return View();
             }
 
-            var users = repoResult.Result.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
-            ViewData[nameof(users)]= users;
+            var allUsers = repoResult.Result.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
+            ViewData[ViewStringHelper.AllUsers] = allUsers;
             return View();
         }
 
@@ -83,56 +147,63 @@ namespace LetMeet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterUser(RegisterUserDto userToRegister)
         {
-            var errors=new List<string>();
-            if (!ModelState.IsValid) {
-                return RedirectToAction("ManageUsers");
+            var errors = new List<string>();
+            var messages = new List<string>();
+            if (!ModelState.IsValid)
+            {
+                errors = RepositoryValidationResult.DataAnnotationsValidation(userToRegister).ValidationErrors
+                    .Select(e => e.ErrorMessage).ToList();
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            var exsistUser= await _userManager.Users.FirstOrDefaultAsync(x=>x.Email==userToRegister.emailAddress);
+            var exsistUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == userToRegister.emailAddress);
 
-            if (exsistUser is not null) {
+            if (exsistUser is not null)
+            {
                 errors.Add("Email Adress is Already Used Try Another One.");
-                return RedirectToAction("ManageUsers",new { errors});
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            var identityUser = new AppIdentityUser() {
+            var identityUser = new AppIdentityUser()
+            {
                 FullName = userToRegister.fullName,
                 Email = userToRegister.emailAddress,
-                UserName = userToRegister.fullName.Replace(" ",""),
-                PhoneNumber= userToRegister.phoneNumber,    
+                UserName = userToRegister.emailAddress,
+                PhoneNumber = userToRegister.phoneNumber,
             };
-           string password = await _passwordGenrator.GenerateRandomPassword();
-           IdentityResult identityResult= await _userManager.CreateAsync(identityUser, password);
+            string password = await _passwordGenrator.GenerateRandomPassword();
+            IdentityResult identityResult = await _userManager.CreateAsync(identityUser, password);
 
-            if (!identityResult.Succeeded) {
-                errors.AddRange(identityResult.Errors.Select(x=>x.Description));
-                ViewBag.errors = errors;
-                return RedirectToAction("ManageUsers");
+            if (!identityResult.Succeeded)
+            {
+                errors.AddRange(identityResult.Errors.Select(x => x.Description));
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
 
-            identityUser=await _userManager.FindByEmailAsync(userToRegister.emailAddress);
+            identityUser = await _userManager.FindByEmailAsync(userToRegister.emailAddress);
 
             if (identityUser is null)
             {
                 errors.Add("Can't Register The User.");
-                ViewBag.errors = errors;
-                return RedirectToAction("ManageUsers");
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            var userRole = await _roleManager.Roles.FirstOrDefaultAsync(r=>r.Name==userToRegister.userRole.ToString());
+            var userRole = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == userToRegister.userRole.ToString());
 
-            if (userRole is null) {
+            if (userRole is null)
+            {
                 await _roleManager.CreateAsync(new AppIdentityRole { Name = userToRegister.userRole.ToString() });
             }
             var roleResult = await _userManager.AddToRoleAsync(identityUser, userToRegister.userRole.ToString());
 
-            if (!roleResult.Succeeded) {
+            if (!roleResult.Succeeded)
+            {
                 errors.Add("Can't Register User Role.");
-                ViewBag.errors = errors;
-                return RedirectToAction("ManageUsers");
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
 
-            UserInfo userInfo = new UserInfo() {
+            UserInfo userInfo = new UserInfo()
+            {
                 fullName = userToRegister.fullName,
                 emailAddress = userToRegister.emailAddress,
-                phoneNumber= userToRegister.phoneNumber,
+                phoneNumber = userToRegister.phoneNumber,
 
                 stage = userToRegister.stage,
                 userRole = userToRegister.userRole,
@@ -140,45 +211,45 @@ namespace LetMeet.Controllers
                 identityId = identityUser.Id,
             };
 
-            RepositoryResult<UserInfo> repoResult=await _userRepository.CreateUniqeByAsync(userInfo,
-                u => u.emailAddress==userToRegister.emailAddress);
+            RepositoryResult<UserInfo> repoResult = await _userRepository.CreateUniqeByAsync(userInfo,
+                u => u.emailAddress == userToRegister.emailAddress);
 
             if (repoResult.State == ResultState.ItemAlreadyExsist)
             {
                 errors.Add("User is Already Exsist.");
-                ViewBag.errors = errors;
-                return RedirectToAction("ManageUsers");
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
 
-            if (repoResult.State==ResultState.ValidationError) {
-                errors.AddRange(repoResult.ValidationErrors.Select(e=>e.ErrorMessage));
-                ViewBag.errors = errors;
-                return RedirectToAction("ManageUsers");
+            if (repoResult.State == ResultState.ValidationError)
+            {
+                errors.AddRange(repoResult.ValidationErrors.Select(e => e.ErrorMessage));
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            if (repoResult.State==ResultState.Created) {
+            if (repoResult.State == ResultState.Created)
+            {
 
 
-               var emailResult= await _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject:"Acount Created",
-                    body:$"You Account Cridantional is:<br>" +
-                    $"Email : {userToRegister.emailAddress} <br>" +
-                    $"Password :{password} <br>" +
-                    $"Please Change Your Password .");
+                var emailResult = await _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject: "Acount Created",
+                     body: $"You Account Cridantional is:<br>" +
+                     $"Email : {userToRegister.emailAddress} <br>" +
+                     $"Password :{password} <br>" +
+                     $"Please Change Your Password .");
 
-                if (emailResult.state!=ResultState.Seccess) {
-                    if (_env.IsDevelopment())
-                    {
-                        Test1.SaveAccountToFile(userToRegister.emailAddress, password);
-                    }
+                if (emailResult.state != ResultState.Seccess)
+                {
+                    //sae to file or some ware
+                }
+                if (_env.IsDevelopment())
+                {
+                    Test1.SaveAccountToFile(userToRegister.emailAddress, password);
                 }
 
-                ViewBag.errors = errors;
-                ViewBag.message = "User Created Successfully";
-                return RedirectToAction("ManageUsers");
+                messages.Add("User Created Successfully");
+                return RedirectToAction(nameof(ManageUsers), new { errors, messages });
             }
 
             errors.Add("Can't Register The User , UnExpected Error Happen.");
-            TempData["errors"] = errors;
-            return RedirectToAction("ManageUsers");
+            return RedirectToAction(nameof(ManageUsers), new { errors });
         }
 
 

@@ -19,38 +19,80 @@
 
 @{
     List<RegisterUserDto> users = new List<RegisterUserDto>();
-    if (ViewData["users"] is not null)
+    if (ViewData[ViewStringHelper.AllUsers] is not null)
     {
-        users = ViewData["users"] as List<RegisterUserDto>;
+        users = ViewData[ViewStringHelper.AllUsers] as List<RegisterUserDto>;
 
     }
 }
 
-<div>
-    Errors
+
+
+
+<div class="errors-container">
+ 
 
     @{
-        if (ViewBag.errors is not null)
+        int delay = 5000;
+        if (ViewData[ViewStringHelper.Errors] is not null)
         {
-            foreach (string error in ViewBag.errors)
+           
+            foreach (string error in ViewData[ViewStringHelper.Errors] as List<string>)
             {
-                <span class="text-danger">@error</span>
-                <br />
+             <script>
+
+             window.addEventListener('load',()=>{
+             MeShowNotification('<b>@error </b>', '', 'add_alert', 'danger', @delay, 'top', 'center');
+
+
+             });
+
+                </script>
+                delay += 1000;
+
             }
         }
+
+
     }
+
+
+    @*//alert danger inline alert*@ 
+@*    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Invalid Data!</strong> @error
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>*@
+
 </div>
-<div>
-    Message
+
+<div class="messages-container ">
 
     @{
-        if (ViewBag.message is not null)
+        if (ViewData[ViewStringHelper.Messages] is not null)
         {
-            <span class="text-danger">@ViewBag.message</span>
+            foreach (string message in ViewData[ViewStringHelper.Messages] as List<string>)
+            {
+                <script>
+
+                    window.addEventListener('load', () => {
+                        MeShowNotification('<b>@message </', '', 'add_alert', 'info', @delay, 'top', 'right');
+
+                    });
+
+                </script>
+                delay += 1000;
+            }
+
         }
 
     }
 </div>
+
+@*to show notiffications*@
+<script defer src="~/lib/bootstrap/dist/js/bootstrap-notify.js"></script>
+<script defer src="~/js/Main/NotificationCreating.js"></script>
 
 
 <script defer src="~/js/RegisterUser.js"></script>
@@ -74,7 +116,7 @@
             <div class="modal-body pb-0">
                 @*contenet start *@
 
-                <form class="pb-0" id="msform" method="post" asp-asp-controller="Account" asp-action="RegisterUser">
+                <form class="pb-0" id="msform" method="post" asp-controller="Account" asp-action="RegisterUser">
 
                     <fieldset>
                         <h2 class="fs-title text-center">Fill Account Information</h2>
@@ -186,7 +228,7 @@
 </div>
 <partial name="_ValidationScriptsPartial" />
 
-// users table
+ @*users table*@
 
 
 <table class="table">

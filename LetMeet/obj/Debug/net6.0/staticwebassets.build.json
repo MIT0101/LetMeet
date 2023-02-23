@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "UA7tvbjJ5Yuqg5wYXAv6ZFVny28RNi4gbhQU9YC6Yhc=",
+  "Hash": "3CDVbgfexdTBYl2yef+UyXIX7Q6wt4xUc9OmTH1rF/4=",
   "Source": "LetMeet",
   "BasePath": "_content/LetMeet",
   "Mode": "Default",
@@ -1120,6 +1120,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap-notify.js",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "lib/bootstrap/dist/js/bootstrap-notify.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap-notify.js"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\bootstrap\\LICENSE",
