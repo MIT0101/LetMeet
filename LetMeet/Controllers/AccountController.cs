@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-
+using System.IO.Pipelines;
+using System.Security.Claims;
 
 namespace LetMeet.Controllers
 {
@@ -41,6 +42,23 @@ namespace LetMeet.Controllers
             _signInManager = signInManager;
             _logger = logger;
         }
+        public IActionResult Edit(Guid? id)
+        {
+            if (id is null)
+            {
+
+                return BadRequest("id Is Required For Edit");
+
+            }
+            return Json(new { id });
+        }
+        public IActionResult Delete(Guid? id) {
+            if (id is  null) {
+                return BadRequest("id Is Required For Delete");
+            }
+            return Json(new { id});
+        }
+
         [HttpPost]
         public async Task<IActionResult> SignIn(SiginInDto siginInDto)
         {
@@ -185,13 +203,15 @@ namespace LetMeet.Controllers
                 errors.Add("Can't Register The User.");
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            var userRole = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == userToRegister.userRole.ToString());
+            //var userRole = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == userToRegister.userRole.ToString());
 
-            if (userRole is null)
-            {
-                await _roleManager.CreateAsync(new AppIdentityRole { Name = userToRegister.userRole.ToString() });
-            }
+            //if (userRole is null)
+            //{
+            //    await _roleManager.CreateAsync(new AppIdentityRole { Name = userToRegister.userRole.ToString() });
+            //}
             var roleResult = await _userManager.AddToRoleAsync(identityUser, userToRegister.userRole.ToString());
+            // add claims to user
+
 
             if (!roleResult.Succeeded)
             {
@@ -243,6 +263,11 @@ namespace LetMeet.Controllers
                 {
                     Test1.SaveAccountToFile(userToRegister.emailAddress, password);
                 }
+                List<Claim> claims = 
+                    getUserMainClaim(userIdentityId:identityUser.Id.ToString(),userInfoId:repoResult.Result.id.ToString());
+
+                await _userManager.AddClaimsAsync(identityUser, claims);
+
 
                 messages.Add("User Created Successfully");
                 return RedirectToAction(nameof(ManageUsers), new { errors, messages });
@@ -252,6 +277,13 @@ namespace LetMeet.Controllers
             return RedirectToAction(nameof(ManageUsers), new { errors });
         }
 
+        private List<Claim> getUserMainClaim(string userIdentityId,string userInfoId) {
+
+            return new List<Claim>() {
+                 new Claim(ClaimsNameHelper.UserInfoId,userInfoId),
+                new Claim(ClaimsNameHelper.UserIdentityId,userIdentityId),
+                };
+        }
 
 
 

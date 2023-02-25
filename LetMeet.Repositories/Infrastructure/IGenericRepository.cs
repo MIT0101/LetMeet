@@ -24,7 +24,12 @@ namespace LetMeet.Repositories.Infrastructure
         //when validtion return validation error
         //when item exsist return item alrady exsist db error
         Task<RepositoryResult<TEntity>> CreateUniqeByAsync(TEntity entity, Expression<Func<TEntity, bool>> filter);
+
+        //when secsess return State.Sucess
+        //when not found return not found
+        //when item exsist return item alrady exsist db error
         Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id);
+
 
         //when secsess return State.Seccess
         //when no result return State.NotFound

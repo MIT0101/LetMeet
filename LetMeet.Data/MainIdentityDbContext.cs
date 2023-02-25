@@ -15,5 +15,16 @@ namespace LetMeet.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+           List<AppIdentityRole> userRoles = Enum.GetNames(typeof(UserRole)).ToList().Select(u=>new AppIdentityRole { Name=u,Id=Guid.NewGuid(),NormalizedName=u.ToString().ToUpper()}).ToList();
+
+            builder.Entity<AppIdentityRole>().HasData(
+                userRoles
+                );
+        }
+
     }
 }

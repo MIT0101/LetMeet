@@ -27,25 +27,23 @@
 }
 
 
+<div class="errors-container ">
 
-
-<div class="errors-container">
- 
 
     @{
         int delay = 5000;
         if (ViewData[ViewStringHelper.Errors] is not null)
         {
-           
+
             foreach (string error in ViewData[ViewStringHelper.Errors] as List<string>)
             {
-             <script>
+                <script>
 
-             window.addEventListener('load',()=>{
-             MeShowNotification('<b>@error </b>', '', 'add_alert', 'danger', @delay, 'top', 'center');
+                    window.addEventListener('load', () => {
+                        MeShowNotification('<b>@error </b>', '', 'add_alert', 'danger', @delay, 'top', 'center');
 
 
-             });
+                    });
 
                 </script>
                 delay += 1000;
@@ -57,12 +55,12 @@
     }
 
 
-    @*//alert danger inline alert*@ 
-@*    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Invalid Data!</strong> @error
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    @*//alert danger inline alert*@
+    @*    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Invalid Data!</strong> @error
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
     </div>*@
 
 </div>
@@ -97,21 +95,19 @@
 
 <script defer src="~/js/RegisterUser.js"></script>
 
-<button type="button" class="btn btn-primary " data-toggle="modal" data-target="#createUserModal">
-    <span class="material-icons ">
-        person_add
-    </span>
-</button>
 
-<!-- Modal -->
+
+<!-- Modal Create User -->
 <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog " role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Register User</h5>
+
                 <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+
             </div>
             <div class="modal-body pb-0">
                 @*contenet start *@
@@ -166,7 +162,7 @@
                                     <div class="dropdown-menu">
 
                                         @{
-                                            
+
                                             foreach (string stage in _selectionRepo.GetStages())
                                             {
 
@@ -220,71 +216,115 @@
             </div>
             <div class="modal-footer">
                 <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button id="submitBtn" type="submit" class="btn btn-primary">Create User</button>
+                <button id="submitBtn" type="submit" onclick="return DisplayprogressMessage(this, 'Saving...');" class="btn btn-primary">Create User</button>
 
             </div>
         </div>
     </div>
 </div>
+@*to show loading*@
+
+
 <partial name="_ValidationScriptsPartial" />
 
- @*users table*@
+@*users table*@
+
+<div class="row">
 
 
-<table class="table">
-    <thead>
-        <tr>
+    <div class="col-md-12">
 
-            <th>
-                Full Name
-            </th>
-            <th>
-                Stage
-            </th>
-            <th>
-                Email Address
-            </th>
-            <th>
+        @*add user button*@
+        <button type="button" class="btn btn-primary d-block ml-auto" data-toggle="modal" data-target="#createUserModal">
+            <span class="material-icons ">
+                person_add
+            </span>
+        </button>
 
-                Phone Number
-            </th>
-            <th>
-                User Role
-            </th>
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title ">All Users</h4>
+                <p class="card-category"> Application Users You Can Manage Them</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    <table class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    Full Name
+                                </th>
+                                <th>
+                                    Stage
+                                </th>
+                                <th>
+                                    Email Address
+                                </th>
+                                <th>
+                                    User Role
+                                </th>
+                                <th>
 
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in users)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.fullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.stage)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.emailAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.phoneNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.userRole)
-                </td>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                            @foreach (var item in users)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.fullName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.stage)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.emailAddress)
+                                    </td>
 
-<partial name="Partials/PaginationPartial">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.userRole)
+                                    </td>
 
+                                    <td class="td-actions text-right">
+
+                                        <div class="d-flex flex-row justify-content-end">
+
+
+                                            <a class="btn btn-info m-1" asp-controller="Account" asp-action="Details" asp-route-id="@item.id">
+                                                <i class="material-icons">person</i>
+                                            </a>
+
+                                            <a class="btn btn-success m-1" asp-controller="Account" asp-action="Edit" asp-route-id="@item.id">
+                                                <i class="material-icons">edit</i>
+                                            </a>
+
+
+                                            <form asp-controller="Account" asp-action="Delete" asp-route-id="@item.id" class="d-inline m-1">
+
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete @item.fullName ?');" class="btn btn-danger">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center">
+                        <partial name="Partials/PaginationPartial">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

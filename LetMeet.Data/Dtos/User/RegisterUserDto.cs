@@ -38,7 +38,7 @@ namespace LetMeet.Data.Dtos.User
         [Display(Name = "Confirm Email")]
         [Compare(nameof(emailAddress), ErrorMessage = "Emails mismatch")]
         [EmailAddress(ErrorMessage = "Confirm Email Address Field is Not a Valid Email Address.")]
-        public string confirmEmail { get; set; }
+        public virtual string confirmEmail { get; set; }
 
 
         [Display(Name = "Phone Number")]

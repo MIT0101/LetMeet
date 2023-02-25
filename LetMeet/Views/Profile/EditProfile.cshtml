@@ -1,0 +1,160 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model UserInfo
+
+<div class="container-fluid">
+
+    @{
+        if (ViewData[ViewStringHelper.Errors] is not null)
+        {
+
+            foreach (string error in ViewData[ViewStringHelper.Errors] as List<string>)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>@error</strong>
+
+                </div>
+            }
+
+        }
+
+        if (Model is not null)
+        {
+
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                            <h4 class="card-title">Edit Profile</h4>
+                            <p class="card-category">Complete your profile</p>
+                        </div>
+                        <div class="card-body">
+                            <form >
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+                                            <label asp-for="fullName" class="bmd-label-floating">Full Name</label>
+                                            <input asp-for=fullName type="text" class="form-control">
+                                        </div>
+                                        <span asp-validation-for="fullName" class="d-block w-100 text-danger"></span>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+
+                                            @inject ISelectionRepository _selectionRepo
+                                            @{
+                                                SelectList selectLists = new SelectList(_selectionRepo.GetUserRoles());
+                                            }
+
+                                            @Html.DropDownListFor(x => Model.userRole, new SelectList(selectLists), htmlAttributes: new { @class = "form-control", id = "userRole"})
+                                            @Html.ValidationMessageFor(x => x.userRole, "", new { @class = "text-danger" })
+                                        </div>
+
+
+
+
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+
+                                            <label asp-for="emailAddress" class="bmd-label-floating">Email address</label>
+                                            <input asp-for="emailAddress" type="email" class="form-control">
+                                        </div>
+                                        <span asp-validation-for="emailAddress" class="d-block w-100 text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+
+                                            <label asp-for=phoneNumber class="bmd-label-floating">Phone Number</label>
+                                            <input asp-for="phoneNumber" type="text" class="form-control">
+                                        </div>
+                                        <span asp-validation-for="phoneNumber" class="d-block w-100 text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group bmd-form-group">
+                                            <label class="bmd-label-floating">Adress</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group bmd-form-group">
+                                            <label class="bmd-label-floating">City</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group bmd-form-group">
+                                            <label class="bmd-label-floating">Country</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group bmd-form-group">
+                                            <label class="bmd-label-floating">Postal Code</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>About Me</label>
+                                            <div class="form-group bmd-form-group">
+                                                <label class="bmd-label-floating"> Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</label>
+                                                <textarea class="form-control" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-profile">
+                        <div class="card-avatar">
+                            @{
+                                string profileImage = "profile_empty_img.png";
+                                if (!string.IsNullOrWhiteSpace(Model?.profileImage))
+                                {
+                                    profileImage = Model.profileImage;
+                                }
+                            }
+
+                            <a href="javascript:;">
+                                <img class="img" src="~/img/@profileImage">
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-category text-gray">@Model?.userRole</h6>
+                            <h4 class="card-title">@Model?.fullName</h4>
+                            <p class="card-description">
+                                Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
+                            </p>
+                            <a href="javascript:;" class="btn btn-primary btn-round">Follow</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <partial name="_ValidationScriptsPartial" />
+        }
+    }
+</div>

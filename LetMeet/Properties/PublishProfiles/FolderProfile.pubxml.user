@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>True|2023-02-24T10:46:28.8528622Z;True|2023-02-24T13:43:10.9038529+03:00;True|2023-02-24T13:40:29.2936124+03:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="IdentityConnection">
+      <Value>Data Source=.\SQLEXPRESS%3bInitial Catalog=LetMeetIdentityDb%3bIntegrated Security=True%3b</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="MainDataConnection">
+      <Value>Data Source=.\SQLEXPRESS%3bInitial Catalog=LetMeetDb%3bIntegrated Security=True%3b</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="LetMeet.Data.MainDbContext">
+      <Value>Data Source=.\SQLEXPRESS%3bInitial Catalog=LetMeetDb%3bIntegrated Security=True%3b</Value>
+    </EFMigrations>
+    <EFMigrations Include="LetMeet.Data.MainIdentityDbContext">
+      <Value>Data Source=.\SQLEXPRESS%3bInitial Catalog=LetMeetIdentityDb%3bIntegrated Security=True%3b</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

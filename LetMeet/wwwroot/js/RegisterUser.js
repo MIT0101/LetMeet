@@ -24,17 +24,22 @@ for (let i = 0; i < postionSelections.length; i++) {
     });
 }
 
-document.getElementById("submitBtn").addEventListener("click", (e) => {
-    /*event.preventDefault();*/ // Prevent form from submitting normally
-
+//for disable button and make it saving
+function DisplayprogressMessage(ctl, msg) {
+    event.preventDefault();
     $('#msform').validate();
     if ($('#msform').valid()) {
-        document.getElementById("msform").submit();
+        $(ctl).prop("disabled", true).text(msg);
+        //submit the f0rm.
+        setTimeout(function () {
+            $("#msform").submit();
 
-    } else {
-        event.preventDefault();
+        }, 1);
+
+        return true;
     }
-});
+}
+
 
 restStageAndPostionValues();
 

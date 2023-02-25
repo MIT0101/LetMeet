@@ -23,8 +23,6 @@ namespace LetMeet.Repositories.Repository
 
         }
 
-
-
         public List<string> GetStages()
         {
             return stages;

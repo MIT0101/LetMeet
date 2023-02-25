@@ -52,6 +52,36 @@ namespace LetMeet.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1f3f581d-bb16-4c4b-9f63-8d251d4e904a"),
+                            ConcurrencyStamp = "4e43831f-9269-462f-95a5-1eb5cd6a6e9f",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("32459016-b781-41f3-b9ad-eaed99ebc42b"),
+                            ConcurrencyStamp = "cf15b28b-6870-47d0-a32c-299bee8def1a",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = new Guid("9826de6c-dec7-48dd-8617-cf322b415524"),
+                            ConcurrencyStamp = "5808b313-216e-438a-9ff8-816809188aea",
+                            Name = "Supervisor",
+                            NormalizedName = "SUPERVISOR"
+                        },
+                        new
+                        {
+                            Id = new Guid("141db3b1-52e6-4f80-a6e4-54c0c3d49662"),
+                            ConcurrencyStamp = "780b93b3-6309-4a52-93a7-0c6a665e77ff",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
+                        });
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.Identity.AppIdentityUser", b =>

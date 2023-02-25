@@ -37,6 +37,10 @@
       "PackagePath": "staticwebassets\\img\\loading3.gif"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\profile_empty_img.png",
+      "PackagePath": "staticwebassets\\img\\profile_empty_img.png"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\sgin_bg-min.jpeg",
       "PackagePath": "staticwebassets\\img\\sgin_bg-min.jpeg"
     },

@@ -44,7 +44,7 @@
     @*<script defer src="../js/Me/Theme.js"></script>*@
     <script defer src="~/js/Main/Theme.js"></script>
 
-    
+
 
     <!-- For RTL Switching -->
     @*<script defer src="../js/Me/Rtl.js"></script>*@
@@ -58,6 +58,11 @@
    for icons and check box also .md-dark -->
 
 <body class="">
+
+  
+
+    @*its loaded befor css to show load and then load css *@
+    <partial name="Partials/MainLoadingPartial" />
 
     <!-- side bar start -->
 
@@ -250,18 +255,18 @@
 
     </div>
 
-                        <script>
-                        let navTitlesMap = new Map();
-                        let all = document.querySelectorAll(".side-nav-title");
+    <script>
+        let navTitlesMap = new Map();
+        let all = document.querySelectorAll(".side-nav-title");
 
-                        for(let i=0;i<all.length;i++){
-                            navTitlesMap.set(all[i].textContent,all[i]);
-                        }
-                        let currentPage = '@ViewBag.currentPage';
+        for (let i = 0; i < all.length; i++) {
+            navTitlesMap.set(all[i].textContent, all[i]);
+        }
+        let currentPage = '@ViewBag.currentPage';
 
-                        navTitlesMap.get(currentPage)?.parentElement.parentElement.classList.add("active");
+        navTitlesMap.get(currentPage)?.parentElement.parentElement.classList.add("active");
 
-                    </script>
+    </script>
 
 
 </body>

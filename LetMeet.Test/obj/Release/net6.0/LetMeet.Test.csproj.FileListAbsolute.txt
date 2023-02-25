@@ -1,0 +1,12 @@
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\bin\Release\net6.0\LetMeet.Test.deps.json
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\bin\Release\net6.0\LetMeet.Test.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\bin\Release\net6.0\LetMeet.Test.pdb
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.csproj.AssemblyReference.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.AssemblyInfoInputs.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.AssemblyInfo.cs
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.csproj.CoreCompileInputs.cache
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\refint\LetMeet.Test.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\LetMeet.Test.pdb
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Test\obj\Release\net6.0\ref\LetMeet.Test.dll

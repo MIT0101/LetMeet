@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3CDVbgfexdTBYl2yef+UyXIX7Q6wt4xUc9OmTH1rF/4=",
+  "Hash": "c2GKSs8+f8CCmked3VgoI8D8cZY2rio+lCThA3lvlT4=",
   "Source": "LetMeet",
   "BasePath": "_content/LetMeet",
   "Mode": "Default",
@@ -185,6 +185,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\img\\loading3.gif"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\profile_empty_img.png",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "img/profile_empty_img.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\profile_empty_img.png"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\sgin_bg.jpeg",

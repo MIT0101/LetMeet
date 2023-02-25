@@ -109,9 +109,31 @@ namespace LetMeet.Repositories.Repository
             throw new NotImplementedException();
         }
 
-        public virtual Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id)
+        public virtual async Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (id is null) {
+                    List<ValidationResult> validationErrors = new() {
+                    new ValidationResult("Key Is Required")};
+
+                    return RepositoryResult<TEntity>.FailureValidationResult(validationErrors);
+
+                }
+
+               TEntity result= _entities.Find(id);
+
+                if (result==null) {
+                    return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound,validationErrors:null);
+                }
+
+                return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Seccess, result);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<TEntity>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
         }
 
         public virtual Task<RepositoryValidationResult> IsValid(TEntity entity)

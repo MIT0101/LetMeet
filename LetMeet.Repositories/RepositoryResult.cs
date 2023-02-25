@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace LetMeet.Repositories
 {
     public class RepositoryResult<TResult> where TResult : class 
-
     {
+
         public bool Success { get; set; }
 
         public ResultState State { get; set; }
@@ -46,7 +46,7 @@ namespace LetMeet.Repositories
                 result:null, validationErrors: validationErrors, errorMessages: errorMessages);
         }
 
-        public static RepositoryResult<TResult> FailureResult(ResultState state,List<ValidationResult>? validationErrors, List<string> errorMessages = null) {
+        public static RepositoryResult<TResult> FailureResult(ResultState state,List<ValidationResult>? validationErrors , List<string> errorMessages = null) {
 
             return new RepositoryResult<TResult>(success: false,state:state,
                 result: null, validationErrors: validationErrors, errorMessages: errorMessages);
