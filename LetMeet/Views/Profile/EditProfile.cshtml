@@ -8,18 +8,27 @@
 <div class="container-fluid">
 
     @{
-        if (ViewData[ViewStringHelper.Errors] is not null)
+        List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new List<string>();
+
+        List<string> roles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
+        List<string> stages = ViewData[ViewStringHelper.UserStages] as List<string> ?? new List<string>();
+
+        List<SelectListItem> roleOptions = roles.Select(r => new SelectListItem { Text = r, Value = r }).ToList();
+        List<SelectListItem> stageOptions = stages.Select(s => new SelectListItem { Text = s, Value = s }).ToList();
+
+
+        bool isAdmin = Context.User.IsInRole(UserRole.Admin.ToString());
+
+
+        foreach (string error in errors)
         {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>@error</strong>
 
-            foreach (string error in ViewData[ViewStringHelper.Errors] as List<string>)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>@error</strong>
-
-                </div>
-            }
-
+            </div>
         }
+
+
 
         if (Model is not null)
         {
@@ -33,9 +42,10 @@
                             <p class="card-category">Complete your profile</p>
                         </div>
                         <div class="card-body">
-                            <form >
-                                <div class="row">
 
+                            <form method="post" id="editProfileForm" asp-controller="Profile" asp-action="EditProfile" asp-route-id="@Context.Request.RouteValues["id"]?">
+                                <div class="row">
+                                    <input asp-for="id" hidden value="@Model.id">
                                     <div class="col-md-6">
                                         <div class="form-group bmd-form-group">
                                             <label asp-for="fullName" class="bmd-label-floating">Full Name</label>
@@ -46,15 +56,26 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <div class="form-group bmd-form-group">
+                                        <div class="form-group bmd-form-group d-flex flex-row">
 
-                                            @inject ISelectionRepository _selectionRepo
-                                            @{
-                                                SelectList selectLists = new SelectList(_selectionRepo.GetUserRoles());
+                                            @if (isAdmin)
+                                            {
+                                                <label asp-for="userRole">User Role</label>
+                                                <select class="form-control" asp-for="userRole" asp-items="@roleOptions"></select>
+                                                <span asp-validation-for="userRole"></span>
+
+
+                                            }
+                                            else
+                                            {
+                                                //render stages here insted
+
+                                                //<label asp-for="stage">Stage</label>
+                                                <select class="form-control" asp-for="stage" asp-items="@stageOptions"></select>
+                                                <span asp-validation-for="stage"></span>
+
                                             }
 
-                                            @Html.DropDownListFor(x => Model.userRole, new SelectList(selectLists), htmlAttributes: new { @class = "form-control", id = "userRole"})
-                                            @Html.ValidationMessageFor(x => x.userRole, "", new { @class = "text-danger" })
                                         </div>
 
 
@@ -68,7 +89,18 @@
                                         <div class="form-group bmd-form-group">
 
                                             <label asp-for="emailAddress" class="bmd-label-floating">Email address</label>
-                                            <input asp-for="emailAddress" type="email" class="form-control">
+
+                                            @if (isAdmin)
+                                            {
+                                                <input asp-for="emailAddress" type="email" class="form-control">
+
+                                            }
+                                            else
+                                            {
+                                                <input asp-for="emailAddress" type="email" class="form-control" disabled>
+
+                                            }
+
                                         </div>
                                         <span asp-validation-for="emailAddress" class="d-block w-100 text-danger"></span>
                                     </div>
@@ -92,9 +124,20 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="form-group bmd-form-group">
-                                            <label class="bmd-label-floating">City</label>
-                                            <input type="text" class="form-control">
+                                        <div class="form-group bmd-form-group ">
+
+                                            @if (isAdmin)
+                                            {
+                                                //render stages here
+
+                                                //<label  asp-for="stage">Stage</label>
+                                                <select class="form-control" asp-for="stage" asp-items="@stageOptions"></select>
+                                                <span asp-validation-for="stage"></span>
+
+                                            }
+
+
+
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -121,7 +164,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
+                                <button id="editSubmitBtn" type="submit" class="btn btn-primary pull-right" disabled>Update Profile</button>
                                 <div class="clearfix"></div>
                             </form>
                         </div>
@@ -158,3 +201,9 @@
         }
     }
 </div>
+@{
+    ValueTuple<string, string> formInfo = new("editProfileForm", "editSubmitBtn");
+}
+
+<partial name="Partials/FrormInputChangeListnerPartial" for="@formInfo">
+

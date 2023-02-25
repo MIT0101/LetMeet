@@ -69,22 +69,22 @@
                 <div class="card-body">
 
                     @{
-                        if (ViewData[ViewStringHelper.Errors] is not null)
-                        {
+                        List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new List<string>();
 
-                            foreach (string error in ViewData[ViewStringHelper.Errors] as List<string>)
+
+                            foreach (string error in errors)
                             {
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                     <strong>@error</strong>
 
-                                </div>
-                            }
-
+                            </div>
                         }
+                        string ReturnUrl = Context.Request.Query["ReturnUrl"].ToString() ?? "/";
+
                     }
 
 
-                    <form asp-controller="Account" asp-action="SignIn" method="post" role="form" class="text-start">
+                    <form asp-controller="Account" asp-action="SignIn" asp-route-ReturnUrl="@ReturnUrl" method="post" role="form" class="text-start">
 
                         @*     <div class="input-group mb-3">
                         <div class="input-group-prepend">

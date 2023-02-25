@@ -22,6 +22,5 @@ namespace LetMeet.Data.Dtos.User
 
         public bool rememberMe { get; set; } = false;
 
-        public string returnUrl { get; set; } = "/";
     }
 }

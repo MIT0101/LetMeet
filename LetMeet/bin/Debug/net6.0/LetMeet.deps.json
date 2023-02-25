@@ -10,7 +10,6 @@
         "dependencies": {
           "LetMeet.Data": "1.0.0",
           "LetMeet.Repositories": "1.0.0",
-          "LetMeet.Test": "1.0.0",
           "MailKit": "3.5.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.13",
           "Microsoft.EntityFrameworkCore": "6.0.13",
@@ -2490,11 +2489,6 @@
         "runtime": {
           "LetMeet.Repositories.dll": {}
         }
-      },
-      "LetMeet.Test/1.0.0": {
-        "runtime": {
-          "LetMeet.Test.dll": {}
-        }
       }
     }
   },
@@ -3910,11 +3904,6 @@
       "sha512": ""
     },
     "LetMeet.Repositories/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "LetMeet.Test/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -41,6 +41,7 @@ builder.Services.AddOptions<EmailRepositorySettings>().Bind(builder.Configuratio
 
 builder.Services.AddIdentity<AppIdentityUser, AppIdentityRole>(options =>
 {
+
     options.User.RequireUniqueEmail = true;
 
     options.Password.RequireNonAlphanumeric= false;
@@ -66,6 +67,12 @@ builder.Services.AddDbContext<MainIdentityDbContext>(options =>
 builder.Services.AddDbContext<MainDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MainDataConnection"));
 
+});
+
+//configure the login path
+builder.Services.ConfigureApplicationCookie(options => {
+
+    options.LoginPath = "/Account/SignIn";
 });
 
 //Add repositores

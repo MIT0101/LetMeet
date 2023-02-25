@@ -27,11 +27,9 @@
   <ItemGroup>
     <ProjectReference Include="..\LetMeet.Data\LetMeet.Data.csproj" />
     <ProjectReference Include="..\LetMeet.Repositories\LetMeet.Repositories.csproj" />
-    <ProjectReference Include="..\LetMeet.Test\LetMeet.Test.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middlewares\" />
     <Folder Include="wwwroot\lib\material-dashboard\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>

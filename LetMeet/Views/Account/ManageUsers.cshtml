@@ -9,21 +9,23 @@
 
 
 @model RegisterUserDto
-@inject ISelectionRepository _selectionRepo
-
-@*@{
-    RegisterUserDto dump=null;
-    <partial name="Partials/Users/RegisterUserParitail" for="@dump" />
-
-}*@
+@*@inject ISelectionRepository _selectionRepo*@
 
 @{
-    List<RegisterUserDto> users = new List<RegisterUserDto>();
-    if (ViewData[ViewStringHelper.AllUsers] is not null)
-    {
-        users = ViewData[ViewStringHelper.AllUsers] as List<RegisterUserDto>;
+    //for errors and messages
+    List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new List<string>();
+    List<string> messages = ViewData[ViewStringHelper.Messages] as List<string> ?? new List<string>();
 
-    }
+
+    //for register user
+    List<string> userRoles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
+    List<string> userStages = ViewData[ViewStringHelper.UserStages] as List<string> ?? new List<string>();
+
+    //for show users with current query
+    List<RegisterUserDto> users = ViewData[ViewStringHelper.AllUsers] as List<RegisterUserDto> ?? new List<RegisterUserDto>();
+
+
+
 }
 
 
@@ -31,26 +33,23 @@
 
 
     @{
+
         int delay = 5000;
-        if (ViewData[ViewStringHelper.Errors] is not null)
+
+        foreach (string error in errors)
         {
+            <script>
 
-            foreach (string error in ViewData[ViewStringHelper.Errors] as List<string>)
-            {
-                <script>
-
-                    window.addEventListener('load', () => {
-                        MeShowNotification('<b>@error </b>', '', 'add_alert', 'danger', @delay, 'top', 'center');
+                window.addEventListener('load', () => {
+                    MeShowNotification('<b>@error </b>', '', 'add_alert', 'danger', @delay, 'top', 'center');
 
 
-                    });
+                });
 
-                </script>
-                delay += 1000;
+            </script>
+            delay += 1000;
 
-            }
         }
-
 
     }
 
@@ -68,22 +67,21 @@
 <div class="messages-container ">
 
     @{
-        if (ViewData[ViewStringHelper.Messages] is not null)
+
+        foreach (string message in messages)
         {
-            foreach (string message in ViewData[ViewStringHelper.Messages] as List<string>)
-            {
-                <script>
+            <script>
 
-                    window.addEventListener('load', () => {
-                        MeShowNotification('<b>@message </', '', 'add_alert', 'info', @delay, 'top', 'right');
+                window.addEventListener('load', () => {
+                    MeShowNotification('<b>@message </b>', '', 'add_alert', 'info', @delay, 'top', 'right');
 
-                    });
+                });
 
-                </script>
-                delay += 1000;
-            }
-
+            </script>
+            delay += 1000;
         }
+
+
 
     }
 </div>
@@ -163,7 +161,7 @@
 
                                         @{
 
-                                            foreach (string stage in _selectionRepo.GetStages())
+                                            foreach (string stage in userStages)
                                             {
 
                                                 <option class="dropdown-item stageItem" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="@stage">@stage</option>
@@ -174,7 +172,7 @@
                                     </div>
                                 </div>
 
-                                <input asp-for="stage" hidden value="@_selectionRepo.GetStages().FirstOrDefault()" name="stage" id="stage" />
+                                <input asp-for="stage" hidden value="@userStages.FirstOrDefault()" name="stage" id="stage" />
                                 <span asp-validation-for="stage" class="text-danger"></span>
 
                             </div>
@@ -189,8 +187,7 @@
                                     <div class="dropdown-menu">
 
                                         @{
-                                            List<string> roles = _selectionRepo.GetUserRoles();
-                                            foreach (string postion in roles)
+                                            foreach (string postion in userRoles)
                                             {
 
                                                 <option class="dropdown-item postionItem" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="@postion">@postion</option>
@@ -201,7 +198,7 @@
                                     </div>
                                 </div>
 
-                                <input asp-for="userRole" hidden value="@_selectionRepo.GetUserRoles().FirstOrDefault()" name="userRole" id="userRole" />
+                                <input asp-for="userRole" hidden value="@userRoles.FirstOrDefault()" name="userRole" id="userRole" />
                                 <span asp-validation-for="userRole" class="text-danger"></span>
 
                             </div>
@@ -296,7 +293,7 @@
                                                 <i class="material-icons">person</i>
                                             </a>
 
-                                            <a class="btn btn-success m-1" asp-controller="Account" asp-action="Edit" asp-route-id="@item.id">
+                                            <a class="btn btn-success m-1" asp-controller="Profile" asp-action="EditProfile" asp-route-id="@item.id">
                                                 <i class="material-icons">edit</i>
                                             </a>
 

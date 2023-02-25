@@ -1,7 +1,7 @@
 ﻿using LetMeet.Data.Dtos.User;
 using LetMeet.Helpers;
-using LetMeet.Test;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,14 +22,16 @@ namespace LetMeet.Controllers
 
         private readonly IPasswordGenrationRepository _passwordGenrator;
         private readonly IGenericRepository<UserInfo, Guid> _userRepository;
-        public readonly IErrorMessagesRepository _errorMessages;
+        private readonly IErrorMessagesRepository _errorMessages;
         private readonly IOptions<RepositoryDataSettings> _settings;
         private readonly IEmailRepository _mailRepository;
+
+        private readonly ISelectionRepository _selectionRepository;
 
         private readonly IWebHostEnvironment _env;
 
 
-        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger)
+        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger, ISelectionRepository selectionRepository)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
@@ -41,31 +43,32 @@ namespace LetMeet.Controllers
             _mailRepository = mailRepository;
             _signInManager = signInManager;
             _logger = logger;
+            _selectionRepository = selectionRepository;
         }
-        public IActionResult Edit(Guid? id)
+        [Authorize]
+        public IActionResult logOut()
         {
+            _signInManager.SignOutAsync();
+            return RedirectToAction(actionName: nameof(SignIn));
+        }
+        public IActionResult Delete(Guid? id)
+        {
+            throw new NotImplementedException();
             if (id is null)
             {
-
-                return BadRequest("id Is Required For Edit");
-
+                return BadRequest("id Is Required For Delete");
             }
             return Json(new { id });
         }
-        public IActionResult Delete(Guid? id) {
-            if (id is  null) {
-                return BadRequest("id Is Required For Delete");
-            }
-            return Json(new { id});
-        }
 
         [HttpPost]
-        public async Task<IActionResult> SignIn(SiginInDto siginInDto)
+        public async Task<IActionResult> SignIn(SiginInDto siginInDto, string? ReturnUrl)
         {
-            
+
             List<string> errors = new List<string>();
-            
             ViewData[ViewStringHelper.Errors] = errors;
+            ReturnUrl = (string.IsNullOrWhiteSpace(ReturnUrl)) ? "/" : ReturnUrl;
+
 
             if (!ModelState.IsValid)
             {
@@ -75,7 +78,8 @@ namespace LetMeet.Controllers
 
             var exsistUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == siginInDto.emailAddress);
 
-            if (exsistUser is null) {
+            if (exsistUser is null)
+            {
                 //user not found at all
                 errors.Add("Invalid login attempt.");
                 return View(siginInDto);
@@ -83,7 +87,7 @@ namespace LetMeet.Controllers
             }
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
-            var siginInResult =await _signInManager.PasswordSignInAsync(user: exsistUser, password: siginInDto.password, isPersistent: siginInDto.rememberMe,
+            var siginInResult = await _signInManager.PasswordSignInAsync(user: exsistUser, password: siginInDto.password, isPersistent: siginInDto.rememberMe,
                 lockoutOnFailure: false);
 
 
@@ -104,7 +108,7 @@ namespace LetMeet.Controllers
             if (siginInResult.Succeeded)
             {
                 _logger.LogInformation("User logged in.");
-                return LocalRedirect(siginInDto.returnUrl);
+                return LocalRedirect(ReturnUrl);
             }
 
 
@@ -129,13 +133,17 @@ namespace LetMeet.Controllers
         [HttpGet]
         public async Task<ViewResult> ManageUsers(int pageIndex = 1, List<string> errors = null, List<string> messages = null)
         {
-            ViewData[ViewStringHelper.Errors] = errors;
-            ViewData[ViewStringHelper.Messages] = messages;
+            ViewData[ViewStringHelper.Errors] = errors ?? new List<string>();
+            ViewData[ViewStringHelper.Messages] = messages ?? new List<string>();
+            //to show roles and users
+            ViewData[ViewStringHelper.UserStages] = _selectionRepository.GetStages();
+            ViewData[ViewStringHelper.UserRoles] = _selectionRepository.GetUserRoles();
+
             var countResult = await _userRepository.CountQueryAsync();
 
             if (countResult.state != ResultState.Seccess)
             {
-                errors.Add(_errorMessages.DbError());
+                errors?.Add(_errorMessages.DbError());
                 return View();
             }
 
@@ -145,18 +153,18 @@ namespace LetMeet.Controllers
 
             if (repoResult.State == ResultState.MultipleNotFound)
             {
-                messages.Add(_errorMessages.MultipleItemsNotFound("NO Items Found"));
+                messages?.Add(_errorMessages.MultipleItemsNotFound("NO Items Found"));
                 return View();
 
             }
             if (repoResult.State == ResultState.DbError)
             {
-                messages.Add(_errorMessages.DbError());
+                messages?.Add(_errorMessages.DbError());
 
                 return View();
             }
 
-            var allUsers = repoResult.Result.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
+            var allUsers = repoResult.Result?.Select(u => RegisterUserDto.GetFromUserInfo(u)).ToList();
             ViewData[ViewStringHelper.AllUsers] = allUsers;
             return View();
         }
@@ -170,7 +178,7 @@ namespace LetMeet.Controllers
             if (!ModelState.IsValid)
             {
                 errors = RepositoryValidationResult.DataAnnotationsValidation(userToRegister).ValidationErrors
-                    .Select(e => e.ErrorMessage).ToList();
+                    .Select(e => e.ErrorMessage ?? string.Empty).ToList();
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
             var exsistUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == userToRegister.emailAddress);
@@ -261,10 +269,10 @@ namespace LetMeet.Controllers
                 }
                 if (_env.IsDevelopment())
                 {
-                    Test1.SaveAccountToFile(userToRegister.emailAddress, password);
+                    DevelopmentHelper.SaveAccountToFile(userToRegister.emailAddress, password, userToRegister.userRole.ToString());
                 }
-                List<Claim> claims = 
-                    getUserMainClaim(userIdentityId:identityUser.Id.ToString(),userInfoId:repoResult.Result.id.ToString());
+                List<Claim> claims =
+                    getUserMainClaim(userIdentityId: identityUser.Id.ToString(), userInfoId: repoResult.Result.id.ToString());
 
                 await _userManager.AddClaimsAsync(identityUser, claims);
 
@@ -277,10 +285,11 @@ namespace LetMeet.Controllers
             return RedirectToAction(nameof(ManageUsers), new { errors });
         }
 
-        private List<Claim> getUserMainClaim(string userIdentityId,string userInfoId) {
+        private List<Claim> getUserMainClaim(string userIdentityId, string userInfoId)
+        {
 
             return new List<Claim>() {
-                 new Claim(ClaimsNameHelper.UserInfoId,userInfoId),
+                new Claim(ClaimsNameHelper.UserInfoId,userInfoId),
                 new Claim(ClaimsNameHelper.UserIdentityId,userIdentityId),
                 };
         }

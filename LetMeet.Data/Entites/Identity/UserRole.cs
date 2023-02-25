@@ -12,5 +12,8 @@ namespace LetMeet.Data.Entites.Identity
         Student,
         Supervisor,
         Employee
+
+     
     }
+
 }

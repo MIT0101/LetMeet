@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+}
+@model (string formId,string formSubmitBtnID)
+<script  src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+<script defer>
+    // Get the form element
+    const form = $('#@Model.formId');
+
+    // Save the initial default values of the form fields
+    const defaultValues = {};
+    form.find(':input').each(function () {
+        defaultValues[this.name] = $(this).val();
+    });
+
+    // Add an event listener to all form fields to detect changes
+    form.find(':input').on('input', function () {
+
+        formIsValid = $(this).val() !== defaultValues[this.name]
+        //$('#editSubmitBtn').prop('disabled', !formIsValid);
+        let allInputs = form.find(':input');
+
+        allInputs.each(function () {
+            if ($(this).val() !== defaultValues[this.name]) {
+                formIsValid = true;
+
+            }
+        });
+
+        $('#@Model.formSubmitBtnID').prop('disabled', !formIsValid);
+
+    });
+</script>
