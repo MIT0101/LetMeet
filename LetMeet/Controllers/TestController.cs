@@ -35,6 +35,15 @@ namespace LetMeet.Controllers
             _selectionRepository = selectionRepository;
         }
 
+        //test jqeury alidation
+
+        public IActionResult formValidationJquery()
+        {
+
+            return View();
+        }
+
+        // test avalble stages
         public ActionResult stage()
         {
 

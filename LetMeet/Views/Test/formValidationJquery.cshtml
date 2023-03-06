@@ -1,0 +1,102 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+
+<form>
+    <input type="text" name="fullName" />
+    <input type="email" name="emailAddress" />
+    <span class="text-danger">Error Email</span>
+    <input type="tel" name="phoneNumber" />
+    <select name="stage">
+        <option value="">Select stage</option>
+        <option value="First">First</option>
+        <option value="Second">Second</option>
+        <option value="Third">Third</option>
+        <option value="Fourth">Fourth</option>
+        <option value="Unknown">Unknown</option>
+    </select>
+    <input type="url" name="profileImage" />
+    <input type="hidden" name="identityId" value="some-value" />
+    <select name="userRole">
+        <option value="">Select user role</option>
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+    </select>
+    <button type="submit" value="Submit" >Send</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+
+
+<script defer>
+
+
+    $(document).ready(function () {
+        $("form").validate({
+            rules: {
+                fullName: {
+                    required: true,
+                    minlength: 4,
+                    maxlength: 100
+                },
+                emailAddress: {
+                    required: true,
+                    email: true
+                },
+                phoneNumber: {
+                    minlength: 10,
+                    maxlength: 50,
+                    phoneUS: true // This is a custom rule that checks if the phone number is valid in the US format
+                },
+                stage: {
+                    required: true
+                },
+                identityId: {
+                    required: true,
+                    uuid: true // This is a custom rule that checks if the GUID is valid
+                },
+                userRole: {
+                    required: true
+                }
+            },
+            messages: {
+                fullName: {
+                    required: "Full Name is required.",
+                    minlength: "Full Name must be at least 4 characters.",
+                    maxlength: "Full Name must not exceed 100 characters."
+                },
+                emailAddress: {
+                    required: "Email Address is required.",
+                    email: "Email Address is invalid."
+                },
+                phoneNumber: {
+                    minlength: "Phone Number must be at least 10 characters.",
+                    maxlength: "Phone Number must not exceed 50 characters.",
+                    phoneUS: "Phone Number is invalid."
+                },
+                stage: {
+                    required: "User Stage is required."
+                },
+                identityId: {
+                    required: "User Identity is required.",
+                    uuid: "User Identity is invalid."
+                },
+                userRole: {
+                    required: "User Role is required."
+                }
+            },
+            errorElement: "span",
+            errorClass: "text-danger",
+            errorPlacement: function (error, element) {
+                error.insertAfter(element);
+            }
+        });
+    });
+</script>
+
+<partial name="_ValidationScriptsPartial" />

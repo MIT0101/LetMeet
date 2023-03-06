@@ -4,6 +4,7 @@ global using LetMeet.Data.Entites.UsersInfo;
 global using LetMeet.Repositories;
 global using LetMeet.Repositories.Infrastructure;
 global using LetMeet.Repositories.Repository;
+using Alachisoft.NCache.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -65,7 +66,12 @@ builder.Services.AddDbContext<MainIdentityDbContext>(options =>
 });
 
 builder.Services.AddDbContext<MainDbContext>(options => {
+    string cacheId = "myClusteredCache";
+    NCacheConfiguration.Configure(cacheId, DependencyType.SqlServer);
+    NCacheConfiguration.ConfigureLogger();
+
     options.UseSqlServer(builder.Configuration.GetConnectionString("MainDataConnection"));
+
 
 });
 

@@ -35,7 +35,7 @@
 
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-7">
                     <div class="card">
                         <div class="card-header card-header-primary">
                             <h4 class="card-title">Edit Profile</h4>
@@ -170,7 +170,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+
+
+                <div class="col-md-5">
                     <div class="card card-profile">
                         <div class="card-avatar">
                             @{
@@ -194,6 +196,59 @@
                             <a href="javascript:;" class="btn btn-primary btn-round">Follow</a>
                         </div>
                     </div>
+
+
+                    <div class="card mt-5">
+                        <div class="card-header card-header-danger">
+                            <h4 class="card-title">Account Security</h4>
+                            <p class="category">Change Account Password</p>
+                        </div>
+                        <div class="card-body">
+
+                            <form method="post" id="changePasswordForm" asp-controller="Account" asp-action="ChangePassword" asp-route-id="@Context.Request.RouteValues["id"]?">
+                                <div class="form-group mb-3 bmd-form-group">
+                                    <label for="fullName" class="bmd-label-static">Old Password</label>
+
+                                    <input type="text" class="form-control" id="oldPassword" placeholder="Enter password"
+                                           data-val="true" data-val-length="Old Password Must Be Between 8 and 255 for length"
+                                           data-val-length-max="255" data-val-length-min="8" data-val-required="Old Password Is Required"
+                                           maxlength="255" name="oldPassword" value="">
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="oldPassword" data-valmsg-replace="true"></span>
+
+                                </div>
+
+
+                                <div class="form-group mb-3 bmd-form-group">
+                                    <label for="fullName" class="bmd-label-static">New Password</label>
+
+                                    <input type="text" class="form-control" id="newPassword" placeholder="Enter New password"
+                                           data-val="true" data-val-length="New Password Must Be Between 8 and 255 for length"
+                                           data-val-length-max="255" data-val-length-min="8" data-val-required="New Password Is Required"
+                                           maxlength="255" name="newPassword" value="">
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="newPassword" data-valmsg-replace="true"></span>
+
+                                </div>
+
+                                <div class="form-group mb-3 bmd-form-group">
+                                    <label for="fullName" class="bmd-label-static">Confirm New Password</label>
+
+                                    <input type="text" class="form-control" id="confirmNewPassword" placeholder="Rewrite New password"
+                                           data-val="true" data-val-length="Confirm New Password Must Be Between 8 and 255 for length"
+                                           data-val-length-max="255" data-val-length-min="8" data-val-required="Confirm New Password Is Required"
+                                           maxlength="255" name="confirmNewPassword"
+                                           data-val-equalto="New Password Mismatch" data-val-equalto-other="*.newPassword" value="">
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="confirmNewPassword" data-valmsg-replace="true"></span>
+
+                                </div>
+
+
+
+                                <button id="changePasswordSubmitBtn" type="submit" class="d-block btn btn-danger mx-auto" >Change Password</button>
+
+                            </form>
+
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -206,4 +261,3 @@
 }
 
 <partial name="Partials/FrormInputChangeListnerPartial" for="@formInfo">
-
