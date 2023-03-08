@@ -12,10 +12,6 @@
 @*@inject ISelectionRepository _selectionRepo*@
 
 @{
-    //for errors and messages
-    List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new List<string>();
-    List<string> messages = ViewData[ViewStringHelper.Messages] as List<string> ?? new List<string>();
-
 
     //for register user
     List<string> userRoles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
@@ -28,68 +24,7 @@
 
 }
 
-
-<div class="errors-container ">
-
-
-    @{
-
-        int delay = 5000;
-
-        foreach (string error in errors)
-        {
-            <script>
-
-                window.addEventListener('load', () => {
-                    MeShowNotification('<b>@error </b>', '', 'add_alert', 'danger', @delay, 'top', 'center');
-
-
-                });
-
-            </script>
-            delay += 1000;
-
-        }
-
-    }
-
-
-    @*//alert danger inline alert*@
-    @*    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <strong>Invalid Data!</strong> @error
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-    </button>
-    </div>*@
-
-</div>
-
-<div class="messages-container ">
-
-    @{
-
-        foreach (string message in messages)
-        {
-            <script>
-
-                window.addEventListener('load', () => {
-                    MeShowNotification('<b>@message </b>', '', 'add_alert', 'info', @delay, 'top', 'right');
-
-                });
-
-            </script>
-            delay += 1000;
-        }
-
-
-
-    }
-</div>
-
-@*to show notiffications*@
-<script defer src="~/lib/bootstrap/dist/js/bootstrap-notify.js"></script>
-<script defer src="~/js/Main/NotificationCreating.js"></script>
-
+<partial name="Partials/ErrorsAndMessageNotificationPartial" />
 
 <script defer src="~/js/RegisterUser.js"></script>
 

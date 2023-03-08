@@ -5,10 +5,11 @@
 }
 @model UserInfo
 
+
 <div class="container-fluid">
 
     @{
-        List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new List<string>();
+
 
         List<string> roles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
         List<string> stages = ViewData[ViewStringHelper.UserStages] as List<string> ?? new List<string>();
@@ -20,13 +21,10 @@
         bool isAdmin = Context.User.IsInRole(UserRole.Admin.ToString());
 
 
-        foreach (string error in errors)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>@error</strong>
 
-            </div>
-        }
+
+        <partial name="Partials/ErrorsAndMessageNotificationPartial" />
+
 
 
 
@@ -199,23 +197,28 @@
 
 
                     <div class="card mt-5">
-                        <div class="card-header card-header-danger">
+                        <div class="card-header card-header-warning">
                             <h4 class="card-title">Account Security</h4>
                             <p class="category">Change Account Password</p>
                         </div>
                         <div class="card-body">
 
-                            <form method="post" id="changePasswordForm" asp-controller="Account" asp-action="ChangePassword" asp-route-id="@Context.Request.RouteValues["id"]?">
-                                <div class="form-group mb-3 bmd-form-group">
-                                    <label for="fullName" class="bmd-label-static">Old Password</label>
+                            <form method="post" id="changePasswordForm" asp-controller="Account" asp-action="ChangePassword" asp-route-id="@Context.Request.RouteValues["id"]">
 
-                                    <input type="text" class="form-control" id="oldPassword" placeholder="Enter password"
-                                           data-val="true" data-val-length="Old Password Must Be Between 8 and 255 for length"
-                                           data-val-length-max="255" data-val-length-min="8" data-val-required="Old Password Is Required"
-                                           maxlength="255" name="oldPassword" value="">
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="oldPassword" data-valmsg-replace="true"></span>
+                            @Html.AntiForgeryToken()
 
-                                </div>
+                                @if (!Context.User.IsInRole(UserRole.Admin.ToString())) {
+                                    <div class="form-group mb-3 bmd-form-group">
+                                        <label for="fullName" class="bmd-label-static">Old Password</label>
+
+                                        <input type="text" class="form-control" id="oldPassword" placeholder="Enter password"
+                                        data-val="true" data-val-length="Old Password Must Be Between 8 and 255 for length"
+                                        data-val-length-max="255" data-val-length-min="8" data-val-required="Old Password Is Required"
+                                        maxlength="255" name="oldPassword" value="">
+                                        <span class="text-danger field-validation-valid" data-valmsg-for="oldPassword" data-valmsg-replace="true"></span>
+
+                                    </div>
+                                }
 
 
                                 <div class="form-group mb-3 bmd-form-group">
@@ -243,7 +246,7 @@
 
 
 
-                                <button id="changePasswordSubmitBtn" type="submit" class="d-block btn btn-danger mx-auto" >Change Password</button>
+                                <button id="changePasswordSubmitBtn" type="submit" class="d-block btn btn-warning mx-auto" >Change Password</button>
 
                             </form>
 

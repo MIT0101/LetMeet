@@ -11,19 +11,21 @@ namespace LetMeet.Controllers
     public class ProfileController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        public readonly IErrorMessagesRepository _errorMessages;
+        public readonly  IErrorMessagesRepository _errorMessages;
         private readonly ISelectionRepository _selectionRepository;
 
 
-        private readonly IGenericRepository<UserInfo, Guid> _userRepository;
+        //private readonly IGenericRepository<UserInfo, Guid> _userRepository;
+        private readonly IUserProfileRepository _userProfileRepository;
 
 
-        public ProfileController(IHttpContextAccessor contextAccessor, IErrorMessagesRepository errorMessages, IGenericRepository<UserInfo, Guid> userRepository, ISelectionRepository selectionRepository)
+
+        public ProfileController(IHttpContextAccessor contextAccessor, IErrorMessagesRepository errorMessages, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository)
         {
             _contextAccessor = contextAccessor;
             _errorMessages = errorMessages;
-            _userRepository = userRepository;
             _selectionRepository = selectionRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         public IActionResult Index()
@@ -54,7 +56,7 @@ namespace LetMeet.Controllers
             ViewData[ViewStringHelper.Errors] = errors;
             ViewData[ViewStringHelper.Messages] = messages;
 
-            var reposResult = await _userRepository.GetByIdAsync(id);
+            var reposResult = await _userProfileRepository.GetUserByIdAsync(id);
 
             if (reposResult.State==ResultState.DbError) {
                 messages.Add(_errorMessages.DbError());

@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Shared\Partials\Users\" />
     <Folder Include="wwwroot\lib\material-dashboard\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>

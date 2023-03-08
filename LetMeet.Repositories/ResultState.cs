@@ -6,19 +6,28 @@ namespace LetMeet.Repositories
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ResultState
     {
-        Created,
-        Deleted,
-        Updated,
-        Found,
+
         Seccess,
+        ValidationError,
         NotFound,
-        MultipleNotFound,
         ItemAlreadyExsist,
         DbError,
-        ValidationError,
-        UnExpectedError,
         Error
+
     }
 
-   
+    //Created,
+    //    Deleted,
+    //    Updated,
+    //    Found,
+    //    Seccess,
+    //    NotFound,
+    //    MultipleNotFound,
+    //    ItemAlreadyExsist,
+    //    DbError,
+    //    ValidationError,
+    //    UnExpectedError,
+    //    Error
+
+
 }

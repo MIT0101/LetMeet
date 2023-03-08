@@ -65,7 +65,7 @@ namespace LetMeet.Repositories.Repository
 
                 await _mainDb.SaveChangesAsync();
 
-                return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Created, entity);
+                return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Seccess, entity);
 
             }
             catch (Exception ex)
@@ -164,7 +164,7 @@ namespace LetMeet.Repositories.Repository
                     return RepositoryResult<List<TEntity>>.FailureResult(countResult.state, null);
                 }
                 if (countResult.value <= 0) {
-                    return RepositoryResult<List<TEntity>>.FailureResult(ResultState.MultipleNotFound, null);
+                    return RepositoryResult<List<TEntity>>.FailureResult(ResultState.NotFound, null);
 
                 }
 

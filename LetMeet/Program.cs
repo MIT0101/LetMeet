@@ -5,6 +5,7 @@ global using LetMeet.Repositories;
 global using LetMeet.Repositories.Infrastructure;
 global using LetMeet.Repositories.Repository;
 using Alachisoft.NCache.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -56,7 +57,9 @@ builder.Services.AddIdentity<AppIdentityUser, AppIdentityRole>(options =>
     options.Lockout.MaxFailedAccessAttempts = builder.Configuration.GetValue<int>("IdentitySettings:MaxFailedAccessAttempts");
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(builder.Configuration.GetValue<int>("IdentitySettings:DefaultLockoutTimeSpanInMinutes"));
 
-}).AddRoles<AppIdentityRole>().AddEntityFrameworkStores<MainIdentityDbContext>();
+
+}).AddRoles<AppIdentityRole>().AddEntityFrameworkStores<MainIdentityDbContext>()
+.AddTokenProvider<DataProtectorTokenProvider<AppIdentityUser>>(TokenOptions.DefaultProvider); ;
 
 //add db contexts
 
@@ -71,6 +74,7 @@ builder.Services.AddDbContext<MainDbContext>(options => {
     NCacheConfiguration.ConfigureLogger();
 
     options.UseSqlServer(builder.Configuration.GetConnectionString("MainDataConnection"));
+    //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
 
 });
@@ -81,9 +85,6 @@ builder.Services.ConfigureApplicationCookie(options => {
     options.LoginPath = "/Account/SignIn";
 });
 
-//Add repositores
-//Genric Repository of user Info
-builder.Services.AddScoped<IGenericRepository<UserInfo, Guid>, GenericRepository<UserInfo, Guid>>();
 
 //password genration repository
 builder.Services.AddSingleton<IPasswordGenrationRepository, PasswordGenrationRepository>(options =>
@@ -91,12 +92,18 @@ builder.Services.AddSingleton<IPasswordGenrationRepository, PasswordGenrationRep
     return new PasswordGenrationRepository(validPasswordChars);
 });
 
+//Add repositores//Add repositores
+
 //Enums Selction repository
 builder.Services.AddSingleton<ISelectionRepository, SelectionRepository>();
 //add error message Repository
 builder.Services.AddSingleton<IErrorMessagesRepository, ErrorMessagesRepository>();
 //add email service
 builder.Services.AddSingleton<IEmailRepository,EmailRepository>();
+//Genric Repository of user Info
+builder.Services.AddScoped<IGenericRepository<UserInfo, Guid>, GenericRepository<UserInfo, Guid>>();
+//add user profile repository than inhert GenricRepository
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 
 

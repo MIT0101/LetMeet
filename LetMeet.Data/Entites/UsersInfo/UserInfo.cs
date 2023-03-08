@@ -68,10 +68,9 @@ namespace LetMeet.Data.Entites.UsersInfo
 
     public enum Stage
     {
-        First ,
-        Second ,
-        Third ,
         Fourth ,
+        Master,
+        Phd,
         Unknown,
 
     }

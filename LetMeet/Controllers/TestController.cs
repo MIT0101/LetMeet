@@ -75,7 +75,7 @@ namespace LetMeet.Controllers
             return Json(new {result= RepositoryValidationResult.DataAnnotationsValidation(user)});
         }
         public IActionResult state() {
-            return Json(new { state= ResultState.Created });
+            return Json(new { state= ResultState.Seccess });
         }
 
         //test validation 
@@ -114,7 +114,7 @@ namespace LetMeet.Controllers
                 }
             };
 
-            RepositoryResult<List<UserInfo>> successResult = RepositoryResult<List<UserInfo>>.SuccessResult(ResultState.Created,users);
+            RepositoryResult<List<UserInfo>> successResult = RepositoryResult<List<UserInfo>>.SuccessResult(ResultState.Seccess,users);
             List<ValidationResult> validationErrors = new List<ValidationResult>();
             validationErrors.Add(new ValidationResult("Full Name Is Required ", new string[] { nameof(UserInfo.fullName) }));
 
