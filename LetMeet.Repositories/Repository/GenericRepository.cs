@@ -42,13 +42,13 @@ namespace LetMeet.Repositories.Repository
                 nullFilterSolver(ref filter);
 
                 int count = await _entities.CountAsync(filter);
-                return await Task.FromResult((ResultState.Seccess, count));
+                return (ResultState.Seccess, count);
 
             }
             catch (Exception ex)
             {
 
-                return await Task.FromResult((ResultState.DbError, -1));
+                return (ResultState.DbError, -1);
             }
         }
 

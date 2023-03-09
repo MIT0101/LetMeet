@@ -5,6 +5,14 @@
       "PackagePath": "staticwebassets\\LetMeet.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\profile_empty_img.png",
+      "PackagePath": "staticwebassets\\UsersImages\\profile_empty_img.png"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\dark.css",
       "PackagePath": "staticwebassets\\css\\Main\\dark.css"
     },
@@ -63,6 +71,10 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\sidebar-bg-4.jpg",
       "PackagePath": "staticwebassets\\img\\sidebar-bg-4.jpg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\EditProfile.js",
+      "PackagePath": "staticwebassets\\js\\EditProfile.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Main\\NotificationCreating.js",

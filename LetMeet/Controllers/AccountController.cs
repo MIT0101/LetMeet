@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipelines;
 using System.Security.Claims;
 
@@ -52,6 +53,65 @@ namespace LetMeet.Controllers
             _selectionRepository = selectionRepository;
             _userProfileRepo = userProfileRepository;
         }
+
+
+        //for update user profile image
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
+        public async Task<RedirectToActionResult> UpdateProfileImage(Guid id,IFormFile? picInput, CancellationToken cancellationToken,
+            List<string> errors = null, List<string> messages = null)
+        {
+
+            InitErrorsAndMessagesForView(ref errors, ref messages);
+
+            if (picInput is null) {
+                errors.Add("No Image To Update");
+
+                return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
+                        controllerName: RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+            }
+
+            var imageStream = new MemoryStream();
+            
+            await picInput.CopyToAsync(imageStream,cancellationToken);
+           
+
+            string saveDir = Path.Combine(_env.WebRootPath, "UsersImages");
+
+            long sizeInBytes = Request.ContentLength ?? 0;
+            double sizeInKb = sizeInBytes / 1024.0;
+
+            _logger.LogWarning($"Request Size is {sizeInKb} kb");
+
+            var reposResult = await _userProfileRepo.UpdateProfileImageAsync(userInfoId: id, imageStream: imageStream, saveDir);
+
+            if (reposResult.State == ResultState.ValidationError)
+            {
+                errors.AddRange(reposResult.ValidationErrors.Select(e => e.ErrorMessage));
+
+            }
+
+            if (reposResult.State != ResultState.Seccess)
+            {
+                errors.Add("Can Not Update Profil Image");
+
+            }
+            if (reposResult.State == ResultState.Seccess)
+            {
+                messages.Add("Image Updated Successfully");
+
+            }
+            errors.AddRange(reposResult.ErrorMessages);
+
+
+            return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
+                    controllerName: RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+
+        }
+
         //for update user password
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -116,7 +176,7 @@ namespace LetMeet.Controllers
 
 
             IdentityResult identityPasswordResult;
-           
+
             if (User.IsInRole(UserRole.Admin.ToString()))
             {
                 //change without old password
@@ -173,7 +233,7 @@ namespace LetMeet.Controllers
             _logger.LogInformation(message);
 
             return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
-            controllerName: RouteNameHelper.ProfileControllerName, new { id,errors, messages });
+            controllerName: RouteNameHelper.ProfileControllerName, new { id, errors, messages });
         }
 
         [Authorize]
@@ -242,8 +302,6 @@ namespace LetMeet.Controllers
                 return LocalRedirect(ReturnUrl);
             }
 
-
-            //ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             //invalid user name or password 
 
             errors.Add("Invalid login attempt.");
@@ -342,14 +400,8 @@ namespace LetMeet.Controllers
                 errors.Add("Can't Register The User.");
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            //var userRole = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == userToRegister.userRole.ToString());
 
-            //if (userRole is null)
-            //{
-            //    await _roleManager.CreateAsync(new AppIdentityRole { Name = userToRegister.userRole.ToString() });
-            //}
             var roleResult = await _userManager.AddToRoleAsync(identityUser, userToRegister.userRole.ToString());
-            // add claims to user
 
 
             if (!roleResult.Succeeded)
@@ -402,8 +454,12 @@ namespace LetMeet.Controllers
                 {
                     DevelopmentHelper.SaveAccountToFile(userToRegister.emailAddress, password, userToRegister.userRole.ToString());
                 }
+
+                // add claims to user
                 List<Claim> claims =
-                    getUserMainClaim(userIdentityId: identityUser.Id.ToString(), userInfoId: repoResult.Result.id.ToString());
+                    getUserMainClaim(userIdentityId: identityUser.Id.ToString(),
+                    userInfoId: repoResult.Result.id.ToString(),
+                    profileImage: repoResult.Result.profileImage ?? "profile_empty_img.png");
 
                 await _userManager.AddClaimsAsync(identityUser, claims);
 
@@ -416,15 +472,26 @@ namespace LetMeet.Controllers
             return RedirectToAction(nameof(ManageUsers), new { errors });
         }
 
-        private List<Claim> getUserMainClaim(string userIdentityId, string userInfoId)
+        private List<Claim> getUserMainClaim(string userIdentityId, string userInfoId, string profileImage)
         {
 
             return new List<Claim>() {
                 new Claim(ClaimsNameHelper.UserInfoId,userInfoId),
                 new Claim(ClaimsNameHelper.UserIdentityId,userIdentityId),
+                new Claim(ClaimsNameHelper.UserProfileImage,profileImage)
                 };
         }
 
+        // to init errors and messages
+        private void InitErrorsAndMessagesForView(ref List<string>? errors, ref List<string>? messages)
+        {
+
+            errors ??= new List<string>();
+            messages ??= new List<string>();
+
+            ViewData[ViewStringHelper.Errors] = errors;
+            ViewData[ViewStringHelper.Messages] = messages;
+        }
 
 
 

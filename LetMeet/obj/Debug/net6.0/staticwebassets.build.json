@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "c2GKSs8+f8CCmked3VgoI8D8cZY2rio+lCThA3lvlT4=",
+  "Hash": "Gzbmt9sTv9QC+/TGWKUqjYXzwKE+LFjY3J6VMANSvwk=",
   "Source": "LetMeet",
   "BasePath": "_content/LetMeet",
   "Mode": "Default",
@@ -304,6 +304,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\img\\sidebar-bg-4.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\EditProfile.js",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "js/EditProfile.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\EditProfile.js"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Main\\NotificationCreating.js",
@@ -1494,6 +1511,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\material-dashboard\\js\\material-dashboard.min.js"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "UsersImages/197ea313818f48b651d808db20cc506e.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\profile_empty_img.png",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "UsersImages/profile_empty_img.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\UsersImages\\profile_empty_img.png"
     }
   ]
 }

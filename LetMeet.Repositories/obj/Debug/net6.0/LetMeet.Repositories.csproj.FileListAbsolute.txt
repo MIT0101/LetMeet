@@ -1,3 +1,6 @@
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\client.ncconf
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\config.ncconf
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\tls.ncconf
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\LetMeet.Repositories.deps.json
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\LetMeet.Repositories.runtimeconfig.json
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\LetMeet.Repositories.dll
@@ -15,6 +18,3 @@ C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\obj\Debug\net6.0\refi
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\obj\Debug\net6.0\LetMeet.Repositories.pdb
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\obj\Debug\net6.0\LetMeet.Repositories.genruntimeconfig.cache
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\obj\Debug\net6.0\ref\LetMeet.Repositories.dll
-C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\client.ncconf
-C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\config.ncconf
-C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Repositories\bin\Debug\net6.0\tls.ncconf

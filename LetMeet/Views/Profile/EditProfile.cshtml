@@ -5,6 +5,7 @@
 }
 @model UserInfo
 
+<script defer src="~/js/EditProfile.js"></script>
 
 <div class="container-fluid">
 
@@ -175,23 +176,46 @@
                         <div class="card-avatar">
                             @{
                                 string profileImage = "profile_empty_img.png";
+
                                 if (!string.IsNullOrWhiteSpace(Model?.profileImage))
                                 {
                                     profileImage = Model.profileImage;
                                 }
                             }
 
-                            <a href="javascript:;">
-                                <img class="img" src="~/img/@profileImage">
-                            </a>
+
+                            <label class="newbtn" style="cursor: pointer;">
+
+                                <img id="previewImage" style="aspect-ratio: 1 /1" class="img" src="~/UsersImages/@profileImage">
+
+
+                            </label>
+
                         </div>
                         <div class="card-body">
                             <h6 class="card-category text-gray">@Model?.userRole</h6>
                             <h4 class="card-title">@Model?.fullName</h4>
                             <p class="card-description">
-                                Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
+
+
+
+                                <form id="profileImageForm" method="post" enctype="multipart/form-data" asp-action="UpdateProfileImage" asp-controller="@RouteNameHelper.AccountControllerName" asp-route-id="@Context.Request.RouteValues["id"]">
+
+                                    <input id="picInput" style=" display: none;" name="picInput" class='pis' type="file" accept="Image/*"
+                                           data-val="true data-val-required="Old Password Is Required"
+                                           required>
+
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="picInput" data-valmsg-replace="true"></span>
+
+                                    @Html.AntiForgeryToken()
+
+
+                                    <button type="submit" id="updateProfileSubmitBtn" onclick="return DisplayprogressMessage('profileImageForm',this, 'Saving...');" class="btn btn-primary btn-round"> Save Image</button>
+
+                                </form>
+
+
                             </p>
-                            <a href="javascript:;" class="btn btn-primary btn-round">Follow</a>
                         </div>
                     </div>
 
@@ -203,18 +227,19 @@
                         </div>
                         <div class="card-body">
 
-                            <form method="post" id="changePasswordForm" asp-controller="Account" asp-action="ChangePassword" asp-route-id="@Context.Request.RouteValues["id"]">
+                            <form method="post" id="changePasswordForm" asp-controller="@RouteNameHelper.AccountControllerName" asp-action="ChangePassword" asp-route-id="@Context.Request.RouteValues["id"]">
 
-                            @Html.AntiForgeryToken()
+                                @Html.AntiForgeryToken()
 
-                                @if (!Context.User.IsInRole(UserRole.Admin.ToString())) {
+                                @if (!Context.User.IsInRole(UserRole.Admin.ToString()))
+                                {
                                     <div class="form-group mb-3 bmd-form-group">
                                         <label for="fullName" class="bmd-label-static">Old Password</label>
 
                                         <input type="text" class="form-control" id="oldPassword" placeholder="Enter password"
-                                        data-val="true" data-val-length="Old Password Must Be Between 8 and 255 for length"
-                                        data-val-length-max="255" data-val-length-min="8" data-val-required="Old Password Is Required"
-                                        maxlength="255" name="oldPassword" value="">
+                                               data-val="true" data-val-length="Old Password Must Be Between 8 and 255 for length"
+                                               data-val-length-max="255" data-val-length-min="8" data-val-required="Old Password Is Required"
+                                               maxlength="255" name="oldPassword" value="">
                                         <span class="text-danger field-validation-valid" data-valmsg-for="oldPassword" data-valmsg-replace="true"></span>
 
                                     </div>
@@ -246,7 +271,7 @@
 
 
 
-                                <button id="changePasswordSubmitBtn" type="submit" class="d-block btn btn-warning mx-auto" >Change Password</button>
+                                <button id="changePasswordSubmitBtn" type="submit" class="d-block btn btn-warning mx-auto">Change Password</button>
 
                             </form>
 

@@ -2,6 +2,7 @@
 using LetMeet.Data.Entites.UsersInfo;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -16,6 +17,9 @@ namespace LetMeet.Repositories.Infrastructure
         Task<RepositoryResult<UserInfo>> GetUserByIdAsync(Guid userInfoId);
 
         Task<RepositoryResult<UserInfo>> GetUserIdAsync(Expression<Func<UserInfo, bool>> filter);
+
+        Task<RepositoryResult<string>> UpdateProfileImageAsync(Guid userInfoId, MemoryStream imageStream, string folderPath);
+
 
         Task<(ResultState state, Guid? value)> GetIdentityIdAsync(Guid userInfoId);
 

@@ -109,7 +109,6 @@ builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -119,6 +118,16 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+//create user profile direcorty
+
+string ProfileImgaesDir= Path.Combine(app.Environment.WebRootPath, "UsersImages");
+
+if (!Directory.Exists(ProfileImgaesDir))
+{
+    Directory.CreateDirectory(ProfileImgaesDir);
+}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -1,0 +1,7 @@
+drop-database -context MainDbContext
+
+drop-database -context MainIdentityDbContext
+
+update-database -context MainDbContext
+
+update-database -context MainIdentityDbContext

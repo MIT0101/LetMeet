@@ -4,6 +4,8 @@
     {
         public static string UserInfoId = "UserInfoId";
         public static string UserIdentityId = "UserIdentityId";
+        public static string UserProfileImage = "UserProfileImage";
+
 
     }
 }
