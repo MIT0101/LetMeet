@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\749faea72eb5454952d408db21775786.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\749faea72eb5454952d408db21775786.jpeg"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\profile_empty_img.png",
       "PackagePath": "staticwebassets\\UsersImages\\profile_empty_img.png"
     },
@@ -19,6 +23,10 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\mainloadiersStyle.css",
       "PackagePath": "staticwebassets\\css\\Main\\mainloadiersStyle.css"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Profile\\EditProfileStyle.css",
+      "PackagePath": "staticwebassets\\css\\Profile\\EditProfileStyle.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\signIn\\sginInStyle.css",
@@ -73,10 +81,6 @@
       "PackagePath": "staticwebassets\\img\\sidebar-bg-4.jpg"
     },
     {
-      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\EditProfile.js",
-      "PackagePath": "staticwebassets\\js\\EditProfile.js"
-    },
-    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Main\\NotificationCreating.js",
       "PackagePath": "staticwebassets\\js\\Main\\NotificationCreating.js"
     },
@@ -87,6 +91,10 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Main\\Theme.js",
       "PackagePath": "staticwebassets\\js\\Main\\Theme.js"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Profile\\EditProfile.js",
+      "PackagePath": "staticwebassets\\js\\Profile\\EditProfile.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\RegisterUser.js",

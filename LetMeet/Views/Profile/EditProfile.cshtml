@@ -5,7 +5,8 @@
 }
 @model UserInfo
 
-<script defer src="~/js/EditProfile.js"></script>
+<script defer src="~/js/Profile/EditProfile.js"></script>
+<link rel="stylesheet" href="~/css/Profile/EditProfileStyle.css" />
 
 <div class="container-fluid">
 
@@ -135,8 +136,6 @@
 
                                             }
 
-
-
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -173,7 +172,7 @@
 
                 <div class="col-md-5">
                     <div class="card card-profile">
-                        <div class="card-avatar">
+                        <div class="card-avatar border-1">
                             @{
                                 string profileImage = "profile_empty_img.png";
 
@@ -182,14 +181,18 @@
                                     profileImage = Model.profileImage;
                                 }
                             }
+                            <div class="img_div">
 
+                                <label class="newbtn" >
+                                    <img id="previewImage" class="img" src="~/UsersImages/@profileImage" />
+                                </label>
 
-                            <label class="newbtn" style="cursor: pointer;">
+                                <div class="edit-overlay">
+                                    <i class="material-icons pt-1">photo_camera</i>
 
-                                <img id="previewImage" style="aspect-ratio: 1 /1" class="img" src="~/UsersImages/@profileImage">
+                                </div>
+                            </div>
 
-
-                            </label>
 
                         </div>
                         <div class="card-body">
@@ -210,7 +213,7 @@
                                     @Html.AntiForgeryToken()
 
 
-                                    <button type="submit" id="updateProfileSubmitBtn" onclick="return DisplayprogressMessage('profileImageForm',this, 'Saving...');" class="btn btn-primary btn-round"> Save Image</button>
+                                    <button type="submit" id="updateProfileSubmitBtn" onclick="return DisplayprogressMessage('profileImageForm',this, 'Saving...');" class="btn btn-info " disabled> Save Image</button>
 
                                 </form>
 

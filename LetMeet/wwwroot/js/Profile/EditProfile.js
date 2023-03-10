@@ -15,9 +15,7 @@ function DisplayprogressMessage(formId, ctl, msg) {
 }
 
 
-let cmpStrInput = document.getElementById("cmpStrInput");
-
-$('.newbtn').bind("click", function () {
+$('.edit-overlay').bind("click", function () {
     $('#picInput').click();
 });
 
@@ -56,7 +54,13 @@ input.addEventListener('change', async (e) => {
     const { files } = e.target;
 
     // No files selected
-    if (!files.length) return;
+    if (!files.length) {
+        $(`#updateProfileSubmitBtn`).prop("disabled", true);
+
+        return;
+    }
+    $(`#updateProfileSubmitBtn`).prop("disabled", false);
+
 
     // We'll store the files in this data transfer object
     const dataTransfer = new DataTransfer();
