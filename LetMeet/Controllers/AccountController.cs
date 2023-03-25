@@ -8,12 +8,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
-using System.IO.Pipelines;
 using System.Security.Claims;
 
 namespace LetMeet.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<AppIdentityUser> _userManager;
@@ -58,7 +57,6 @@ namespace LetMeet.Controllers
         //for update user profile image
 
         [HttpPost]
-        [Authorize]
         [ValidateAntiForgeryToken]
         [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
         public async Task<RedirectToActionResult> UpdateProfileImage(Guid id,IFormFile? picInput, CancellationToken cancellationToken,
@@ -115,7 +113,6 @@ namespace LetMeet.Controllers
         //for update user password
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         [OwnerOrInRoleGuid(IdFieldName: "id", "Admin")]
         public async Task<IActionResult> ChangePassword([FromRoute] Guid id, ChangePasswordDto PasswordDto,
             List<string> errors = null, List<string> messages = null)
@@ -236,7 +233,6 @@ namespace LetMeet.Controllers
             controllerName: RouteNameHelper.ProfileControllerName, new { id, errors, messages });
         }
 
-        [Authorize]
         public async Task<IActionResult> logOut()
         {
             await _signInManager.SignOutAsync();
@@ -251,7 +247,7 @@ namespace LetMeet.Controllers
             }
             return Json(new { id });
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> SignIn(SiginInDto siginInDto, string? ReturnUrl)
         {
@@ -310,6 +306,7 @@ namespace LetMeet.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ViewResult> SignIn()
         {
@@ -318,7 +315,8 @@ namespace LetMeet.Controllers
 
             return await Task.FromResult(View());
         }
-
+        //temprory must removed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ViewResult> ManageUsers(int pageIndex = 1, List<string> errors = null, List<string> messages = null)
         {
@@ -358,6 +356,9 @@ namespace LetMeet.Controllers
             return View();
         }
 
+        //temprory must removed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        [AllowAnonymous]
+        //[Authorize(Roles = "Admin" )]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterUser(RegisterUserDto userToRegister)

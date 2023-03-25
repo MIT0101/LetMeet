@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "aYooMpbVHQCqTv9uf8azkOdX82A7MnuIdl2HceDYUg4=",
+  "Hash": "LJtJfch1S0YEZNdquT7okrLt36VXRSgxdRyUeLknEk8=",
   "Source": "LetMeet",
   "BasePath": "_content/LetMeet",
   "Mode": "Default",
@@ -1562,6 +1562,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\UsersImages\\749faea72eb5454952d408db21775786.jpeg"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_4.jpeg",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "UsersImages/855fba7180aa4bb419ec08db2c63c2b7_4.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_4.jpeg"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\profile_empty_img.png",

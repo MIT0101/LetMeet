@@ -5,3 +5,8 @@ drop-database -context MainIdentityDbContext
 update-database -context MainDbContext
 
 update-database -context MainIdentityDbContext
+
+
+Add-Migration IdentityMigrations -context MainIdentityDbContext
+
+Add-Migration MainAppMigrations -context MainDbContext

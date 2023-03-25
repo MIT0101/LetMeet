@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LetMeet.Data.Migrations
 {
-    public partial class IdentityMigration : Migration
+    public partial class IdentityMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -161,10 +161,10 @@ namespace LetMeet.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("141db3b1-52e6-4f80-a6e4-54c0c3d49662"), "780b93b3-6309-4a52-93a7-0c6a665e77ff", null, "Employee", "EMPLOYEE" },
-                    { new Guid("1f3f581d-bb16-4c4b-9f63-8d251d4e904a"), "4e43831f-9269-462f-95a5-1eb5cd6a6e9f", null, "Admin", "ADMIN" },
-                    { new Guid("32459016-b781-41f3-b9ad-eaed99ebc42b"), "cf15b28b-6870-47d0-a32c-299bee8def1a", null, "Student", "STUDENT" },
-                    { new Guid("9826de6c-dec7-48dd-8617-cf322b415524"), "5808b313-216e-438a-9ff8-816809188aea", null, "Supervisor", "SUPERVISOR" }
+                    { new Guid("4eef13f7-159e-4538-af58-c368846a3aea"), "97f5ee12-d8b9-4ce7-982a-9876e00a96a5", null, "Admin", "ADMIN" },
+                    { new Guid("6a5ce97e-1581-4dfc-9979-ea00524fda37"), "57e773e9-2e89-4ed7-9bea-f2317cb624a4", null, "Employee", "EMPLOYEE" },
+                    { new Guid("831dc052-256d-469e-9026-bbb49a12ca66"), "6e91020e-6f8c-4292-860a-ed27f7741c5d", null, "Student", "STUDENT" },
+                    { new Guid("8d6f7472-de2f-4f1c-a091-c0f711fb2dcf"), "fd3ff8f0-1c8c-4ab0-8be3-7f4e4c817256", null, "Supervisor", "SUPERVISOR" }
                 });
 
             migrationBuilder.CreateIndex(

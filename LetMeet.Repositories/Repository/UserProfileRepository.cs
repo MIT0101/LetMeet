@@ -1,28 +1,15 @@
-﻿using Alachisoft.NCache.Common.Licensing.Kubernetes;
-using Alachisoft.NCache.Config.Dom;
+﻿
 using LetMeet.Data;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Utilities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations;
-using System.DirectoryServices.Protocols;
 using System.Drawing.Imaging;
 using System.Drawing;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static Microsoft.FSharp.Core.ByRefKinds;
-using static System.Net.Mime.MediaTypeNames;
-using Image = System.Drawing.Image;
-using Alachisoft.NCache.Common.Licensing.Request;
 using System.IO;
 
 namespace LetMeet.Repositories.Repository
@@ -38,6 +25,7 @@ namespace LetMeet.Repositories.Repository
 
         private readonly int MAX_IMAGE_SIZE_IN_KB = 300;
 
+        private Random _random;
 
         public UserProfileRepository(MainDbContext mainDb, IOptions<RepositoryDataSettings> repoSettingsOptions, IGenericRepository<UserInfo, Guid> genericUserRepository, ILogger<UserProfileRepository> logger)
         {
@@ -46,6 +34,7 @@ namespace LetMeet.Repositories.Repository
             _settings = repoSettingsOptions.Value;
             _genericUserRepository = genericUserRepository;
             this._logger = logger;
+            _random = new Random();
         }
 
 
@@ -116,44 +105,52 @@ namespace LetMeet.Repositories.Repository
                     return await Task.FromResult(RepositoryResult<string>.FailureValidationResult(validationErrors, null));
                 }
 
-                Image image = Image.FromStream(imageStream);
-                
+                Bitmap imgMap = new Bitmap(imageStream);
 
-                if (image == null)
+                if (imgMap is null)
                 {
-
                     return await Task.FromResult(RepositoryResult<string>.FailureResult(ResultState.Error, null, new List<string>() {
                         "Can Not Update Image"
                     }));
 
                 }
-
                 // Calculate the size of the image in kilobytes
                 var size = (imageStream.Length / 1024) + 1;
-
-                await imageStream.DisposeAsync();
+                string imageFileName = userInfoId.ToString("N") + "_" + _random.Next(10) + ".jpeg";
 
                 // Check if the image exceeds the maximum size MAX_IMAGE_SIZE_IN_KB
                 if (size > MAX_IMAGE_SIZE_IN_KB)
                 {
+                    List<ValidationResult> validationErrors = new List<ValidationResult>() {
+                    new ValidationResult("Image Size Is Too Large , Try Another One")
+                    };
+                    _logger.LogError("Image Size Is Too Large , Try Another One");
+                    return await Task.FromResult(RepositoryResult<string>.FailureValidationResult(validationErrors, null));
+
                     // Compress image to maximum size of MAX_IMAGE_SIZE_IN_KB KB
-                    image = await CompressImage(image, MAX_IMAGE_SIZE_IN_KB * 1024);
+                    //await CompressImageAndSave(imgMap, imageFileName);
                 }
+                else {
+                    imgMap.Save(Path.Combine(folderPath, imageFileName), ImageFormat.Jpeg);
+
+                }
+                var userToUpdate = await _mainDb.UserInfos.FindAsync(userInfoId);
+
                 // Generate a unique file name for the image
+                string oldImagePath = Path.Combine(folderPath, userToUpdate?.profileImage ?? "no.txt");
 
-                string imageFileName = userInfoId.ToString("N")+ ".jpeg";
+                await Task.Run(() =>
+                {
+                    if (File.Exists(oldImagePath))
+                    {
+                        File.Delete(oldImagePath);
+                    }
+                });
 
-                //save image
-                //image.Save(Path.Combine(folderPath, imageFileName), ImageFormat.Jpeg);
+                await imageStream.DisposeAsync();
 
-                var imageMap = new Bitmap(image);
-                image = null;
-                imageMap.Save(Path.Combine(folderPath, imageFileName), ImageFormat.Jpeg);
-
-
-                var userToUpdate = await _mainDb.UserInfos.FirstOrDefaultAsync(u=>u.id==userInfoId);
-
-                if (userToUpdate is null) {
+                if (userToUpdate is null)
+                {
                     return await Task.FromResult(RepositoryResult<string>.FailureResult(ResultState.Error, null, new List<string>() {
                         "User Not Found To Update His Image"
                     }));
@@ -165,69 +162,51 @@ namespace LetMeet.Repositories.Repository
 
                 await _mainDb.SaveChangesAsync();
 
-
-
                 // Return a success response
                 return await Task.FromResult(RepositoryResult<string>.SuccessResult(ResultState.Seccess, imageFileName));
 
             }
             catch (Exception ex)
             {
-                _logger.LogError("Can Not Save Image " +ex.Message);
+                _logger.LogError("Can Not Save Image " + ex.Message);
                 return await Task.FromResult(RepositoryResult<string>.FailureResult(ResultState.DbError, null, null));
             }
 
-
-
-
-        }
-        private async Task<Image> CompressImage(Image image, long maxSize)
-        {
-            long quality = 90L; // Starting JPEG quality
-            long minQuality = 50L; // Minimum JPEG quality
-
-            // Compress image until it is under maxSize
-            while (await GetImageSize(image) > maxSize && quality >= minQuality)
-            {
-                quality -= 5L;
-
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    // Set JPEG quality and save to memory stream
-                    EncoderParameters eps = new EncoderParameters(1);
-                    eps.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
-                    ImageCodecInfo ici = await GetEncoderInfo("image/jpeg");
-                    image.Save(ms, ici, eps);
-
-                    // Load compressed image from memory stream
-                    ms.Seek(0, SeekOrigin.Begin);
-                    image = Image.FromStream(ms);
-                }
-            }
-
-            return image;
-        }
-        private async Task<long> GetImageSize(Image image)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                image.Save(ms, ImageFormat.Jpeg);
-                return ms.Length;
-            }
         }
 
-        private async Task<ImageCodecInfo> GetEncoderInfo(string mimeType)
+        public async Task CompressImageAndSave(Bitmap imgMap, string savePath)
         {
+            int quality = 70;
+            // Encoder parameter for image quality 
+            EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, quality);
+            // JPEG image codec 
+            ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
+            EncoderParameters encoderParams = new EncoderParameters(1);
+            encoderParams.Param[0] = qualityParam;
+            imgMap.Save(savePath, jpegCodec, encoderParams);
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat jpeg)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary> 
+        /// Returns the image codec with the given mime type 
+        /// </summary> 
+        private static ImageCodecInfo GetEncoderInfo(string mimeType)
+        {
+            // Get image codecs for all image formats 
             ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
-            foreach (ImageCodecInfo codec in codecs)
-            {
-                if (codec.MimeType == mimeType)
-                {
-                    return codec;
-                }
-            }
+
+            // Find the correct image codec 
+            for (int i = 0; i < codecs.Length; i++)
+                if (codecs[i].MimeType == mimeType)
+                    return codecs[i];
+
             return null;
         }
+
 
 
 

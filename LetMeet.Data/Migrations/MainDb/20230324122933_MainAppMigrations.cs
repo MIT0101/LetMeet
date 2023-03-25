@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LetMeet.Data.Migrations.MainDb
 {
-    public partial class MainAppMigration : Migration
+    public partial class MainAppMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,59 +49,34 @@ namespace LetMeet.Data.Migrations.MainDb
                 });
 
             migrationBuilder.CreateTable(
-                name: "Meetings",
+                name: "SupervisionInfo",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     studentid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     supervisorid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    totalTimeHours = table.Column<float>(type: "real", nullable: false),
-                    remindingTimeHours = table.Column<float>(type: "real", nullable: false),
-                    startFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                    startDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    endDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    extendTimes = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Meetings", x => x.id);
+                    table.PrimaryKey("PK_SupervisionInfo", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Meetings_UserInfos_studentid",
+                        name: "FK_SupervisionInfo_UserInfos_studentid",
                         column: x => x.studentid,
                         principalTable: "UserInfos",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_Meetings_UserInfos_supervisorid",
+                        name: "FK_SupervisionInfo_UserInfos_supervisorid",
                         column: x => x.supervisorid,
                         principalTable: "UserInfos",
                         principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentSupervisors",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    studentid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    supervisorid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentSupervisors", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_StudentSupervisors_UserInfos_studentid",
-                        column: x => x.studentid,
-                        principalTable: "UserInfos",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_StudentSupervisors_UserInfos_supervisorid",
-                        column: x => x.supervisorid,
-                        principalTable: "UserInfos",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubMeetings",
+                name: "Meetings",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -111,15 +86,15 @@ namespace LetMeet.Data.Migrations.MainDb
                     startHour = table.Column<int>(type: "int", nullable: false),
                     endHour = table.Column<int>(type: "int", nullable: false),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Meetingid = table.Column<int>(type: "int", nullable: true)
+                    SupervisionInfoid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SubMeetings", x => x.id);
+                    table.PrimaryKey("PK_Meetings", x => x.id);
                     table.ForeignKey(
-                        name: "FK_SubMeetings_Meetings_Meetingid",
-                        column: x => x.Meetingid,
-                        principalTable: "Meetings",
+                        name: "FK_Meetings_SupervisionInfo_SupervisionInfoid",
+                        column: x => x.SupervisionInfoid,
+                        principalTable: "SupervisionInfo",
                         principalColumn: "id");
                 });
 
@@ -132,15 +107,15 @@ namespace LetMeet.Data.Migrations.MainDb
                     title = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     decription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     isCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    SubMeetingid = table.Column<int>(type: "int", nullable: true)
+                    Meetingid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MeetingTasks", x => x.id);
                     table.ForeignKey(
-                        name: "FK_MeetingTasks_SubMeetings_SubMeetingid",
-                        column: x => x.SubMeetingid,
-                        principalTable: "SubMeetings",
+                        name: "FK_MeetingTasks_Meetings_Meetingid",
+                        column: x => x.Meetingid,
+                        principalTable: "Meetings",
                         principalColumn: "id");
                 });
 
@@ -150,34 +125,24 @@ namespace LetMeet.Data.Migrations.MainDb
                 column: "UserInfoid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Meetings_studentid",
+                name: "IX_Meetings_SupervisionInfoid",
                 table: "Meetings",
-                column: "studentid");
+                column: "SupervisionInfoid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Meetings_supervisorid",
-                table: "Meetings",
-                column: "supervisorid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MeetingTasks_SubMeetingid",
+                name: "IX_MeetingTasks_Meetingid",
                 table: "MeetingTasks",
-                column: "SubMeetingid");
+                column: "Meetingid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentSupervisors_studentid",
-                table: "StudentSupervisors",
+                name: "IX_SupervisionInfo_studentid",
+                table: "SupervisionInfo",
                 column: "studentid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentSupervisors_supervisorid",
-                table: "StudentSupervisors",
+                name: "IX_SupervisionInfo_supervisorid",
+                table: "SupervisionInfo",
                 column: "supervisorid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SubMeetings_Meetingid",
-                table: "SubMeetings",
-                column: "Meetingid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserInfos_emailAddress",
@@ -201,13 +166,10 @@ namespace LetMeet.Data.Migrations.MainDb
                 name: "MeetingTasks");
 
             migrationBuilder.DropTable(
-                name: "StudentSupervisors");
-
-            migrationBuilder.DropTable(
-                name: "SubMeetings");
-
-            migrationBuilder.DropTable(
                 name: "Meetings");
+
+            migrationBuilder.DropTable(
+                name: "SupervisionInfo");
 
             migrationBuilder.DropTable(
                 name: "UserInfos");

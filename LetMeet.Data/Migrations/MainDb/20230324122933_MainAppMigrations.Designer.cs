@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetMeet.Data.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230220114137_MainAppMigration")]
-    partial class MainAppMigration
+    [Migration("20230324122933_MainAppMigrations")]
+    partial class MainAppMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,74 +32,7 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<string>("description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<float>("remindingTimeHours")
-                        .HasColumnType("real");
-
-                    b.Property<DateTime>("startFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("studentid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("supervisorid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("totalTimeHours")
-                        .HasColumnType("real");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("studentid");
-
-                    b.HasIndex("supervisorid");
-
-                    b.ToTable("Meetings");
-                });
-
-            modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.MeetingTask", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int?>("SubMeetingid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("decription")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("isCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("title")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("SubMeetingid");
-
-                    b.ToTable("MeetingTasks");
-                });
-
-            modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.SubMeeting", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int?>("Meetingid")
+                    b.Property<int?>("SupervisionInfoid")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("date")
@@ -120,9 +53,40 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     b.HasKey("id");
 
+                    b.HasIndex("SupervisionInfoid");
+
+                    b.ToTable("Meetings");
+                });
+
+            modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.MeetingTask", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int?>("Meetingid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("decription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("isCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("id");
+
                     b.HasIndex("Meetingid");
 
-                    b.ToTable("SubMeetings");
+                    b.ToTable("MeetingTasks");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.DayFree", b =>
@@ -155,13 +119,22 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.ToTable("DayFrees");
                 });
 
-            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.StudentSupervisors", b =>
+            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<DateTime>("endDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("extendTimes")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("startDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("studentid")
                         .HasColumnType("uniqueidentifier");
@@ -175,7 +148,7 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     b.HasIndex("supervisorid");
 
-                    b.ToTable("StudentSupervisors");
+                    b.ToTable("SupervisionInfo");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.UserInfo", b =>
@@ -222,35 +195,16 @@ namespace LetMeet.Data.Migrations.MainDb
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.Meeting", b =>
                 {
-                    b.HasOne("LetMeet.Data.Entites.UsersInfo.UserInfo", "student")
-                        .WithMany()
-                        .HasForeignKey("studentid")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("LetMeet.Data.Entites.UsersInfo.UserInfo", "supervisor")
-                        .WithMany()
-                        .HasForeignKey("supervisorid")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("student");
-
-                    b.Navigation("supervisor");
+                    b.HasOne("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", null)
+                        .WithMany("meetings")
+                        .HasForeignKey("SupervisionInfoid")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.MeetingTask", b =>
                 {
-                    b.HasOne("LetMeet.Data.Entites.Meetigs.SubMeeting", null)
-                        .WithMany("tasks")
-                        .HasForeignKey("SubMeetingid")
-                        .OnDelete(DeleteBehavior.NoAction);
-                });
-
-            modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.SubMeeting", b =>
-                {
                     b.HasOne("LetMeet.Data.Entites.Meetigs.Meeting", null)
-                        .WithMany("subMeetings")
+                        .WithMany("tasks")
                         .HasForeignKey("Meetingid")
                         .OnDelete(DeleteBehavior.NoAction);
                 });
@@ -263,7 +217,7 @@ namespace LetMeet.Data.Migrations.MainDb
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
-            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.StudentSupervisors", b =>
+            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", b =>
                 {
                     b.HasOne("LetMeet.Data.Entites.UsersInfo.UserInfo", "student")
                         .WithMany()
@@ -284,12 +238,12 @@ namespace LetMeet.Data.Migrations.MainDb
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.Meeting", b =>
                 {
-                    b.Navigation("subMeetings");
+                    b.Navigation("tasks");
                 });
 
-            modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.SubMeeting", b =>
+            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", b =>
                 {
-                    b.Navigation("tasks");
+                    b.Navigation("meetings");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.UserInfo", b =>
