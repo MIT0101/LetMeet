@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet.Data", "LetMeet.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet.Repositories", "LetMeet.Repositories\LetMeet.Repositories.csproj", "{8A52C836-08EC-4D9B-B58E-10BDB165787B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetMeet.Business", "LetMeet.Business\LetMeet.Business.csproj", "{B50CA460-D29F-4B74-A96E-06EEA3250386}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{8A52C836-08EC-4D9B-B58E-10BDB165787B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A52C836-08EC-4D9B-B58E-10BDB165787B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A52C836-08EC-4D9B-B58E-10BDB165787B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B50CA460-D29F-4B74-A96E-06EEA3250386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B50CA460-D29F-4B74-A96E-06EEA3250386}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B50CA460-D29F-4B74-A96E-06EEA3250386}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B50CA460-D29F-4B74-A96E-06EEA3250386}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

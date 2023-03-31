@@ -9,6 +9,7 @@
       "LetMeet/1.0.0": {
         "dependencies": {
           "EntityFrameworkCore.NCache": "5.3.0",
+          "LetMeet.Business": "1.0.0",
           "LetMeet.Data": "1.0.0",
           "LetMeet.Repositories": "1.0.0",
           "MailKit": "3.5.0",
@@ -1870,6 +1871,14 @@
           }
         }
       },
+      "OneOf/3.0.243": {
+        "runtime": {
+          "lib/netstandard2.0/OneOf.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Oracle.ManagedDataAccess.Core/2.19.100": {
         "runtime": {
           "lib/netstandard2.0/Oracle.ManagedDataAccess.dll": {
@@ -3479,6 +3488,16 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "LetMeet.Business/1.0.0": {
+        "dependencies": {
+          "LetMeet.Data": "1.0.0",
+          "LetMeet.Repositories": "1.0.0",
+          "OneOf": "3.0.243"
+        },
+        "runtime": {
+          "LetMeet.Business.dll": {}
+        }
+      },
       "LetMeet.Data/1.0.0": {
         "dependencies": {
           "EntityFrameworkCore.NCache": "5.3.0",
@@ -4273,6 +4292,13 @@
       "sha512": "sha512-T/igBDLXCd+pH3YTWgGVNvYSOwbwaT30NyyM9ONjvlHlmaUjKBJpr9kH0AeL+Ado4EJsBhU3qxXVc6lyrpRcMw==",
       "path": "nuget.versioning/6.3.1",
       "hashPath": "nuget.versioning.6.3.1.nupkg.sha512"
+    },
+    "OneOf/3.0.243": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7zbyWxAbh0FZTVTpfqd8lIo9ejgoxPuadZgYTZLCq8aCtLQ5biQZ8gv61hpCbi/XuII0JlqfOTfocvv4wu8Xdw==",
+      "path": "oneof/3.0.243",
+      "hashPath": "oneof.3.0.243.nupkg.sha512"
     },
     "Oracle.ManagedDataAccess.Core/2.19.100": {
       "type": "package",
@@ -5351,6 +5377,11 @@
       "sha512": "sha512-MYoTCP7EZ98RrANESW05J5ZwskKDoN0AuZ06ZflnowE50LTpbR5yRg3tHckTVm5j/m47stuGgCrCHWePyHS70Q==",
       "path": "system.xml.xmlserializer/4.3.0",
       "hashPath": "system.xml.xmlserializer.4.3.0.nupkg.sha512"
+    },
+    "LetMeet.Business/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "LetMeet.Data/1.0.0": {
       "type": "project",

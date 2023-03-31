@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LetMeet.Business\LetMeet.Business.csproj" />
     <ProjectReference Include="..\LetMeet.Data\LetMeet.Data.csproj" />
     <ProjectReference Include="..\LetMeet.Repositories\LetMeet.Repositories.csproj" />
   </ItemGroup>

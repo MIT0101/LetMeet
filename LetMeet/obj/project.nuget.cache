@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "yRFmuTmQI/uQsNXQ/FQ9hcb+hOpcWn0hwSusZ4ubTrPKobEdWU7taiKlyZKJ2ZGFrI/oj9MWdDQ/8OPqRcSRMQ==",
+  "dgSpecHash": "cxx4mAxkI2cEOSsLMhoOTPmxD84IZQhtew3CCdI7UoOxQvoE1fG86DQhq/xmaXU8JGfzcpe3XWocs5frOyf/cg==",
   "success": true,
   "projectFilePath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\LetMeet.csproj",
   "expectedPackageFiles": [
@@ -113,6 +113,7 @@
     "C:\\Users\\M_IT_01\\.nuget\\packages\\nuget.projectmodel\\6.3.1\\nuget.projectmodel.6.3.1.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\nuget.protocol\\6.3.1\\nuget.protocol.6.3.1.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\nuget.versioning\\6.3.1\\nuget.versioning.6.3.1.nupkg.sha512",
+    "C:\\Users\\M_IT_01\\.nuget\\packages\\oneof\\3.0.243\\oneof.3.0.243.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\oracle.manageddataaccess.core\\2.19.100\\oracle.manageddataaccess.core.2.19.100.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\portable.bouncycastle\\1.9.0\\portable.bouncycastle.1.9.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\quartz\\3.0.7\\quartz.3.0.7.nupkg.sha512",

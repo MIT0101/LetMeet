@@ -47,7 +47,7 @@ namespace LetMeet.Repositories.Infrastructure
 
         Task<RepositoryResult<TEntity>> UpdateAsync(TKey id,TEntity entity);
 
-        Task<RepositoryResult<TEntity>> DeleteAsync(TKey id);
+        Task<RepositoryResult<TEntity>> RemoveAsync(TKey id);
 
         Task<RepositoryValidationResult> IsValid(TEntity entity);
         Task<RepositoryValidationResult> IsValid(IEnumerable<TEntity> entities);

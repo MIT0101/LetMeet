@@ -363,3 +363,6 @@ C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\refint\LetMeet.dl
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\LetMeet.pdb
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\LetMeet.genruntimeconfig.cache
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\ref\LetMeet.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\OneOf.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\LetMeet.Business.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\LetMeet.Business.pdb

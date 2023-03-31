@@ -207,14 +207,10 @@ namespace LetMeet.Repositories.Repository
             return null;
         }
 
-
-
-
-
-
-
-
-
+        public Task<RepositoryResult<SupervisionInfo>> UpdateSupervison(UserInfo supervisor, UserInfo student)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using LetMeet.Data;
+﻿using Alachisoft.NCache.MapReduce;
+using LetMeet.Data;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -98,15 +99,48 @@ namespace LetMeet.Repositories.Repository
             }
         }
 
-        public virtual Task<RepositoryResult<TEntity>> DeleteAsync(TKey id)
+        public async virtual Task<RepositoryResult<TEntity>> RemoveAsync(TKey id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var exsistItem = await _entities.FindAsync(id);
+                if (exsistItem is null)
+                {
+                    return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound, null);
+                }
+
+                _entities.Remove(exsistItem);
+
+                await _mainDb.SaveChangesAsync();
+
+                return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Seccess, exsistItem);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<TEntity>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
+
         }
 
-        public virtual Task<RepositoryResult<TEntity>> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null)
+        public async virtual Task<RepositoryResult<TEntity>> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null)
         {
-            nullFilterSolver(ref filter);
-            throw new NotImplementedException();
+            try
+            {
+                nullFilterSolver(ref filter);
+                var exsistItem = await _entities.FirstOrDefaultAsync(filter);
+                if (exsistItem is null)
+                {
+                    return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound, null);
+                }
+
+                return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Seccess, exsistItem);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<TEntity>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
         }
 
         public virtual async Task<RepositoryResult<TEntity>> GetByIdAsync(TKey id)
@@ -121,10 +155,10 @@ namespace LetMeet.Repositories.Repository
 
                 }
 
-               TEntity result= _entities.Find(id);
+                TEntity result = _entities.Find(id);
 
-                if (result==null) {
-                    return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound,validationErrors:null);
+                if (result == null) {
+                    return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound, validationErrors: null);
                 }
 
                 return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Seccess, result);
@@ -182,10 +216,38 @@ namespace LetMeet.Repositories.Repository
         }
 
 
-        public  virtual Task<RepositoryResult<TEntity>> UpdateAsync(TKey id, TEntity entity)
+        public  virtual async Task<RepositoryResult<TEntity>> UpdateAsync(TKey id, TEntity entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var validatoinResult = RepositoryValidationResult.DataAnnotationsValidation(entity);
+                if (!validatoinResult.IsValid)
+                {
+                    return RepositoryResult<TEntity>.FailureValidationResult(validatoinResult.ValidationErrors);
+                }
+
+                var foudnEnity = _entities.Find(id);
+
+                if (foudnEnity is null) {
+                    //not found
+                    return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound, null);
+
+                }
+                _entities.Update(entity);
+
+                await _mainDb.SaveChangesAsync();
+
+                return RepositoryResult<TEntity>.SuccessResult(state: ResultState.Seccess, entity);
+
+
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<TEntity>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
         }
+    
 
         public virtual Expression<Func<TEntity, bool>> DefaultFilter()
         {

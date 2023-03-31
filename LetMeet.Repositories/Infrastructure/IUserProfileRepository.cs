@@ -23,6 +23,10 @@ namespace LetMeet.Repositories.Infrastructure
 
         Task<(ResultState state, Guid? value)> GetIdentityIdAsync(Guid userInfoId);
 
+        Task<RepositoryResult<SupervisionInfo>> UpdateSupervison(UserInfo supervisor,UserInfo student);
+
+
+
 
     }
 }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "LJtJfch1S0YEZNdquT7okrLt36VXRSgxdRyUeLknEk8=",
+  "Hash": "vc4fWzKhmwJ+nfj+2XSiSbdD9wc43NxwW9EGXcn3hvc=",
   "Source": "LetMeet",
   "BasePath": "_content/LetMeet",
   "Mode": "Default",
@@ -1564,12 +1564,12 @@
       "OriginalItemSpec": "wwwroot\\UsersImages\\749faea72eb5454952d408db21775786.jpeg"
     },
     {
-      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_4.jpeg",
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_3.jpeg",
       "SourceId": "LetMeet",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
       "BasePath": "_content/LetMeet",
-      "RelativePath": "UsersImages/855fba7180aa4bb419ec08db2c63c2b7_4.jpeg",
+      "RelativePath": "UsersImages/855fba7180aa4bb419ec08db2c63c2b7_3.jpeg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -1578,7 +1578,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_4.jpeg"
+      "OriginalItemSpec": "wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_3.jpeg"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\profile_empty_img.png",

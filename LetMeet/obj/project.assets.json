@@ -2554,6 +2554,15 @@
           }
         }
       },
+      "OneOf/3.0.243": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/OneOf.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/OneOf.dll": {}
+        }
+      },
       "Oracle.ManagedDataAccess.Core/2.19.100": {
         "type": "package",
         "compile": {
@@ -5326,6 +5335,21 @@
         },
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "LetMeet.Business/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "LetMeet.Data": "1.0.0",
+          "LetMeet.Repositories": "1.0.0",
+          "OneOf": "3.0.243"
+        },
+        "compile": {
+          "bin/placeholder/LetMeet.Business.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LetMeet.Business.dll": {}
         }
       },
       "LetMeet.Data/1.0.0": {
@@ -8418,6 +8442,21 @@
         "lib/netstandard2.0/NuGet.Versioning.xml",
         "nuget.versioning.6.3.1.nupkg.sha512",
         "nuget.versioning.nuspec"
+      ]
+    },
+    "OneOf/3.0.243": {
+      "sha512": "7zbyWxAbh0FZTVTpfqd8lIo9ejgoxPuadZgYTZLCq8aCtLQ5biQZ8gv61hpCbi/XuII0JlqfOTfocvv4wu8Xdw==",
+      "type": "package",
+      "path": "oneof/3.0.243",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35/OneOf.dll",
+        "lib/net45/OneOf.dll",
+        "lib/netstandard1.3/OneOf.dll",
+        "lib/netstandard2.0/OneOf.dll",
+        "oneof.3.0.243.nupkg.sha512",
+        "oneof.nuspec"
       ]
     },
     "Oracle.ManagedDataAccess.Core/2.19.100": {
@@ -14490,6 +14529,11 @@
         "system.xml.xmlserializer.nuspec"
       ]
     },
+    "LetMeet.Business/1.0.0": {
+      "type": "project",
+      "path": "../LetMeet.Business/LetMeet.Business.csproj",
+      "msbuildProject": "../LetMeet.Business/LetMeet.Business.csproj"
+    },
     "LetMeet.Data/1.0.0": {
       "type": "project",
       "path": "../LetMeet.Data/LetMeet.Data.csproj",
@@ -14504,6 +14548,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "EntityFrameworkCore.NCache >= 5.3.0",
+      "LetMeet.Business >= 1.0.0",
       "LetMeet.Data >= 1.0.0",
       "LetMeet.Repositories >= 1.0.0",
       "MailKit >= 3.5.0",
@@ -14547,6 +14592,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
+            "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet.Business\\LetMeet.Business.csproj": {
+              "projectPath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet.Business\\LetMeet.Business.csproj"
+            },
             "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet.Data\\LetMeet.Data.csproj": {
               "projectPath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet.Data\\LetMeet.Data.csproj"
             },
