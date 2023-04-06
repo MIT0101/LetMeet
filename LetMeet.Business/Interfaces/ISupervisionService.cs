@@ -7,15 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Business.Results;
+using LetMeet.Data.Dtos.Supervision;
 
 namespace LetMeet.Business.Interfaces;
 
 public interface ISupervisionService
 {
     Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> AddStudentToSupervisor(Guid supervisorId, Guid studentId,
-            DateTime startDate,DateTime endDate);
+            DateTime startDate, DateTime endDate);
     Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> RemoveStudentFromSupervisor(Guid supervisorId, Guid studentId);
     Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> ExtendStudentSupervisionExpire(Guid studentId);
 
+    Task<List<SupervisorSelectDto>> GetAllAvailableSupervisorsAsync();
 }
 

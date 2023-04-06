@@ -15,9 +15,11 @@
 
         List<string> roles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
         List<string> stages = ViewData[ViewStringHelper.UserStages] as List<string> ?? new List<string>();
+        List<SupervisorSelectDto> availableSupervisors = ViewData[ViewStringHelper.AvailableSupervisors] as List<SupervisorSelectDto> ?? new List<SupervisorSelectDto>();
 
         List<SelectListItem> roleOptions = roles.Select(r => new SelectListItem { Text = r, Value = r }).ToList();
         List<SelectListItem> stageOptions = stages.Select(s => new SelectListItem { Text = s, Value = s }).ToList();
+        List<SelectListItem> supervisorOptions = availableSupervisors.Select(s => new SelectListItem { Text = s.name, Value = s.id.ToString() }).ToList();
 
 
         bool isAdmin = Context.User.IsInRole(UserRole.Admin.ToString());
@@ -27,13 +29,12 @@
 
         <partial name="Partials/ErrorsAndMessageNotificationPartial" />
 
-
-
-
-        if (Model is not null)
+        if (Model is null)
         {
-
-
+            <h2 class="text-center text-danger ">No User Found</h2>
+        }
+        else
+        {
             <div class="row">
                 <div class="col-md-7">
                     <div class="card">
@@ -285,7 +286,11 @@
 
             <partial name="_ValidationScriptsPartial" />
         }
+
     }
+
+    <select class="form-control" asp-items="@supervisorOptions"></select>
+
 </div>
 @{
     ValueTuple<string, string> formInfo = new("editProfileForm", "editSubmitBtn");

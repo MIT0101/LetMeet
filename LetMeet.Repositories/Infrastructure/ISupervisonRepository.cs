@@ -1,4 +1,5 @@
-﻿using LetMeet.Data.Entites.UsersInfo;
+﻿using LetMeet.Data.Dtos.Supervision;
+using LetMeet.Data.Entites.UsersInfo;
 
 namespace LetMeet.Repositories.Infrastructure
 {
@@ -14,7 +15,10 @@ namespace LetMeet.Repositories.Infrastructure
 
         Task<(ResultState state, int value)> GetCurrentSupervisorStudents(UserInfo supervisor);
 
-        
+        Task<RepositoryResult<List<SupervisorSelectDto>>> GetAvailableSupervisorNamesAsync(int maxStudentsPerSupervisor);
+
+
+
 
 
     }

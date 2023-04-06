@@ -1,5 +1,6 @@
 ﻿using LetMeet.Business.Interfaces;
 using LetMeet.Business.Results;
+using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
 using LetMeet.Repositories.Infrastructure;
@@ -104,6 +105,11 @@ namespace LetMeet.Business.Implemintation
                 return new List<ServiceMassage>() { new ServiceMassage($"Can Not Extend Supervision With {_options.NumberOfMonthsPerExtend} Months") };
             }
             return supervision;
+        }
+
+        public async Task<List<SupervisorSelectDto>> GetAllAvailableSupervisorsAsync()
+        {
+            return (await _supervionsRepo.GetAvailableSupervisorNamesAsync(_options.MaxStudentsPerSupervisor)).Result;
         }
 
         public async Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> RemoveStudentFromSupervisor(Guid supervisorId, Guid studentId)

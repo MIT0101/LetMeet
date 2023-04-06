@@ -9,6 +9,9 @@
         public static string UserRoles = "userRoles";
         public static string UserStages = "userStages";
 
+        public static string AvailableSupervisors = "availableSupervisors";
+
+
 
     }
 }

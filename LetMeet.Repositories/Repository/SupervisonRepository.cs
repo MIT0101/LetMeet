@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using LetMeet.Data.Entites.UsersInfo;
 using System.ComponentModel.DataAnnotations;
+using LetMeet.Data.Dtos.Supervision;
+using LetMeet.Data.Entites.Identity;
 
 namespace LetMeet.Repositories.Repository
 {
@@ -39,9 +41,29 @@ namespace LetMeet.Repositories.Repository
          return _supervionGRepo.CreateAsync(supervisionInfo);
         }
 
+        public async Task<RepositoryResult<List<SupervisorSelectDto>>> GetAvailableSupervisorNamesAsync(int maxStudentsPerSupervisor)
+        {
+            try
+            {
+                //get list of UserInfo entity where useres are in Supervisor role and user in SupervisionInfo (endDate bigger or equal _appTimeProvider.Now and) count is 6 or higher 
+         
+                var res = await _mainDb.UserInfos.Where(u => u.userRole == UserRole.Supervisor &&
+                _mainDb.SupervisionInfo.Count(s => s.supervisor==u&&s.endDate >= _appTimeProvider.Now) < maxStudentsPerSupervisor).
+                Select(u => new SupervisorSelectDto(u.id, u.fullName)).ToListAsync();
+
+                return RepositoryResult<List<SupervisorSelectDto>>.SuccessResult(ResultState.Seccess,res);
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<List<SupervisorSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+
+            }
+        }
+
         public async Task<(ResultState state, int value)> GetCurrentSupervisorStudents(UserInfo supervisor)
         {
-            return await _supervionGRepo.CountQueryAsync(s=>s.endDate>=_appTimeProvider.Now);
+            return await _supervionGRepo.CountQueryAsync(s=>s.endDate>=_appTimeProvider.Now&&s.supervisor==supervisor);
         }
 
         public async Task<RepositoryResult<SupervisionInfo>> GetSupervisionAsync(UserInfo supervisor, UserInfo student)
