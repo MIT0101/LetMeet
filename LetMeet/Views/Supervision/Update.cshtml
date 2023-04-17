@@ -1,0 +1,311 @@
+﻿@{
+    SupervisorSelectDto? currentSupervisor = ViewData[ViewStringHelper.Supervisor] as SupervisorSelectDto;
+
+
+    List<StudentSelectDto> unsupervisedStudents = ViewData[ViewStringHelper.UnSupervisedStudents] as List<StudentSelectDto> ?? new List<StudentSelectDto>();
+    List<SelectListItem> studentsOptions = unsupervisedStudents.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
+
+
+    List<StudentDatedSelectDto> supervisorStudents = ViewData[ViewStringHelper.SupervisorStudents] as List<StudentDatedSelectDto> ?? new List<StudentDatedSelectDto>();
+    string supervisorName = currentSupervisor?.FullName ?? "No Supervisor";
+
+
+}
+@inject AppTimeProvider TimeProvider;
+
+@if (currentSupervisor is null)
+{
+    <h1 class="text-center text-danger">Supervisor Not Found</h1>
+
+    return;
+}
+
+
+
+<partial name="Partials/ErrorsAndMessageNotificationPartial" />
+
+<script defer>
+    //for disable button and make it saving
+    function DisplayprogressMessage(formId, ctl, msg) {
+        event.preventDefault();
+        $('#' + formId).validate();
+        if ($('#' + formId).valid()) {
+            $(ctl).prop("disabled", true).text(msg);
+            //submit the form.
+            setTimeout(function () {
+                $('#' + formId).submit();
+
+            }, 1);
+
+            return true;
+        }
+    }
+
+    //set defult values for datetime piccker as current system date
+    $(document).ready(function () {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName("startDate")[0].setAttribute('min', today);
+        document.getElementsByName("endDate")[0].setAttribute('min', today);
+
+        //set defult values for datetime piccker as current system date
+        document.getElementsByName("startDate")[0].value = today;
+        //set enddate input value is one year after start date
+        var endDate = new Date();
+        endDate.setFullYear(endDate.getFullYear() + 1);
+        document.getElementsByName("endDate")[0].value = endDate.toISOString().split('T')[0];;
+
+
+
+
+    });
+
+
+
+
+</script>
+
+<!-- Modal Supervis Student-->
+<div class="modal fade" id="supervisStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Supervis Student</h5>
+
+                <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body pb-0">
+                @*contenet start *@
+                <form id="supervisStudentFrm" method="post" asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="AddStudnetToSupervisor" asp-route-id="@Context.Request.RouteValues["id"]">
+
+                    <!-- input with datetimepicker -->
+
+                    <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
+                        <tr>
+
+                            <td>
+                                <label class="label-control" for="studentId">Student Name</label>
+
+                            </td>
+                            <td>
+                                <select data-val="true" data-val-required="Student Is Required" name="studentId" required id="unsupervisedStudents" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round" asp-items="@studentsOptions"></select>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label class="label-control" for="startDate">Start Date</label>
+
+                            </td>
+
+                            <td>
+                                <input class="w-100" data-val="true" data-val-required="Start Date Is Required" type="date" name="startDate" />
+
+                            </td>
+
+
+                        </tr>
+
+
+                        <tr>
+                            <td>
+                                <label class="label-control" for="endDate">End Date</label>
+
+                            </td>
+
+                            <td>
+                                <input class="w-100" data-val="true" data-val-required="End Date Is Required" type="date" name="endDate" />
+
+                            </td>
+
+
+                        </tr>
+
+                    </table>
+
+                </form>
+
+
+                @*eontent end*@
+            </div>
+            <div class="modal-footer">
+                <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="submitBtn" type="submit" onclick="return DisplayprogressMessage('supervisStudentFrm',this, 'Saving...');" class="btn btn-rose">Supervis Student</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="text-center text-capitalize">Supervisor : @currentSupervisor?.FullName</h3>
+
+
+
+
+<div class="row">
+    @*current Supervised Student*@
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-rose">
+                <h4 class="card-title">Supervisor Students</h4>
+                <p class="category">All Students </p>
+            </div>
+            <div class="card-body">
+                @*add user button*@
+                <button rel="tooltip" title="" data-original-title="Add Student" type="button" class="btn btn-rose d-block ml-auto" data-toggle="modal" data-target="#supervisStudentModal">
+                   Add Student
+                
+                </button>
+                @if (supervisorStudents.Count > 0)
+                {
+
+                    <div class="table-responsive table-hover">
+                        <table class="table">
+                            <thead class=" text-primary">
+                                <tr>
+                                    <th>
+                                        Id
+                                    </th>
+                                    <th>
+                                        Full Name
+
+                                    </th>
+                                    <td>
+                                        State
+                                    </td>
+                                    <th>
+                                        Expire Date
+
+                                    </th>
+                                    <th>
+
+                                    </th>
+
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var student in supervisorStudents)
+                                {
+
+                                    <tr>
+                                        <td>
+                                            @{
+                                                string idStr = student.id.ToString().Substring(0, 5);
+                                            }
+                                            @Html.DisplayFor(modelItem => idStr)
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Account" asp-action="Details" asp-route-id="@student.id">
+                                                @Html.DisplayFor(modelItem => student.FullName)
+
+
+                                            </a>
+                                        </td>
+
+                                        <td>
+                                            @if (student.endDate > TimeProvider.Now)
+                                            {
+                                                <span class="badge badge-success">Active</span>
+
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger">Inactive</span>
+
+                                            }
+
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => student.endDate)
+                                        </td>
+
+
+                                        <td class="td-actions text-right">
+
+                                            <div class="d-flex flex-row justify-content-end">
+
+
+                                                <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="RemoveStudnetFromSupervisor" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
+
+                                                    <input name="studentId" hidden value="@student.id">
+                                                    <input name="supervisorId" hidden value="@currentSupervisor?.id">
+
+
+
+                                                    <button rel="tooltip" title="" data-original-title="Unsupervis" type="submit" onclick="return confirm('Are you sure you want to Unsupervis @student.FullName?');" class="btn btn-danger btn-link btn-sm">
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+
+                                        </td>
+                                    </tr>
+
+
+                                }
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                }
+                else
+                {
+                    <h3 class="text-center text-info fw-bold">No Students Yet</h3>
+                }
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+@*
+<script>
+
+    const selectElement = document.getElementById("availablesSelect");
+    const options = selectElement.options;
+    let currentSId = undefined;
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].value == "@currentSupervisor?.id") {
+            options[i].selected = true;
+            currentSId = "@currentSupervisor?.id";
+            break;
+        }
+    }
+
+    const updateSupervisorBtn = document.getElementById("updateSupervisorBtn");
+
+    selectElement.addEventListener("change", function () {
+
+        let selectedOptionValue = selectElement.options[selectElement.selectedIndex].value;
+
+        if (currentSId != undefined && currentSId != selectedOptionValue) {
+            updateSupervisorBtn.disabled = false;
+        } else if (currentSId == undefined) {
+            updateSupervisorBtn.disabled = false;
+        }else{
+            updateSupervisorBtn.disabled = true;
+
+        }
+
+    });
+
+</script>
+*@
+<partial name="_ValidationScriptsPartial" />

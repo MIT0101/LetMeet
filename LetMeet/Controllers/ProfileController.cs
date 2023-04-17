@@ -24,15 +24,11 @@ namespace LetMeet.Controllers
 
         private readonly IWebHostEnvironment _env;
 
-
-
         //private readonly IGenericRepository<UserInfo, Guid> _userRepository;
         private readonly IUserProfileRepository _userProfileRepository;
 
         //services
         private readonly ISupervisionService _supervionService;
-
-
 
         public ProfileController(IHttpContextAccessor contextAccessor, IErrorMessagesRepository errorMessages, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, IWebHostEnvironment env, ISupervisionService supervionService)
         {
@@ -43,57 +39,7 @@ namespace LetMeet.Controllers
             _env = env;
             _supervionService = supervionService;
         }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemoveSupervisorFromStudent(Guid id,SupervisionDto removeSupervision)
-        {
-            List<string> errors = new();
-            if (!ModelState.IsValid)
-            {
-                errors.AddRange(ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
-                controllerName: RouteNameHelper.ProfileControllerName, new { id = removeSupervision.studentId, errors });
-            }
-            List<string> messages = new();
-            OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>> serviceResult = 
-                await _supervionService.RemoveStudentFromSupervisor(studentId: removeSupervision.studentId
-                , supervisorId: removeSupervision.supervisorId);
-
-            serviceResult.Switch(user => messages.Add("Supervisor Added Sucessfully")
-               , validationErrors => errors.AddRange(validationErrors?.Select(ve => ve?.ErrorMessage))
-               , servicemessages => errors.AddRange(servicemessages.Select(sm => sm.Message))
-               );
-
-            return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
-            controllerName: RouteNameHelper.ProfileControllerName, new { id = removeSupervision.studentId, errors, messages });
-        }
-
-        // to add student to supervisor
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddSupervisorToStudent(Guid id,AddSupervisorDto addSupervion)
-        {
-            List<string> errors = new();
-            if (!ModelState.IsValid)
-            {
-                errors.AddRange(ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
-                controllerName: RouteNameHelper.ProfileControllerName, new { id = addSupervion.studentId, errors });
-            }
-            List<string> messages = new();
-            OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>> serviceResult = await _supervionService.AddStudentToSupervisor(studentId: addSupervion.studentId
-                , supervisorId: addSupervion.supervisorId, startDate: addSupervion.startDate, endDate: addSupervion.endDate);
-
-            serviceResult.Switch(user => messages.Add("Supervisor Added Sucessfully")
-               , validationErrors => errors.AddRange(validationErrors?.Select(ve => ve?.ErrorMessage))
-               , servicemessages => errors.AddRange(servicemessages.Select(sm => sm.Message))
-               );
-
-            return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
-            controllerName: RouteNameHelper.ProfileControllerName, new { id = addSupervion.studentId, errors, messages });
-        }
-
+       
 
         [HttpPost]
         [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]

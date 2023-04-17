@@ -66,6 +66,25 @@ namespace LetMeet.Repositories.Repository
             return await _supervionGRepo.CountQueryAsync(s=>s.endDate>=_appTimeProvider.Now&&s.supervisor==supervisor);
         }
 
+        public async Task<RepositoryResult<SupervisorSelectDto>> GetStudentSupervisor(Guid studentInfoId)
+        {
+            try
+            {
+               var result=await _supervisionInfo.Where(s => s.student.id == studentInfoId).Select(s=>new SupervisorSelectDto(s.supervisor.id,s.supervisor.fullName)).SingleOrDefaultAsync();
+                if (result is null)
+                {
+                    return RepositoryResult<SupervisorSelectDto>.FailureResult(ResultState.NotFound, null);
+                }
+                return RepositoryResult<SupervisorSelectDto>.SuccessResult(ResultState.Seccess, result);
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<SupervisorSelectDto>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+
+
+            }
+        }
+
         public async Task<RepositoryResult<SupervisionInfo>> GetSupervisionAsync(UserInfo supervisor, UserInfo student)
         {
             try
@@ -97,6 +116,41 @@ namespace LetMeet.Repositories.Repository
         public Task<RepositoryResult<SupervisionInfo>> GetSupervisionAsync(Guid studentId)
         {          
             return _supervionGRepo.FirstOrDefaultAsync(s => s.student.id == studentId);
+        }
+
+        public async Task<RepositoryResult<IEnumerable<StudentDatedSelectDto>>> GetSupervisorStudents(Guid supervisorId)
+        {
+            try
+            {
+                var res = await  _mainDb.SupervisionInfo.Where(s => s.supervisor.id == supervisorId).
+                Select(u => new StudentDatedSelectDto(u.student.id, u.student.fullName,u.endDate)).ToListAsync();
+
+                return RepositoryResult<IEnumerable<StudentDatedSelectDto>>.SuccessResult(ResultState.Seccess, res);
+            
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<IEnumerable<StudentDatedSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<RepositoryResult<IEnumerable<StudentSelectDto>>> GetUnSupervisedStudents()
+        {
+            try
+            {
+                var res = await _mainDb.UserInfos.Where(u => u.userRole == UserRole.Student &&
+                               _mainDb.SupervisionInfo.Count(s =>s.student==u&&s.endDate>=_appTimeProvider.Now) == 0).
+                Select(u => new StudentSelectDto(u.id, u.fullName)).ToListAsync();
+
+                return RepositoryResult<IEnumerable<StudentSelectDto>>.SuccessResult(ResultState.Seccess, res);
+
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<IEnumerable<StudentSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
         }
 
         public Task<RepositoryResult<SupervisionInfo>> RemoveAsync(SupervisionInfo supervisionInfo)

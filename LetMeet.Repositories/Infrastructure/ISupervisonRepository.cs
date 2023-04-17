@@ -17,6 +17,14 @@ namespace LetMeet.Repositories.Infrastructure
 
         Task<RepositoryResult<List<SupervisorSelectDto>>> GetAvailableSupervisorNamesAsync(int maxStudentsPerSupervisor);
 
+        Task<RepositoryResult<SupervisorSelectDto>> GetStudentSupervisor(Guid studentInfoId);
+
+        Task<RepositoryResult<IEnumerable<StudentDatedSelectDto>>> GetSupervisorStudents(Guid supervisorId);
+
+
+        Task<RepositoryResult<IEnumerable<StudentSelectDto>>> GetUnSupervisedStudents();
+
+
 
 
 

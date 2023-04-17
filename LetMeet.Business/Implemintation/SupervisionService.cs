@@ -47,7 +47,7 @@ namespace LetMeet.Business.Implemintation
             }
             int CurrentSupervisorStudents = (await _supervionsRepo.GetCurrentSupervisorStudents(supervisor)).value;
             if (CurrentSupervisorStudents==-1) {
-                return new List<ServiceMassage>() { new ServiceMassage($"Can Not Can not Supervisor Student") };
+                return new List<ServiceMassage>() { new ServiceMassage($"Can not Supervisor Student") };
 
             }
             if (CurrentSupervisorStudents >= _options.MaxStudentsPerSupervisor)
@@ -112,6 +112,25 @@ namespace LetMeet.Business.Implemintation
             return (await _supervionsRepo.GetAvailableSupervisorNamesAsync(_options.MaxStudentsPerSupervisor)).Result;
         }
 
+        public async Task<IEnumerable<StudentDatedSelectDto>> GetAllSupervisorStudents(Guid supervisorId)
+        {
+            return (await _supervionsRepo.GetSupervisorStudents(supervisorId)).Result ?? new List<StudentDatedSelectDto>();
+        }
+
+        public async Task<SupervisorSelectDto?> GetSupervisor(Guid supervisorInfoId)
+        {
+            var supervisor= (await _userProfileRepo.GetUserByIdAsync(supervisorInfoId)).Result;
+            if (supervisor is null) {
+                return null;
+            }
+            return new SupervisorSelectDto(supervisor.id,supervisor.fullName);
+        }
+
+        public async Task<IEnumerable<StudentSelectDto>> GetUnSupervisedStudents()
+        {
+            return (await _supervionsRepo.GetUnSupervisedStudents()).Result ?? new List<StudentSelectDto>();
+        }
+
         public async Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> RemoveStudentFromSupervisor(Guid supervisorId, Guid studentId)
         {
             var studentTask = _userProfileRepo.GetUserByIdAsync(studentId);
@@ -141,7 +160,8 @@ namespace LetMeet.Business.Implemintation
                     return new List<ServiceMassage>() { new ServiceMassage($"Can Not Remove Supervision of {student.fullName} with {supervisor.fullName} Supervisor") };
 
                 }
-                return new List<ServiceMassage>() { new ServiceMassage($"Supervision of {student.fullName} with {supervisor.fullName} Supervisor Removed Succefully") };
+                // must return the removed one
+                return removeResult.Result;
             }
             return new List<ServiceMassage>() { new ServiceMassage($"Can Not Remove Supervision of {student.fullName} with {supervisor.fullName} Supervisor") };
         }

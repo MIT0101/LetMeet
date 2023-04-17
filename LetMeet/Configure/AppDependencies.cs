@@ -61,7 +61,6 @@ namespace LetMeet.Configure
             {
                 string cacheId = "myClusteredCache";
                 NCacheConfiguration.Configure(cacheId, DependencyType.SqlServer);
-                NCacheConfiguration.ConfigureLogger();
 
                 options.UseSqlServer(configuration.GetConnectionString("MainDataConnection"));
                 //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

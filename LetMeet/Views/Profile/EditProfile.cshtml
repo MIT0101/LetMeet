@@ -19,7 +19,7 @@
 
         List<SelectListItem> roleOptions = roles.Select(r => new SelectListItem { Text = r, Value = r }).ToList();
         List<SelectListItem> stageOptions = stages.Select(s => new SelectListItem { Text = s, Value = s }).ToList();
-        List<SelectListItem> supervisorOptions = availableSupervisors.Select(s => new SelectListItem { Text = s.name, Value = s.id.ToString() }).ToList();
+        List<SelectListItem> supervisorOptions = availableSupervisors.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
 
 
         bool isAdmin = Context.User.IsInRole(UserRole.Admin.ToString());
@@ -206,7 +206,7 @@
                                 <form id="profileImageForm" method="post" enctype="multipart/form-data" asp-action="UpdateProfileImage" asp-controller="@RouteNameHelper.AccountControllerName" asp-route-id="@Context.Request.RouteValues["id"]">
 
                                     <input id="picInput" style=" display: none;" name="picInput" class='pis' type="file" accept="Image/*"
-                                           data-val="true data-val-required="Old Password Is Required"
+                                           data-val="true" data-val-required="Old Password Is Required"
                                            required>
 
                                     <span class="text-danger field-validation-valid" data-valmsg-for="picInput" data-valmsg-replace="true"></span>

@@ -9,8 +9,13 @@ using System.Xml.Linq;
 
 namespace LetMeet.Data.Dtos.Supervision
 {
-    public class AddSupervisorDto : SupervisionDto
+    public class AddStudentToSupervisorDto
     {
+
+        [Display(Name = "Student")]
+        [Required(ErrorMessage = "Student Is Required")]
+        public Guid studentId { get; set; }
+
         [Display(Name = "Start Date")]
         [Required(ErrorMessage = "Start Date Is Required")]
         public DateTime startDate { get; set; }
@@ -18,17 +23,6 @@ namespace LetMeet.Data.Dtos.Supervision
         [Display(Name = "End Date")]
         [Required(ErrorMessage = "Start Date Is Required")]
         public DateTime endDate { get; set; }
-    }
-
-    public class SupervisionDto
-    {
-        [Display(Name = "Supervisor")]
-        [Required(ErrorMessage = "Supervisor Is Required")]
-        public Guid supervisorId { get; set; }
-
-        [Display(Name = "Student")]
-        [Required(ErrorMessage = "Student Is Required")]
-        public Guid studentId { get; set; }
 
     }
 }

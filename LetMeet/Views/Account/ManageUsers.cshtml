@@ -167,7 +167,7 @@
     <div class="col-md-12">
 
         @*add user button*@
-        <button type="button" class="btn btn-primary d-block ml-auto" data-toggle="modal" data-target="#createUserModal">
+        <button rel="tooltip" title="" data-original-title="Create User" type="button" class="btn btn-primary d-block ml-auto" data-toggle="modal" data-target="#createUserModal">
             <span class="material-icons ">
                 person_add
             </span>
@@ -223,19 +223,24 @@
 
                                         <div class="d-flex flex-row justify-content-end">
 
+                                        @if(item.userRole == UserRole.Supervisor){
+                                                <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-dark m-1" asp-controller="Supervision" asp-action="Update" asp-route-id="@item.id">
+                                                <i class="material-icons">settings_ethernet</i>
+                                            </a>
+                                        }
 
-                                            <a class="btn btn-info m-1" asp-controller="Account" asp-action="Details" asp-route-id="@item.id">
+                                            <a rel="tooltip" title="" data-original-title="Show Profile" class="btn btn-info m-1" asp-controller="Account" asp-action="Details" asp-route-id="@item.id">
                                                 <i class="material-icons">person</i>
                                             </a>
 
-                                            <a class="btn btn-success m-1" asp-controller="Profile" asp-action="EditProfile" asp-route-id="@item.id">
+                                            <a class="btn btn-success m-1" rel="tooltip" title="" data-original-title="Edit User" asp-controller="Profile" asp-action="EditProfile" asp-route-id="@item.id">
                                                 <i class="material-icons">edit</i>
                                             </a>
 
 
                                             <form asp-controller="Account" asp-action="Delete" asp-route-id="@item.id" class="d-inline m-1">
 
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete @item.fullName ?');" class="btn btn-danger">
+                                                <button rel="tooltip" title="" data-original-title="Delete User" type="submit" onclick="return confirm('Are you sure you want to delete @item.fullName ?');" class="btn btn-danger">
                                                     <i class="material-icons">delete</i>
                                                 </button>
 

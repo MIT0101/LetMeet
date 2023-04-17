@@ -1,2 +1,0 @@
-TIMESTAMP                  	APPDOMAIN                                    	LOGGERNAME                                 	THREADNAME                                	LEVEL    	MESSAGE
-END 

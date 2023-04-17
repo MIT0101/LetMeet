@@ -11,6 +11,12 @@
 
         public static string AvailableSupervisors = "availableSupervisors";
 
+        public static string Supervisor = "supervisorName";
+
+        public static string UnSupervisedStudents = "unSupervisedStudents";
+
+        public static string SupervisorStudents = "supervisorStudents";
+
 
 
     }
