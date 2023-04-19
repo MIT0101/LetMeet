@@ -46,6 +46,7 @@
                 @*contenet start *@
 
                 <form class="pb-0" id="msform" method="post" asp-controller="Account" asp-action="RegisterUser">
+                    @Html.AntiForgeryToken()
 
                     <fieldset>
                         <h2 class="fs-title text-center">Fill Account Information</h2>

@@ -111,7 +111,9 @@ namespace LetMeet.Configure
         //Register Services
         public static void RegisterServices(this IServiceCollection services) {
             services.AddScoped<ISupervisionService, SupervisionService>();
-        
+            services.AddScoped<IProfileService, ProfileService>();
+
+
         }
 
 

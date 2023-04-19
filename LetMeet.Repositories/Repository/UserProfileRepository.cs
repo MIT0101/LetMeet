@@ -11,6 +11,8 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using System.Linq.Expressions;
 using System.IO;
+using LetMeet.Data.Dtos.User;
+using System.Collections.Generic;
 
 namespace LetMeet.Repositories.Repository
 {
@@ -40,7 +42,25 @@ namespace LetMeet.Repositories.Repository
 
         public async Task<RepositoryResult<UserInfo>> GetUserByIdAsync(Guid userInfoId)
         {
-            return await _genericUserRepository.GetByIdAsync(userInfoId);
+            try
+            {
+
+                var user = await _usersInfo.Include(u=>u.freeDays).FirstOrDefaultAsync(u => u.id == userInfoId);
+                if (user is null)
+                {
+                    return RepositoryResult<UserInfo>.FailureResult(ResultState.NotFound, null, new List<string>()
+                {
+                    "User Not Found"
+                });
+                }
+
+                return RepositoryResult<UserInfo>.SuccessResult(ResultState.Seccess, user);
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<UserInfo>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error"});
+            }
+
         }
 
         public Task<RepositoryResult<UserInfo>> GetUserIdAsync(Expression<Func<UserInfo, bool>> filter)
@@ -210,6 +230,82 @@ namespace LetMeet.Repositories.Repository
         public Task<RepositoryResult<SupervisionInfo>> UpdateSupervison(UserInfo supervisor, UserInfo student)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<RepositoryResult<DayFree>> AddFreeDay(Guid userinfoId, AddFreeDayDto freeDayDto)
+        {
+            try
+            {
+                var validatoinResult = RepositoryValidationResult.DataAnnotationsValidation(freeDayDto);
+                if (!validatoinResult.IsValid)
+                {
+                    return RepositoryResult<DayFree>.FailureValidationResult(validatoinResult.ValidationErrors);
+                }
+
+                var user = (await GetUserByIdAsync(userinfoId)).Result;
+
+                if (user is null) { 
+                return RepositoryResult<DayFree>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Add Free Day" });
+                }
+                //if the user has free day on this day
+                if (user.freeDays is not null&&user.freeDays.Any(f => f.day == freeDayDto.day))
+                {
+                    return RepositoryResult<DayFree>.FailureResult(ResultState.Error, null, new List<string>() { "User Already Has Free Day On "+((DayOfWeek)freeDayDto.day) });
+                }
+                List<DayFree> freeDays= user.freeDays ?? new List<DayFree>();
+                DayFree dayFree = new DayFree
+                {
+                    day = freeDayDto.day,
+                    startHour = freeDayDto.startHour,
+                    endHour = freeDayDto.endHour,
+                };
+                freeDays.Add(dayFree);
+                await _mainDb.DayFrees.AddAsync(dayFree);
+
+                user.freeDays = freeDays;
+
+                _mainDb.Update(user);
+
+                await _mainDb.SaveChangesAsync();
+
+                return RepositoryResult<DayFree>.SuccessResult(ResultState.Seccess,dayFree);
+                
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<DayFree>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error" });
+            }
+        }
+
+        public async Task<RepositoryResult<DayFree>> RemoveFreeDay(Guid userinfoId, int freeDayId)
+        {
+
+            try
+            {
+                var user = (await GetUserByIdAsync(userinfoId)).Result;
+                if (user is null)
+                {
+                    return RepositoryResult<DayFree>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Remove Free Day" });
+                }
+                if (user.freeDays is null || !user.freeDays.Any(f => f.id == freeDayId))
+                {
+                    return RepositoryResult<DayFree>.FailureResult(ResultState.Error, null, new List<string>() { "User Does Not Have Free Day On This Day" });
+                }
+                var freeDay = user.freeDays.FirstOrDefault(f => f.id == freeDayId);
+                user.freeDays.Remove(freeDay);
+                _mainDb.DayFrees.Remove(freeDay);
+                _mainDb.Update(user);
+                await _mainDb.SaveChangesAsync();
+                return RepositoryResult<DayFree>.SuccessResult(ResultState.Seccess, freeDay);
+
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<DayFree>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+
+            }
         }
     }
 }

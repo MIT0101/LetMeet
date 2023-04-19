@@ -29,8 +29,11 @@ namespace LetMeet.Controllers
 
         //services
         private readonly ISupervisionService _supervionService;
+        private readonly IProfileService _profileService;
 
-        public ProfileController(IHttpContextAccessor contextAccessor, IErrorMessagesRepository errorMessages, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, IWebHostEnvironment env, ISupervisionService supervionService)
+
+
+        public ProfileController(IHttpContextAccessor contextAccessor, IErrorMessagesRepository errorMessages, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, IWebHostEnvironment env, ISupervisionService supervionService, IProfileService profileService)
         {
             _contextAccessor = contextAccessor;
             _errorMessages = errorMessages;
@@ -38,8 +41,71 @@ namespace LetMeet.Controllers
             _userProfileRepository = userProfileRepository;
             _env = env;
             _supervionService = supervionService;
+            _profileService = profileService;
         }
-       
+        //add free day 
+        // remove free day
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
+        public async Task<IActionResult> AddFreeDay(Guid id, AddFreeDayDto freeDayDto)
+        {
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+            if (!ModelState.IsValid)
+            {
+                errors.AddRange(ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return RedirectToAction(actionName: nameof(ProfileController.EditProfile), new { id, errors, messages });
+            }
+            var result=await _profileService.AddFreeDay(id, freeDayDto);
+            result.Switch(
+             freeDay =>
+                messages.Add(((DayOfWeek)freeDay.day)+" Added as free Day")
+             ,
+
+             validationResults =>
+                errors.AddRange(validationResults?.Select(e => e.ErrorMessage))
+             ,
+
+            serviceMassages =>
+               errors.AddRange(serviceMassages.Select(m => m.Message))
+             );
+
+
+            return RedirectToAction(actionName: nameof(ProfileController.EditProfile), new { id, errors, messages });
+
+        }
+
+        // remove free day
+        [HttpPost]
+        [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
+        public async Task<IActionResult> RemoveFreeDay(Guid id, int freeDayId)
+        {
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+            if (!ModelState.IsValid)
+            {
+                errors.AddRange(ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return RedirectToAction(actionName: nameof(ProfileController.EditProfile), new { id, errors, messages });
+            }
+            var result = await _profileService.RemoveFreeDay(id, freeDayId);
+            result.Switch(
+             freeDay =>
+                messages.Add(((DayOfWeek)freeDay.day) + " Removed from free days")
+             ,
+
+             validationResults =>
+                errors.AddRange(validationResults?.Select(e => e.ErrorMessage))
+             ,
+
+            serviceMassages =>
+               errors.AddRange(serviceMassages.Select(m => m.Message))
+             );
+
+
+            return RedirectToAction(actionName: nameof(ProfileController.EditProfile), new { id, errors, messages });
+
+        }
 
         [HttpPost]
         [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
@@ -57,7 +123,6 @@ namespace LetMeet.Controllers
         {
             ViewData[ViewStringHelper.UserRoles] = _selectionRepository.GetUserRoles();
             ViewData[ViewStringHelper.UserStages] = _selectionRepository.GetStages();
-            ViewData[ViewStringHelper.AvailableSupervisors] = await _supervionService.GetAllAvailableSupervisorsAsync();
 
             InitErrorsAndMessagesForView(ref errors, ref messages);
 
@@ -66,15 +131,11 @@ namespace LetMeet.Controllers
             errors.AddRange(reposResult.ValidationErrors.Select(v => v.ErrorMessage));
             errors.AddRange(reposResult.ErrorMessages);
 
+
+            //List<DayFree> dayes = new List<DayFree>(new DayFree[] { d1, d2 });
+            //reposResult.Result.freeDays =dayes;
+
             return View(reposResult.Result);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> ChangePassword(Guid id)
-        {
-
-            throw new NotImplementedException();
         }
         // to init errors and messages
         private void InitErrorsAndMessagesForView(ref List<string>? errors, ref List<string>? messages)

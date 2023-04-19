@@ -86,17 +86,8 @@
 
                     <form asp-controller="Account" asp-action="SignIn" asp-route-ReturnUrl="@ReturnUrl" method="post" role="form" class="text-start">
 
-                        @*     <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                        <span class="input-group-text">
-                        <span class="input-group-text">
-                        <i class="material-icons">person</i>
-                        </span>
-                        </div>
-                        <input asp-for="emailAddress" type="email" class="form-control" id="emailAddress" placeholder="Email Address">
-                        <span asp-validation-for="emailAddress" class="text-danger"></span>
+                        @Html.AntiForgeryToken()
 
-                        </div>*@
 
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">

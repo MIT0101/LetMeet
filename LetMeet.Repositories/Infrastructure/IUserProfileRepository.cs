@@ -1,4 +1,5 @@
 ﻿
+using LetMeet.Data.Dtos.User;
 using LetMeet.Data.Entites.UsersInfo;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,10 @@ namespace LetMeet.Repositories.Infrastructure
         Task<(ResultState state, Guid? value)> GetIdentityIdAsync(Guid userInfoId);
 
         Task<RepositoryResult<SupervisionInfo>> UpdateSupervison(UserInfo supervisor,UserInfo student);
+
+        Task<RepositoryResult<DayFree>> AddFreeDay(Guid userinfoId, AddFreeDayDto freeDayDto);
+        Task<RepositoryResult<DayFree>> RemoveFreeDay(Guid userinfoId, int freeDayId);
+
 
 
 

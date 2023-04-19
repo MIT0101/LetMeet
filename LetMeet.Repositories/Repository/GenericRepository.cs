@@ -155,7 +155,7 @@ namespace LetMeet.Repositories.Repository
 
                 }
 
-                TEntity result = _entities.Find(id);
+                TEntity result = await _entities.FindAsync(id);
 
                 if (result == null) {
                     return RepositoryResult<TEntity>.FailureResult(ResultState.NotFound, validationErrors: null);

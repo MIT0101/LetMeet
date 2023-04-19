@@ -15,11 +15,10 @@
 
         List<string> roles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
         List<string> stages = ViewData[ViewStringHelper.UserStages] as List<string> ?? new List<string>();
-        List<SupervisorSelectDto> availableSupervisors = ViewData[ViewStringHelper.AvailableSupervisors] as List<SupervisorSelectDto> ?? new List<SupervisorSelectDto>();
 
         List<SelectListItem> roleOptions = roles.Select(r => new SelectListItem { Text = r, Value = r }).ToList();
         List<SelectListItem> stageOptions = stages.Select(s => new SelectListItem { Text = s, Value = s }).ToList();
-        List<SelectListItem> supervisorOptions = availableSupervisors.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
+        List<SelectListItem> daysOptions = Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>().Select(d => new SelectListItem(text: d.ToString(), value: ((int)d).ToString())).ToList();
 
 
         bool isAdmin = Context.User.IsInRole(UserRole.Admin.ToString());
@@ -168,6 +167,204 @@
                             </form>
                         </div>
                     </div>
+                    @*for free days*@
+
+                    @*free day modal*@
+                    <div class="modal fade" id="addFreeDayModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog " role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Add Free Day</h5>
+
+                                    <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+
+                                </div>
+                                <div class="modal-body pb-0">
+                                    @*contenet start *@
+                                    <form id="addFreeDayFrm" method="post" asp-controller="@RouteNameHelper.ProfileControllerName" asp-action="AddFreeDay" asp-route-id="@Context.Request.RouteValues["id"]">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <!-- input with datetimepicker -->
+
+                                        <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
+                                            <tr>
+
+                                                <td>
+                                                    <label class="label-control" for="studentId">Student Name</label>
+
+                                                </td>
+                                                <td>
+                                                    <select data-val="true" data-val-required="Day Is Required" name="day" required id="day" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-primary btn-round" asp-items="@daysOptions"></select>
+
+                                                </td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <label class="label-control" for="startHour">Start Hour</label>
+
+                                                </td>
+
+                                                <td>
+                                                    @*start hour*@
+                                                    <input value="1" min="0" max="23" class="w-100"
+                                                           data-val="true" data-val-required="Start Hour Is Required"
+                                                           data-val-length-min="0" data-val-length-max="23"
+                                                           type="number" name="startHour" />
+
+                                                </td>
+
+
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>
+                                                    <label class="label-control" for="endHour">End Hour</label>
+
+                                                </td>
+
+                                                <td>
+
+
+                                                    <input value="2" min="1" max="24" class="w-100"
+                                                           data-val="true" data-val-required="End Date Is Required"
+                                                           data-val-length-min="1" data-val-length-max="24"
+                                                           type="number" name="endHour" />
+
+                                                </td>
+
+
+                                            </tr>
+
+                                        </table>
+
+                                    </form>
+
+
+                                    @*eontent end*@
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button id="submitBtn" type="submit" onclick="return DisplayprogressMessage('addFreeDayFrm',this, 'Saving...');" class="btn btn-primary">Add</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-header card-header-text card-header-primary">
+                            <div class="card-text">
+                                <h4 class="card-title">Free Days</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @*add user button*@
+                            <button rel="tooltip" title="" data-original-title="Add Student" type="button" class="btn btn-primary d-block ml-auto" data-toggle="modal" data-target="#addFreeDayModal">
+                                Add Free Day
+                            </button>
+                            @{
+                                List<DayFree> currentFreeDays = Model?.freeDays ?? new List<DayFree>();
+                            }
+
+                            <div class="table-responsive table-hover">
+                                <table class="table">
+                                    <thead class=" text-primary">
+                                        <tr>
+                                            <th>
+                                                #
+                                            </th>
+                                            <th>
+                                                Day
+                                            </th>
+                                            <th>
+                                                Start Hour
+
+                                            </th>
+                                            <td>
+                                                End Hour
+                                            </td>
+
+                                            <th>
+
+                                            </th>
+
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var freeDay in currentFreeDays)
+                                        {
+
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayTextFor(modelItem => freeDay.id)
+                                                </td>
+                                                <td>
+                                                    @(
+                                                    (DayOfWeek)(freeDay.day % 7)
+                                                        )
+
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayTextFor(modelItem => freeDay.startHour)
+
+                                                </td>
+
+                                                <td>
+                                                    @Html.DisplayTextFor(modelItem => freeDay.endHour)
+
+
+                                                </td>
+
+
+
+
+                                                <td class="td-actions text-right">
+
+                                                    <div class="d-flex flex-row justify-content-end">
+
+
+                                                        <form asp-controller="@RouteNameHelper.ProfileControllerName" asp-action="RemoveFreeDay" asp-route-id="@Model.id" class="d-inline m-1">
+                                                            @Html.AntiForgeryToken()
+
+                                                            <input name="freeDayId" hidden value="@freeDay.id">
+
+
+                                                            <button rel="tooltip" title="" data-original-title="Remove" type="submit" onclick="return confirm('Are you sure you want to Remove @((DayOfWeek)freeDay.day)');" class="btn btn-danger btn-link btn-sm">
+                                                                <i class="material-icons">close</i>
+                                                            </button>
+
+                                                        </form>
+
+                                                    </div>
+
+
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+
+
                 </div>
 
 
@@ -184,7 +381,7 @@
                             }
                             <div class="img_div">
 
-                                <label class="newbtn" >
+                                <label class="newbtn">
                                     <img id="previewImage" class="img" src="~/UsersImages/@profileImage" />
                                 </label>
 
@@ -205,14 +402,13 @@
 
                                 <form id="profileImageForm" method="post" enctype="multipart/form-data" asp-action="UpdateProfileImage" asp-controller="@RouteNameHelper.AccountControllerName" asp-route-id="@Context.Request.RouteValues["id"]">
 
+                                    @Html.AntiForgeryToken()
+
                                     <input id="picInput" style=" display: none;" name="picInput" class='pis' type="file" accept="Image/*"
                                            data-val="true" data-val-required="Old Password Is Required"
                                            required>
 
                                     <span class="text-danger field-validation-valid" data-valmsg-for="picInput" data-valmsg-replace="true"></span>
-
-                                    @Html.AntiForgeryToken()
-
 
                                     <button type="submit" id="updateProfileSubmitBtn" onclick="return DisplayprogressMessage('profileImageForm',this, 'Saving...');" class="btn btn-info " disabled> Save Image</button>
 
@@ -283,13 +479,11 @@
                     </div>
                 </div>
             </div>
-
             <partial name="_ValidationScriptsPartial" />
         }
 
     }
 
-    <select class="form-control" asp-items="@supervisorOptions"></select>
 
 </div>
 @{

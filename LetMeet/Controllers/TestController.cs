@@ -34,9 +34,28 @@ namespace LetMeet.Controllers
             _passwordGenration = passwordGenration;
             _selectionRepository = selectionRepository;
         }
+        // test free days json result
+
+        public IActionResult DayFrees() {
+            DayFree d1 = new DayFree()
+            {
+                day = 1,
+                startHour = 2,
+                endHour = 3,
+            };
+
+            DayFree d2 = new DayFree()
+            {
+                day = 2,
+                startHour = 4,
+                endHour = 5,
+            };
+
+            List<DayFree> dayes = new List<DayFree>(new DayFree[] { d1, d2 });
+            return Json(new { dayes});
+        }
 
         //test jqeury alidation
-
         public IActionResult formValidationJquery()
         {
 

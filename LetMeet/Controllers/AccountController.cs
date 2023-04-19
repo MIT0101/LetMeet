@@ -249,6 +249,7 @@ namespace LetMeet.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn(SiginInDto siginInDto, string? ReturnUrl)
         {
 

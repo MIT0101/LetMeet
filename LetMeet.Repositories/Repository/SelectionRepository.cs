@@ -21,6 +21,8 @@ namespace LetMeet.Repositories.Repository
             userRoles = Enum.GetNames(typeof(UserRole)).ToList();
         }
 
+
+
         public List<string> GetStages()
         {
             return stages;

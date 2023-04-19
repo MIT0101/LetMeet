@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Microsoft.Extensions.Options;
+@{
     SupervisorSelectDto? currentSupervisor = ViewData[ViewStringHelper.Supervisor] as SupervisorSelectDto;
 
 
@@ -12,6 +13,7 @@
 
 }
 @inject AppTimeProvider TimeProvider;
+@inject IOptions<AppServiceOptions> serviceOptions;
 
 @if (currentSupervisor is null)
 {
@@ -79,6 +81,7 @@
             <div class="modal-body pb-0">
                 @*contenet start *@
                 <form id="supervisStudentFrm" method="post" asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="AddStudnetToSupervisor" asp-route-id="@Context.Request.RouteValues["id"]">
+                    @Html.AntiForgeryToken()
 
                     <!-- input with datetimepicker -->
 
@@ -145,7 +148,6 @@
 
 
 
-
 <div class="row">
     @*current Supervised Student*@
 
@@ -156,11 +158,23 @@
                 <p class="category">All Students </p>
             </div>
             <div class="card-body">
-                @*add user button*@
-                <button rel="tooltip" title="" data-original-title="Add Student" type="button" class="btn btn-rose d-block ml-auto" data-toggle="modal" data-target="#supervisStudentModal">
-                   Add Student
-                
-                </button>
+                @{
+                    int currentStudentsCount = supervisorStudents.Where(s => s.endDate > TimeProvider.Now).Count();
+                }
+                @if (currentStudentsCount >= serviceOptions.Value.MaxStudentsPerSupervisor)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @currentSupervisor?.FullName can not supervise more than @serviceOptions.Value.MaxStudentsPerSupervisor students
+                    </div>
+                }
+                else
+                {
+
+                    @*add user button*@
+                    <button rel="tooltip" title="" data-original-title="Add Student" type="button" class="btn btn-rose d-block ml-auto" data-toggle="modal" data-target="#supervisStudentModal">
+                        Add Student
+                    </button>
+                }
                 @if (supervisorStudents.Count > 0)
                 {
 
@@ -185,8 +199,6 @@
                                     <th>
 
                                     </th>
-
-
 
                                 </tr>
                             </thead>
@@ -235,6 +247,7 @@
 
 
                                                 <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="RemoveStudnetFromSupervisor" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
+                                                    @Html.AntiForgeryToken()
 
                                                     <input name="studentId" hidden value="@student.id">
                                                     <input name="supervisorId" hidden value="@currentSupervisor?.id">

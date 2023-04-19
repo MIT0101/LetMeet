@@ -46,6 +46,7 @@ namespace LetMeet.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddStudnetToSupervisor(Guid id, AddStudentToSupervisorDto addStudent)
         {
             List<string> errors = new List<string>();
@@ -78,6 +79,7 @@ namespace LetMeet.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveStudnetFromSupervisor(Guid id, SupervisionDto supervisionDto)
         {
             List<string> errors = new List<string>();
