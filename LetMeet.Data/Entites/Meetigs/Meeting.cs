@@ -16,10 +16,9 @@ namespace LetMeet.Data.Entites.Meetigs
         public int id { get; set; }
 
         [Required(ErrorMessage = "Total Meeting Time Is Required")]
-        [Range(minimum: 0, maximum: 23, ErrorMessage = "Total Meeting Time Must be Between 0 and 24")]
+        [Range(minimum: 0, maximum: 24, ErrorMessage = "Total Meeting Time Must be Between 0 and 24")]
 
         public int totalTimeHoure { get; set; }
-
 
         [Required(ErrorMessage = "Date is Required")]
         public DateTime date { get; set; }
@@ -31,13 +30,16 @@ namespace LetMeet.Data.Entites.Meetigs
 
 
         [Required(ErrorMessage = "Meeting End Hour is Required")]
-        [Range(minimum: 0, maximum: 23, ErrorMessage = "Meeting End Hour Must be Between 0 and 23")]
+        [Range(minimum: 0, maximum: 24, ErrorMessage = "Meeting End Hour Must be Between 0 and 24")]
 
         public int endHour { get; set; }
 
 
         [StringLength(maximumLength: 500, MinimumLength = 4, ErrorMessage = "Meeting Description Must Be Between 4 and 500 for length")]
         public string? description { get; set; }
+
+        [Required(ErrorMessage = "Present is Required")]
+        public bool isPresent { get; set; } = false;
 
 
         public List<MeetingTask>? tasks { get; set; }

@@ -2,6 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"]= Model.fullName+" Profile";
 }
 @model UserInfo
 
@@ -211,7 +212,7 @@
 
                                                 <td>
                                                     @*start hour*@
-                                                    <input value="1" min="0" max="23" class="w-100"
+                                                    <input id="startHourInput" value="1" min="0" max="23" class="w-100"
                                                            data-val="true" data-val-required="Start Hour Is Required"
                                                            data-val-length-min="0" data-val-length-max="23"
                                                            type="number" name="startHour" />
@@ -231,7 +232,7 @@
                                                 <td>
 
 
-                                                    <input value="2" min="1" max="24" class="w-100"
+                                                    <input id="endHourInput" value="2" min="2" max="24" class="w-100"
                                                            data-val="true" data-val-required="End Date Is Required"
                                                            data-val-length-min="1" data-val-length-max="24"
                                                            type="number" name="endHour" />
@@ -246,7 +247,7 @@
                                     </form>
 
 
-                                    @*eontent end*@
+                                    @*content end*@
                                 </div>
                                 <div class="modal-footer">
                                     <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.Design;
+using LetMeet.Data.Dtos.Meeting;
+using LetMeet.Business.Interfaces;
 
 namespace LetMeet.Controllers
 {
@@ -26,16 +28,68 @@ namespace LetMeet.Controllers
         private readonly IPasswordGenrationRepository _passwordGenration;
         private readonly ISelectionRepository _selectionRepository;
 
-        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager, IPasswordGenrationRepository passwordGenration, ISelectionRepository selectionRepository)
+        private readonly IMeetingService _meetingService;
+
+        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager, IPasswordGenrationRepository passwordGenration, ISelectionRepository selectionRepository, IMeetingService meetingService)
         {
             _userRepository = userRepository;
             _settings = settings;
             _signInManager = signInManager;
             _passwordGenration = passwordGenration;
             _selectionRepository = selectionRepository;
+            _meetingService = meetingService;
         }
-        // test free days json result
+        //test Create Meetings
+        public async Task<IActionResult> Create()
+        {
+            Guid supervisorId = Guid.Parse("899f49cc-9af4-40f5-c58a-08db3f4ef8a8");//Hasan Abbas 2 (Sun 1-6)
+            Guid studentId = Guid.Parse("3562d48c-3ccc-4bed-08a2-08db321ebfd1");// ali adel
 
+            //when its Monday its not i free time
+            // 16 => sunday
+            //
+            DateTime date = new DateTime(2023, 4, 17);
+
+            MeetingTaskDto task1 = new MeetingTaskDto()
+            {
+                title = "Task 1 Title",
+                decription = "Task 1 Description"
+            };
+            MeetingTaskDto task2 = new MeetingTaskDto()
+            {
+                title = "Task 2 Title",
+                decription = "Task 2 Description"
+            };
+
+            MeetingDto meetingDto = new MeetingDto
+            {
+                date = date,
+                startHour = 1,
+                endHour = 2,
+                supervisorId = supervisorId,
+                studentId = studentId,
+                tasks = new List<MeetingTaskDto> { task1, task2 },
+                description = "Meeting Description",
+                isPresent = false
+
+            };
+
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+
+            var serviceResult = await _meetingService.Create(supervisorId,meetingDto);
+
+            serviceResult.Switch(
+                meeting => messages.Add("Meeting Created Successfully")
+                , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
+                , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+
+
+            return Json(new { errors, messages });
+        }
+
+
+        // test free days json result
         public IActionResult DayFrees() {
             DayFree d1 = new DayFree()
             {

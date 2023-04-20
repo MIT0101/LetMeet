@@ -25,7 +25,7 @@ namespace LetMeet.Data.Entites.UsersInfo
         [Required(ErrorMessage = "Start Date Is Required")]
         public DateTime endDate { get; set; }
 
-        public int extendTimes { get; set; }
+        public int extendTimes { get; set; } = 0;
 
         public List<Meeting>? meetings { get; set; }
 

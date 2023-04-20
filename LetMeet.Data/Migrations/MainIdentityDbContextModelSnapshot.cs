@@ -56,29 +56,29 @@ namespace LetMeet.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4eef13f7-159e-4538-af58-c368846a3aea"),
-                            ConcurrencyStamp = "97f5ee12-d8b9-4ce7-982a-9876e00a96a5",
+                            Id = new Guid("b92b3219-6476-4c0b-991a-295747c82a12"),
+                            ConcurrencyStamp = "221d1519-a1d3-4dbf-bb14-dfa7d40b8f3d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("831dc052-256d-469e-9026-bbb49a12ca66"),
-                            ConcurrencyStamp = "6e91020e-6f8c-4292-860a-ed27f7741c5d",
+                            Id = new Guid("820617d8-3f25-4973-9203-b2eff63f182c"),
+                            ConcurrencyStamp = "2289d7e2-7c52-4eee-ab1a-de42e4601b45",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("8d6f7472-de2f-4f1c-a091-c0f711fb2dcf"),
-                            ConcurrencyStamp = "fd3ff8f0-1c8c-4ab0-8be3-7f4e4c817256",
+                            Id = new Guid("3899f873-db8c-4bb1-b2da-4d669db81967"),
+                            ConcurrencyStamp = "aacb2870-e138-4b39-8fe2-a70682d293fa",
                             Name = "Supervisor",
                             NormalizedName = "SUPERVISOR"
                         },
                         new
                         {
-                            Id = new Guid("6a5ce97e-1581-4dfc-9979-ea00524fda37"),
-                            ConcurrencyStamp = "57e773e9-2e89-4ed7-9bea-f2317cb624a4",
+                            Id = new Guid("1fedc380-b026-493f-9509-a9e95b7786a5"),
+                            ConcurrencyStamp = "5b452052-55ec-45d9-b839-dda445feff7c",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });

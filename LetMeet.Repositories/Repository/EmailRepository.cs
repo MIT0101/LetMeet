@@ -39,9 +39,9 @@ namespace LetMeet.Repositories.Repository
                 email.Body = new TextPart(TextFormat.Html) { Text = body };
 
                 using var smtp = new SmtpClient();
-                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+                await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
                 smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
-                smtp.Send(email);
+                await smtp.SendAsync(email);
                 smtp.Disconnect(true);
                
                 return (ResultState.Seccess, true);

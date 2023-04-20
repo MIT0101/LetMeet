@@ -241,6 +241,12 @@ namespace LetMeet.Repositories.Repository
                 {
                     return RepositoryResult<DayFree>.FailureValidationResult(validatoinResult.ValidationErrors);
                 }
+                if (freeDayDto.startHour > freeDayDto.endHour)
+                {
+                    List<ValidationResult> hoursValidation = new List<ValidationResult>();
+                    hoursValidation.Add(new ValidationResult("Start Hour must be lower than End Hour", new string[] { "startHour", "endHour" }));
+                    return RepositoryResult<DayFree>.FailureValidationResult(hoursValidation);
+                }
 
                 var user = (await GetUserByIdAsync(userinfoId)).Result;
 

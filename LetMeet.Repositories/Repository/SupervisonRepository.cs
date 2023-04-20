@@ -41,6 +41,24 @@ namespace LetMeet.Repositories.Repository
          return _supervionGRepo.CreateAsync(supervisionInfo);
         }
 
+        public async Task<RepositoryResult<SupervisionInfo>> GetSupervision_Meetings_FreeDaysAsync(Guid supervisorId, Guid studentId)
+        {
+            try
+            {
+                var supervsion = await _mainDb.SupervisionInfo.Include(s => s.meetings)
+                    .Include(s=>s.supervisor.freeDays).Include(s=>s.student.freeDays)
+                    .FirstOrDefaultAsync(s=>s.supervisor.id==supervisorId&&s.student.id==studentId&&s.endDate.Date>_appTimeProvider.Now.Date);
+                if (supervsion is null) {
+                    return RepositoryResult<SupervisionInfo>.FailureResult(ResultState.NotFound, null, new List<string> {"Supervision Not Found" });
+                }
+                return RepositoryResult<SupervisionInfo>.SuccessResult(ResultState.Seccess, supervsion);
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<SupervisionInfo>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error"});
+            }
+        }
+
         public async Task<RepositoryResult<List<SupervisorSelectDto>>> GetAvailableSupervisorNamesAsync(int maxStudentsPerSupervisor)
         {
             try

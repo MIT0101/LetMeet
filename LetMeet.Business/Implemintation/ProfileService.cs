@@ -29,6 +29,11 @@ namespace LetMeet.Business.Implemintation
             if(!validationResult.IsValid) {
                 return validationResult.ValidationErrors;
             }
+            if (addFreeDayDto.startHour> addFreeDayDto.endHour) {
+                List<ValidationResult> hoursValidation= new List<ValidationResult>();
+                hoursValidation.Add(new ValidationResult("Start Hour must be lower than End Hour",new string[] { "startHour","endHour" }));
+                return hoursValidation;
+            }
             var reposResult = await _profileRepository.AddFreeDay(userId, addFreeDayDto);
 
             if (reposResult.State == ResultState.ValidationError) {

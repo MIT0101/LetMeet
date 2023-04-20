@@ -89,11 +89,11 @@ namespace LetMeet.Business.Implemintation
         {
             var supervision = (await _supervionsRepo.GetSupervisionAsync(studentId)).Result;
             if (supervision == null) {
-                return new List<ValidationResult>() { new ValidationResult("Can Not Find Supervison Info") };
+                return new List<ValidationResult>() { new ValidationResult("Can Not Find Supervision Info") };
             }
             if (supervision.extendTimes>=_options.MaxExtendTimes) {
                 //if student has reached maximum number of extend times init 2 times
-                return new List<ServiceMassage>() { new ServiceMassage($"Can Not Extend Supervision Becouse Student has Reached Max Number Of Extending {supervision.extendTimes} Times") };
+                return new List<ServiceMassage>() { new ServiceMassage($"Can Not Extend Supervision Because Student has Reached Max Number Of Extending {supervision.extendTimes} Times") };
             }
 
             supervision.endDate.AddMonths(_options.NumberOfMonthsPerExtend);

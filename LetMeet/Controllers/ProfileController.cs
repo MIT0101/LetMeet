@@ -24,7 +24,6 @@ namespace LetMeet.Controllers
 
         private readonly IWebHostEnvironment _env;
 
-        //private readonly IGenericRepository<UserInfo, Guid> _userRepository;
         private readonly IUserProfileRepository _userProfileRepository;
 
         //services

@@ -43,6 +43,9 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<int>("endHour")
                         .HasColumnType("int");
 
+                    b.Property<bool>("isPresent")
+                        .HasColumnType("bit");
+
                     b.Property<int>("startHour")
                         .HasColumnType("int");
 
@@ -98,16 +101,13 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<Guid?>("UserInfoid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("day")
-                        .IsRequired()
+                    b.Property<int>("day")
                         .HasColumnType("int");
 
-                    b.Property<int?>("endHour")
-                        .IsRequired()
+                    b.Property<int>("endHour")
                         .HasColumnType("int");
 
-                    b.Property<int?>("startHour")
-                        .IsRequired()
+                    b.Property<int>("startHour")
                         .HasColumnType("int");
 
                     b.HasKey("id");

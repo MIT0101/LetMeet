@@ -376,7 +376,7 @@ namespace LetMeet.Controllers
 
             if (exsistUser is not null)
             {
-                errors.Add("Email Adress is Already Used Try Another One.");
+                errors.Add("Email Address is Already Used Try Another One.");
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
             var identityUser = new AppIdentityUser()

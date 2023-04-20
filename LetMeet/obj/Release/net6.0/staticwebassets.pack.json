@@ -5,12 +5,36 @@
       "PackagePath": "staticwebassets\\LetMeet.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\749faea72eb5454952d408db21775786.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\749faea72eb5454952d408db21775786.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_3.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_3.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\890d26bd4412467c00c908db41d6e04b_4.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\890d26bd4412467c00c908db41d6e04b_4.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\profile_empty_img.png",
+      "PackagePath": "staticwebassets\\UsersImages\\profile_empty_img.png"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\dark.css",
       "PackagePath": "staticwebassets\\css\\Main\\dark.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\mainloadiersStyle.css",
       "PackagePath": "staticwebassets\\css\\Main\\mainloadiersStyle.css"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Profile\\EditProfileStyle.css",
+      "PackagePath": "staticwebassets\\css\\Profile\\EditProfileStyle.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\signIn\\sginInStyle.css",
@@ -35,6 +59,10 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\loading3.gif",
       "PackagePath": "staticwebassets\\img\\loading3.gif"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\profile_empty_img.png",
+      "PackagePath": "staticwebassets\\img\\profile_empty_img.png"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\sgin_bg-min.jpeg",
@@ -71,6 +99,10 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Main\\Theme.js",
       "PackagePath": "staticwebassets\\js\\Main\\Theme.js"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Profile\\EditProfile.js",
+      "PackagePath": "staticwebassets\\js\\Profile\\EditProfile.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\RegisterUser.js",

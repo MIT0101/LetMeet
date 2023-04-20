@@ -12,3 +12,6 @@ C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\refint\Let
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.pdb
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\LetMeet.Data.genruntimeconfig.cache
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\obj\Release\net6.0\ref\LetMeet.Data.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\client.ncconf
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\config.ncconf
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet.Data\bin\Release\net6.0\tls.ncconf

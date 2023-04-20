@@ -11,11 +11,11 @@ namespace LetMeet.Configure
 {
     public static class AppDependencies
     {
-        //Add repositores//Add repositores
+        //Add repositories
         public static void RegisterRepositories(this IServiceCollection services, ConfigurationManager configuration)
         {
 
-            //Enums Selction repository
+            //Enums Selection repository
             services.AddSingleton<ISelectionRepository, SelectionRepository>();
             //add error message Repository
             services.AddSingleton<IErrorMessagesRepository, ErrorMessagesRepository>();
@@ -24,24 +24,25 @@ namespace LetMeet.Configure
             //for date time provider
             services.AddSingleton<AppTimeProvider>();
 
-            //Genric Repository of user Info
+            //Generic Repository of user Info
             services.AddScoped<IGenericRepository<UserInfo, Guid>, GenericRepository<UserInfo, Guid>>();
-            //Genric Repository of Supervion Info
+            //Generic Repository of Supervision Info
             services.AddScoped<IGenericRepository<SupervisionInfo, int>, GenericRepository<SupervisionInfo, int>>();
-            //Genric Repository of Day Free
+            //Generic Repository of Day Free
             services.AddScoped<IGenericRepository<DayFree, int>, GenericRepository<DayFree, int>>();
-            //Genric Repository of Meetings
+            //Generic Repository of Meetings
             services.AddScoped<IGenericRepository<Meeting, int>, GenericRepository<Meeting, int>>();
-            //Genric Repository of Meetings
+            //Generic Repository of Meetings
             services.AddScoped<IGenericRepository<MeetingTask, int>, GenericRepository<MeetingTask, int>>();
 
             //add user profile repository 
             services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-            //supervions Info Repository
+            //supervisions Info Repository
             services.AddScoped<ISupervisonRepository, SupervisonRepository>();
+            services.AddScoped<IMeetingRepository, MeetingRepository>();
 
             string validPasswordChars = configuration.GetValue<string>("ValidPasswordChars") ?? PasswordGenrationRepository.DefaultValidChars;
-            //password genration repository
+            //password generation repository
             services.AddSingleton<IPasswordGenrationRepository, PasswordGenrationRepository>(options =>
             {
                 return new PasswordGenrationRepository(validPasswordChars);
@@ -73,7 +74,7 @@ namespace LetMeet.Configure
         public static void RegisterOptions(this IServiceCollection services, ConfigurationManager configuration)
         {
 
-           // for repository serttings
+           // for repository settings
             services.AddOptions<RepositoryDataSettings>()
                  .Bind(configuration.GetRequiredSection(RepositoryDataSettings.NameOfSection))
                  .ValidateDataAnnotations().ValidateOnStart();
@@ -82,7 +83,7 @@ namespace LetMeet.Configure
             services.AddOptions<EmailRepositorySettings>().Bind(configuration.GetSection(EmailRepositorySettings.SectionName))
                 .ValidateDataAnnotations().ValidateOnStart();
 
-            //for busness
+            //for business
             services.AddOptions<AppServiceOptions>()
                 .Bind(configuration.GetRequiredSection(AppServiceOptions.NameOfSection))
                 .ValidateDataAnnotations().ValidateOnStart();
@@ -112,7 +113,7 @@ namespace LetMeet.Configure
         public static void RegisterServices(this IServiceCollection services) {
             services.AddScoped<ISupervisionService, SupervisionService>();
             services.AddScoped<IProfileService, ProfileService>();
-
+            services.AddScoped<IMeetingService, MeetingService>();
 
         }
 

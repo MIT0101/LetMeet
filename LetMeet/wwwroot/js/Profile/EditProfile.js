@@ -1,3 +1,20 @@
+//for adjust start hour and end hour for free day when start hour changes
+//end hour must be bigger than start hour
+const startHourInput = document.getElementById("startHourInput");
+const endHourInput = document.getElementById("endHourInput");
+
+startHourInput.addEventListener("change", function () {
+    const startHourValue = parseInt(startHourInput.value);
+    const minEndHourValue = startHourValue + 1;
+
+
+    endHourInput.min = minEndHourValue;
+
+    if (parseInt(endHourInput.value) < minEndHourValue) {
+        endHourInput.value = minEndHourValue;
+    }
+});
+
 //for disable button and make it saving
 function DisplayprogressMessage(formId, ctl, msg) {
     event.preventDefault();
