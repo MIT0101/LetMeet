@@ -70,8 +70,7 @@ namespace LetMeet.Controllers
                 studentId = studentId,
                 tasks = new List<MeetingTaskDto> { task1, task2 },
                 description = "Meeting Description",
-                isPresent = false
-
+                hasTasks = true
             };
 
             List<string> errors = new List<string>();

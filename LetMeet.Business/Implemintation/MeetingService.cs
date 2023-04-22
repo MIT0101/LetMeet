@@ -7,13 +7,7 @@ using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
 using LetMeet.Repositories.Infrastructure;
 using OneOf;
-using OneOf.Types;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LetMeet.Business.Implemintation;
 
@@ -52,13 +46,13 @@ public partial class MeetingService : IMeetingService
         {
             return new List<ValidationResult> { new ValidationResult($"No Supervision Between These Users") };
         }
+        //is supervision expired if yes return message
         if (supervison.endDate <= _appTimeProvider.Now)
         {
             return new List<ServiceMassage> { new ServiceMassage($"Supervision has Expired Since {supervison.endDate.Date}") };
-
         }
         //get supervisor and student mutual free days use DayHour
-        Dictionary<int, DayHours> mutualDays = GetMutualDays(supervison.supervisor.freeDays, supervison.student.freeDays);
+        Dictionary<int, DayHours> mutualDays =DayHours.GetMutualDays(supervison.supervisor.freeDays, supervison.student.freeDays);
 
         // if there is no mutual free days return Message 
         if (mutualDays.Count < 1)
@@ -93,7 +87,7 @@ public partial class MeetingService : IMeetingService
             endHour = meetingDto.endHour,
             totalTimeHoure = meetingDto.totalTimeHoure,
             description = meetingDto.description,
-            isPresent = meetingDto.isPresent,
+            isPresent = false,
             tasks = meetingDto.tasks?.Select(t => new MeetingTask { title = t.title, decription = t.decription, isCompleted = t.isCompleted }).ToList()
 
         };
@@ -108,36 +102,4 @@ public partial class MeetingService : IMeetingService
         return meeting;
     }
 
-    public OneOf<Dictionary<int, DayHours>> GetMutalDays(Guid supervisorId, Guid studentId, DateTime date)
-    {
-        throw new NotImplementedException();
-
-    }
-
-    private Dictionary<int, DayHours> GetMutualDays(List<DayFree> list1, List<DayFree> list2)
-    {
-        list1 = list1 ?? new List<DayFree>();
-        list2 = list2 ?? new List<DayFree>();
-        Dictionary<int, DayFree> firstMap = new Dictionary<int, DayFree>();
-        Dictionary<int, DayHours> mutualDays = new Dictionary<int, DayHours>();
-        for (int i = 0; i < list1.Count; i++)
-        {
-            firstMap.Add(list1[i].day, list1[i]);
-        }
-
-        for (int i = 0; i < list2.Count; i++)
-        {
-            if (firstMap.ContainsKey(list2[i].day))
-            {
-                DayFree map1Day = firstMap[list1[i].day];
-                DayFree map2Day = list2[i];
-                DayHours day = new DayHours(map1Day.day, map1Day.startHour, map1Day.endHour);
-                day.AddFreeHours(map2Day.startHour, map2Day.endHour);
-                mutualDays.Add(day.day, day);
-            }
-        }
-
-        return mutualDays;
-
-    }
 }

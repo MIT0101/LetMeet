@@ -56,14 +56,18 @@
 asp-controller="@controllerName",
    asp-route-pageIndex="@(pageIndex - 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
+   class="btn btn-outline-dark @prevDisabled">
+    <span class="material-icons">
+        arrow_back_ios_new
+    </span>
 </a>
 <a asp-action="@actionName"
    asp-controller="@controllerName" ,
    asp-route-pageIndex="@(pageIndex + 1)"
-   class="btn btn-default @nextDisabled">
-    Next
+   class="btn btn-outline-dark @nextDisabled">
+    <span class="material-icons">
+        arrow_forward_ios
+    </span>
 </a>
 
 

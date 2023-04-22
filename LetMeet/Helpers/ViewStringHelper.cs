@@ -17,6 +17,10 @@
 
         public static string SupervisorStudents = "supervisorStudents";
 
+        public static string StudentSummary = "studentSummary";
+
+        public static string MutualFreeDays = "mutualFreeDays";
+
 
 
     }

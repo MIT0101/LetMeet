@@ -1,0 +1,411 @@
+﻿@{
+    ViewData["Title"] = "Create Meeting";
+
+    StudentSelectDto? satudentSummary = ViewData[ViewStringHelper.StudentSummary] as StudentSelectDto;
+
+    Dictionary<int, ISet<int>>? daysFreeHours = ViewData[ViewStringHelper.MutualFreeDays] as Dictionary<int, ISet<int>>;
+}
+@inject AppTimeProvider _appTimeProvider;
+@inject IHttpContextAccessor _httpContextAccessor;
+
+<h2>Create Meeting</h2>
+@*create form to fill MeetingDto info*@
+
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header card-header-primary">
+            <h4 class="card-title">Create Meeting With : <strong>@satudentSummary?.FullName</strong></h4>
+        </div>
+        <div class="card-body">
+            <form id="meeting-form" method="post"
+                  href="Meeting/api/Create/@_httpContextAccessor.HttpContext?.Request.RouteValues["id"]?studentId=@_httpContextAccessor.HttpContext?.Request.Query["studentId"]">
+                <!-- Supervisor ID -->
+                <div class="form-group">
+                    <input hidden value="@_httpContextAccessor.HttpContext?.Request.RouteValues["id"]"
+                           type="text" class="form-control" id="supervisorId" name="supervisorId" required>
+
+                </div>
+
+                <!-- Student ID -->
+                <div class="form-group">
+                    <input value="@_httpContextAccessor.HttpContext?.Request.Query["studentId"]" hidden type="text" class="form-control" id="studentId" name="studentId" required>
+
+                </div>
+
+                <!-- Day -->
+                <div class="form-group">
+                    <label for="day">Select Day</label>
+                    <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="day" name="day"
+                            data-val="true" data-val-required="Day Is Required" required>
+                        <!-- Days will be populated by JavaScript -->
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="day" data-valmsg-replace="true"></span>
+
+                </div>
+
+                <!-- Start Hour -->
+                <div class="form-group">
+                    <label for="startHour">Start Hour</label>
+                    <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="startHour" name="startHour"
+                            data-val="true" data-val-required="Start Hour Is Required" required>
+                        <!-- Start hours will be populated by JavaScript -->
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="startHour" data-valmsg-replace="true"></span>
+
+                </div>
+
+                <!-- End Hour -->
+                <div class="form-group">
+                    <label for="endHour">End Hour</label>
+                    <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="endHour" name="endHour"
+                            data-val="true" data-val-required="End Hour Is Required" required>
+                        <!-- End hours will be populated by JavaScript -->
+                    </select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="endHour" data-valmsg-replace="true"></span>
+
+                </div>
+
+                <!-- Date -->
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input min="@_appTimeProvider.Now" type="date" class="form-control" id="date" name="date"
+                           data-val="true" data-val-required="Date Is Required" required>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="date" data-valmsg-replace="true"></span>
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Meeting Description</label>
+                    <textarea class="form-control" id="description" name="description" minlength="4" maxlength="500"
+                              data-val="true" data-val-length="Meeting description must be between 4 and 500 characters"
+                              data-val-length-max="500" data-val-length-min="4"></textarea>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="description" data-valmsg-replace="true"></span>
+
+                    <!-- Show or hide add meeting task -->
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" id="hasTasks" name="hasTasks">
+                            <span class="form-check-sign">
+                                <span class="check"></span>
+                            </span>
+                            Add Meeting Tasks
+                        </label>
+                    </div>
+                    <!-- Meeting tasks -->
+
+                    <div id="meeting-tasks" style="display:none;">
+                        <h5>Meeting Tasks</h5>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-table-body">
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-primary" id="add-task" style="display:none;">Add Task</button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Meeting Task Modal -->
+<div class="modal fade" id="meetingTaskModal" tabindex="-1" role="dialog" aria-labelledby="meetingTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="meetingTaskModalLabel">Add Meeting Task</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="task-title">Title</label>
+                    <input type="text" class="form-control" id="task-title" required minlength="4" maxlength="500"
+                           data-val="true" data-val-required="Title Is Required" data-val-length="Title must be between 4 and 500 characters"
+                           data-val-length-max="500" data-val-length-min="4">
+                </div>
+                <div class="form-group">
+                    <label for="task-description">Description</label>
+                    <textarea class="form-control" id="task-description" minlength="4" maxlength="500"
+                              data-val="true" data-val-length="Title must be between 4 and 500 characters"
+                              data-val-length-max="500" data-val-length-min="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-task">Save Task</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    class FreeDayJs {
+        constructor(day, freeHourSet) {
+            this.day = day;
+            this.freeHourSet = freeHourSet;
+        }
+    }
+
+    //has free days
+    const freeDayHours = new Map();
+
+    let dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+</script>
+@{
+    foreach (var freeday in daysFreeHours)
+    {
+        <script>
+            var myHashSet = @Html.Raw(Json.Serialize(@freeday.Value.ToArray()));
+            @*if no free hours in day we will not show the day *@
+                           if (myHashSet !== undefined && myHashSet.length !== 0) {
+                freeDayHours.set(Number.parseInt('@freeday.Key'), new FreeDayJs(@freeday.Key, myHashSet));
+            }
+
+        </script>
+    }
+}
+<!--For Handle Form Submitting-->
+<script defer>
+    const meetingForm = document.getElementById('meeting-form');
+
+    meetingForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        if (!meetingForm.checkValidity()) {
+            alert('Please fill in the required fields.');
+            return;
+        }
+
+        const formData = new FormData(meetingForm);
+        const dataObj = {};
+
+        // Iterate through form data entries and create an object with input names and values
+        for (let [name, value] of formData.entries()) {
+            dataObj[name] = value;
+        }
+        // Display the data object in the console as a table
+        console.log(dataObj);
+        //console.table([dataObj]);
+        return;
+
+        meetingForm.submit();
+    });
+
+</script>
+<!-- Free day change handling script -->
+<script defer>
+    // Populate the days, start hour, and end hour dropdowns
+    const daySelect = document.getElementById('day');
+    const startHourSelect = document.getElementById('startHour');
+    const endHourSelect = document.getElementById('endHour');
+
+
+    //// Populate days
+    for (let [key, value] of freeDayHours) {
+
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = dayOfWeek[key];
+        daySelect.appendChild(option);
+
+    }
+
+    // Populate start and end hour drop-downs
+    function populateHourDropdowns(selectedDay) {
+        startHourSelect.innerHTML = '';
+        endHourSelect.innerHTML = '';
+
+        const dayHours = freeDayHours.get(Number.parseInt(selectedDay)).freeHourSet;
+
+        for (const hour of dayHours) {
+            const startOption = document.createElement('option');
+            startOption.value = hour;
+            startOption.textContent = hour;
+            startHourSelect.appendChild(startOption);
+
+            const endOption = document.createElement('option');
+            endOption.value = hour + 1;
+            endOption.textContent = hour + 1;
+            endHourSelect.appendChild(endOption);
+        }
+    }
+
+    daySelect.addEventListener('change', function () {
+        populateHourDropdowns(this.value);
+    });
+
+    populateHourDropdowns(daySelect.value);
+
+    // Check hous availability
+
+    function isHoursValid() {
+        const selectedDay = daySelect.value;
+        const startHour = parseInt(startHourSelect.value);
+        const endHour = parseInt(endHourSelect.value);
+        return freeDayHours.get(parseInt(selectedDay)).freeHourSet.includes(startHour) && freeDayHours.get(parseInt(selectedDay)).freeHourSet.includes(endHour - 1);
+    }
+
+    //for make end hour show only values with higher than startHour
+    startHourSelect.addEventListener('change', function () {
+        let startHourValue = parseInt(startHourSelect.value);
+
+        // Disable all the options of the end hour select
+        for (let i = 0; i < endHourSelect.options.length; i++) {
+            endHourSelect.options[i].disabled = true;
+        }
+
+        // Enable the options that have a value higher than the selected start hour value
+
+        for (let i = 0; i < endHourSelect.options.length; i++) {
+            if (parseInt(endHourSelect.options[i].value) > parseInt(startHourSelect.value)) {
+                endHourSelect.options[i].disabled = false;
+            }
+
+        }
+
+        selectFirstAvailbleInEndHour(endHourSelect.options);
+    });
+
+
+    function selectFirstAvailbleInEndHour(endHourOptions) {
+        // Find the first available option
+        let firstAvailableOptionIndex = -1;
+        for (let i = 0; i < endHourOptions.length; i++) {
+            if (!endHourOptions[i].disabled) {
+                firstAvailableOptionIndex = i;
+                break;
+            }
+        }
+
+        // Set the value of the end hour select list to the value of the first available option
+        if (firstAvailableOptionIndex !== -1) {
+            endHourSelect.value = endHourOptions[firstAvailableOptionIndex].value;
+        } else {
+            endHourSelect.value = '-1';
+        }
+    }
+
+    //validate user date input to make him select only dates with same day
+    const meetingDatePicker = document.getElementById('date');
+
+    meetingDatePicker.addEventListener('input', function (event) {
+        const selectedDate = new Date(event.target.value);
+        const specificDay = parseInt(daySelect.value); // 0 for Sunday, 1 for Monday, and so on
+
+        if (selectedDate.getDay() !== specificDay) {
+            alert('Please select a date with the ' + dayOfWeek[specificDay]);
+            meetingDatePicker.value = '';
+        }
+    });
+
+    var today = new Date().toISOString().split('T')[0];
+    meetingDatePicker.setAttribute('min', today);
+
+    //set default values for date-time picker as current system date
+    meetingDatePicker.value = today;
+</script>
+
+<!-- Form handling script -->
+<script defer>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle form submission and validation
+        const meetingForm = document.getElementById('meeting-form');
+        const addTaskBtn = document.getElementById('add-task');
+        const meetingTasks = document.getElementById('meeting-tasks');
+        const tasksTableBody = document.getElementById('tasks-table-body');
+        const showHideTasksCheckbox = document.getElementById('hasTasks');
+
+        // Show or hide add meeting task button and table
+        showHideTasksCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                addTaskBtn.style.display = 'block';
+                meetingTasks.style.display = 'block';
+            } else {
+                addTaskBtn.style.display = 'none';
+                meetingTasks.style.display = 'none';
+            }
+        });
+
+        // Add task button event listener
+        addTaskBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            $('#meetingTaskModal').modal('show');
+        });
+        let taskCounter = 1;
+        // Save task event listener
+        const saveTaskBtn = document.getElementById('save-task');
+        saveTaskBtn.addEventListener('click', function () {
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-description').value;
+
+            if (title && description) {
+                const newRow = tasksTableBody.insertRow();
+                const titleCell = newRow.insertCell(0);
+                const descriptionCell = newRow.insertCell(1);
+
+                titleCell.textContent = title;
+                descriptionCell.textContent = description;
+
+                // Create hidden inputs for title and description
+                const titleInput = document.createElement('input');
+                titleInput.type = 'hidden';
+                titleInput.name = `tasks[${taskCounter}].title`;
+                titleInput.value = title;
+
+                const descriptionInput = document.createElement('input');
+                descriptionInput.type = 'hidden';
+                descriptionInput.name = `tasks[${taskCounter}].description`;
+                descriptionInput.value = description;
+
+                // Add hidden inputs to the form
+                const form = document.getElementById('meeting-form');
+                form.appendChild(titleInput);
+                form.appendChild(descriptionInput);
+
+                // Increment the task counter
+                taskCounter++;
+
+                // Clear the input fields and close the modal
+                document.getElementById('task-title').value = '';
+                document.getElementById('task-description').value = '';
+                $('#meetingTaskModal').modal('hide');
+            }
+        });
+
+
+        // Form submit event listener
+        meetingForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (meetingForm.checkValidity()) {
+                // Process form data
+                console.log('Form is valid');
+            } else {
+                // Show validation messages
+                event.stopPropagation();
+            }
+            meetingForm.classList.add('was-validated');
+        });
+    });
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+
+
+
+
+
+

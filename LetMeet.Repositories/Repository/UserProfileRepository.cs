@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.IO;
 using LetMeet.Data.Dtos.User;
 using System.Collections.Generic;
+using LetMeet.Data.Dtos.Supervision;
 
 namespace LetMeet.Repositories.Repository
 {
@@ -313,6 +314,43 @@ namespace LetMeet.Repositories.Repository
 
             }
         }
+
+        public async Task<RepositoryResult<List<DayFree>>> GetFreeDaysAsync(Guid userinfoId)
+        {
+            try
+            {
+                List<DayFree> dayFrees = await _mainDb.UserInfos.Where(u => u.id == userinfoId).Select(u => u.freeDays).FirstOrDefaultAsync();
+                if (dayFrees == null)
+                {
+                    return RepositoryResult<List<DayFree>>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Get Free Days" });
+                }
+                return RepositoryResult<List<DayFree>>.SuccessResult(ResultState.Seccess, dayFrees);
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<List<DayFree>>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+            }
+
+        }
+
+        public async Task<RepositoryResult<StudentSelectDto>> GetSummary(Guid userinfoId)
+        {
+            try
+            {
+                StudentSelectDto summary = await _mainDb.UserInfos.Where(x => x.id == userinfoId).Select(x => new StudentSelectDto(x.id, x.fullName)).FirstOrDefaultAsync();
+                if (summary is null) { 
+                return RepositoryResult<StudentSelectDto>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Get Summary" });
+                }
+                return RepositoryResult<StudentSelectDto>.SuccessResult(ResultState.Seccess, summary);
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<StudentSelectDto>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+            }
+        }
+
     }
 }
 

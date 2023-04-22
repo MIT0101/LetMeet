@@ -24,5 +24,6 @@ public interface ISupervisionService
     Task<IEnumerable<StudentDatedSelectDto>> GetAllSupervisorStudents(Guid supervisorId);
 
     Task<IEnumerable<StudentSelectDto>> GetUnSupervisedStudents();
+    Task<OneOf<Dictionary<int, DayHours>, List<ValidationResult>,List<ServiceMassage>>> GetMutualFreeDay(Guid supervisorId,Guid studentId,DateTime date);
 }
 

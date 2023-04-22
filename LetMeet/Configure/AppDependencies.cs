@@ -114,6 +114,7 @@ namespace LetMeet.Configure
             services.AddScoped<ISupervisionService, SupervisionService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IMeetingService, MeetingService>();
+            services.AddScoped<IStudentsService, StudentsService>();
 
         }
 

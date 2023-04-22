@@ -33,13 +33,8 @@ namespace LetMeet.Business.Implemintation
             //UserInfo? student = (await _userProfileRepo.GetUserByIdAsync(studentId)).Result;
             //UserInfo? supervisor = (await _userProfileRepo.GetUserByIdAsync(supervisorId)).Result;
 
-            var studentTask = _userProfileRepo.GetUserByIdAsync(studentId);
-            var supervisorTask = _userProfileRepo.GetUserByIdAsync(supervisorId);
-
-            await Task.WhenAll(studentTask, supervisorTask);
-
-            UserInfo? student = studentTask.Result.Result;
-            UserInfo? supervisor = supervisorTask.Result.Result;
+            UserInfo? student = (await _userProfileRepo.GetUserByIdAsync(studentId)).Result;
+            UserInfo? supervisor = (await _userProfileRepo.GetUserByIdAsync(supervisorId)).Result;
 
             if (student is null || supervisor is null)
             {
@@ -131,15 +126,26 @@ namespace LetMeet.Business.Implemintation
             return (await _supervionsRepo.GetUnSupervisedStudents()).Result ?? new List<StudentSelectDto>();
         }
 
+        public async Task<OneOf<Dictionary<int, DayHours>, List<ValidationResult>, List<ServiceMassage>>> GetMutualFreeDay(Guid supervisorId, Guid studentId, DateTime date)
+        {
+            var supervisorFreeDays = (await _userProfileRepo.GetFreeDaysAsync(supervisorId)).Result;
+            var studentFreeDays = (await _userProfileRepo.GetFreeDaysAsync(studentId)).Result;
+
+            if (supervisorFreeDays is null || studentFreeDays is null)
+            {
+                return new List<ServiceMassage> { new ServiceMassage("Can Not Find Supervisor Or Student") };
+            }
+            //get supervisor and student mutual free days use DayHour
+            Dictionary<int, DayHours> mutualDays = DayHours.GetMutualDays(supervisorFreeDays, studentFreeDays);
+
+            return mutualDays;
+        }
+
         public async Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> RemoveStudentFromSupervisor(Guid supervisorId, Guid studentId)
         {
-            var studentTask = _userProfileRepo.GetUserByIdAsync(studentId);
-            var supervisorTask = _userProfileRepo.GetUserByIdAsync(supervisorId);
 
-            await Task.WhenAll(studentTask, supervisorTask);
-
-            UserInfo? student = studentTask.Result.Result;
-            UserInfo? supervisor = supervisorTask.Result.Result;
+            UserInfo? student = (await _userProfileRepo.GetUserByIdAsync(studentId)).Result;
+            UserInfo? supervisor = (await _userProfileRepo.GetUserByIdAsync(supervisorId)).Result;
 
             if (student is null || supervisor is null)
             {
