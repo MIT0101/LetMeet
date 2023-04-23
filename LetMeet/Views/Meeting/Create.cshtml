@@ -1,12 +1,28 @@
-﻿@{
+﻿@inject AppTimeProvider _appTimeProvider;
+@inject IHttpContextAccessor _httpContextAccessor;
+
+@{
     ViewData["Title"] = "Create Meeting";
 
     StudentSelectDto? satudentSummary = ViewData[ViewStringHelper.StudentSummary] as StudentSelectDto;
 
     Dictionary<int, ISet<int>>? daysFreeHours = ViewData[ViewStringHelper.MutualFreeDays] as Dictionary<int, ISet<int>>;
+
+
+    Guid supervisorId=Guid.Empty;
+    Guid studentId =Guid.Empty;
+
+    try
+    {
+           supervisorId= Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues["id"].ToString());
+           studentId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.Query["studentId"].ToString());
+    }
+    catch (Exception ex)
+    {
+        
+    }
+
 }
-@inject AppTimeProvider _appTimeProvider;
-@inject IHttpContextAccessor _httpContextAccessor;
 
 <h2>Create Meeting</h2>
 @*create form to fill MeetingDto info*@
@@ -18,63 +34,90 @@
             <h4 class="card-title">Create Meeting With : <strong>@satudentSummary?.FullName</strong></h4>
         </div>
         <div class="card-body">
-            <form id="meeting-form" method="post"
-                  href="Meeting/api/Create/@_httpContextAccessor.HttpContext?.Request.RouteValues["id"]?studentId=@_httpContextAccessor.HttpContext?.Request.Query["studentId"]">
+            <form id="meeting-form" method="post" action="/Meeting/Create/@supervisorId?studentId=@studentId">
                 <!-- Supervisor ID -->
                 <div class="form-group">
-                    <input hidden value="@_httpContextAccessor.HttpContext?.Request.RouteValues["id"]"
+                    <input hidden value="@supervisorId"
                            type="text" class="form-control" id="supervisorId" name="supervisorId" required>
 
                 </div>
 
                 <!-- Student ID -->
                 <div class="form-group">
-                    <input value="@_httpContextAccessor.HttpContext?.Request.Query["studentId"]" hidden type="text" class="form-control" id="studentId" name="studentId" required>
+                    <input value="@studentId" hidden type="text" class="form-control" id="studentId" name="studentId" required>
 
                 </div>
 
-                <!-- Day -->
+                <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
+
+                        <!-- Day -->
+
+                        <tr >
+                            <td>
+                                <label for="day">Select Day</label>
+
+                            </td>
+                                <td>
+                                <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="day" name="day"
+                                        data-val="true" data-val-required="Day Is Required" required>
+                                    <!-- Days will be populated by JavaScript -->
+                                </select>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="day" data-valmsg-replace="true"></span>
+                            </td>
+
+
+                        </tr>
+
+                         <!-- Start Hour -->
+
+                        <tr>
+                            <td>
+                                <label for="startHour">Start Hour</label>
+                            </td>
+                            <td>
+                                <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="startHour" name="startHour"
+                                        data-val="true" data-val-required="Start Hour Is Required" required>
+                                    <!-- Start hours will be populated by JavaScript -->
+                                </select>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="startHour" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+
+                        <!-- End Hour -->
+
+                        <tr>
+                            <td>
+                                <label for="endHour">End Hour</label>
+                            </td>
+                            <td>
+                                <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="endHour" name="endHour"
+                                        data-val="true" data-val-required="End Hour Is Required" required>
+                                    <!-- End hours will be populated by JavaScript -->
+                                </select>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="endHour" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+
+                        <!-- Date -->
+
+                        <tr>
+                            <td>
+                                <label for="date">Date</label>
+                            </td>
+                            <td>
+                                <input min="@_appTimeProvider.Now" type="date" class="form-control" id="date" name="date"
+                                       data-val="true" data-val-required="Date Is Required" required>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="date" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+
+
+                        </table>
+
                 <div class="form-group">
-                    <label for="day">Select Day</label>
-                    <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="day" name="day"
-                            data-val="true" data-val-required="Day Is Required" required>
-                        <!-- Days will be populated by JavaScript -->
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="day" data-valmsg-replace="true"></span>
+
 
                 </div>
-
-                <!-- Start Hour -->
-                <div class="form-group">
-                    <label for="startHour">Start Hour</label>
-                    <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="startHour" name="startHour"
-                            data-val="true" data-val-required="Start Hour Is Required" required>
-                        <!-- Start hours will be populated by JavaScript -->
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="startHour" data-valmsg-replace="true"></span>
-
-                </div>
-
-                <!-- End Hour -->
-                <div class="form-group">
-                    <label for="endHour">End Hour</label>
-                    <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="endHour" name="endHour"
-                            data-val="true" data-val-required="End Hour Is Required" required>
-                        <!-- End hours will be populated by JavaScript -->
-                    </select>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="endHour" data-valmsg-replace="true"></span>
-
-                </div>
-
-                <!-- Date -->
-                <div class="form-group">
-                    <label for="date">Date</label>
-                    <input min="@_appTimeProvider.Now" type="date" class="form-control" id="date" name="date"
-                           data-val="true" data-val-required="Date Is Required" required>
-                    <span class="text-danger field-validation-valid" data-valmsg-for="date" data-valmsg-replace="true"></span>
-
-                </div>
-
 
                 <!-- Description -->
                 <div class="form-group">
@@ -99,21 +142,23 @@
                     <div id="meeting-tasks" style="display:none;">
                         <h5>Meeting Tasks</h5>
 
+                        <button type="button" class="btn btn-primary pull-right" id="add-task" style="display:none;">Add Task</button>
+
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>Title</th>
                                     <th>Description</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tasks-table-body">
                             </tbody>
                         </table>
-                        <button type="button" class="btn btn-primary" id="add-task" style="display:none;">Add Task</button>
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Create Meeting</button>
             </form>
         </div>
     </div>
@@ -130,18 +175,25 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="task-title">Title</label>
-                    <input type="text" class="form-control" id="task-title" required minlength="4" maxlength="500"
-                           data-val="true" data-val-required="Title Is Required" data-val-length="Title must be between 4 and 500 characters"
-                           data-val-length-max="500" data-val-length-min="4">
-                </div>
-                <div class="form-group">
-                    <label for="task-description">Description</label>
-                    <textarea class="form-control" id="task-description" minlength="4" maxlength="500"
-                              data-val="true" data-val-length="Title must be between 4 and 500 characters"
-                              data-val-length-max="500" data-val-length-min="4"></textarea>
-                </div>
+                <form id="add-task-form" href="">
+                    <div class="form-group">
+                        <label for="task-title">Title</label>
+                        <input type="text" class="form-control" name="task-title" id="task-title" required minlength="4" maxlength="500"
+                               data-val="true" data-val-required="Title Is Required" data-val-length="Title must be between 4 and 500 characters"
+                               data-val-length-max="500" data-val-length-min="4">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="task-title" data-valmsg-replace="true"></span>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">Description</label>
+                        <textarea class="form-control" name="task-description" id="task-description"
+                                  data-val="true" data-val-required="Description Is Required" data-val-length="Description must be between 4 and 500 characters"
+                                  data-val-length-max="500" data-val-length-min="4" maxlength="500" required></textarea>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="task-description" data-valmsg-replace="true"></span>
+
+                    </div>
+                </form>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -171,7 +223,7 @@
         <script>
             var myHashSet = @Html.Raw(Json.Serialize(@freeday.Value.ToArray()));
             @*if no free hours in day we will not show the day *@
-                           if (myHashSet !== undefined && myHashSet.length !== 0) {
+                                                                                       if (myHashSet !== undefined && myHashSet.length !== 0) {
                 freeDayHours.set(Number.parseInt('@freeday.Key'), new FreeDayJs(@freeday.Key, myHashSet));
             }
 
@@ -180,30 +232,122 @@
 }
 <!--For Handle Form Submitting-->
 <script defer>
-    const meetingForm = document.getElementById('meeting-form');
+    const meetingForm2 = document.getElementById('meeting-form');
+    const tasksTableBody2 = document.getElementById('tasks-table-body');
 
-    meetingForm.addEventListener('submit', async function (event) {
+
+
+    meetingForm2.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        if (!meetingForm.checkValidity()) {
-            alert('Please fill in the required fields.');
+        if (!meetingForm2.checkValidity()) {
+            //alert('Please fill in the required fields.');
             return;
         }
 
-        const formData = new FormData(meetingForm);
-        const dataObj = {};
+        const formData = new FormData(meetingForm2);
+        const tasks = [];
 
-        // Iterate through form data entries and create an object with input names and values
-        for (let [name, value] of formData.entries()) {
-            dataObj[name] = value;
+        for (const row of tasksTableBody2.querySelectorAll('tr')) {
+            const title = row.querySelector('td:nth-child(1)').textContent;
+            const description = row.querySelector('td:nth-child(2)').textContent;
+
+            tasks.push({ title, description });
         }
-        // Display the data object in the console as a table
-        console.log(dataObj);
-        //console.table([dataObj]);
-        return;
 
-        meetingForm.submit();
+        const hasTasksCheckbox = meetingForm2.querySelector('input[name="hasTasks"]');
+
+        // Log the form data
+        let data= {};
+
+        for (const [key, value] of formData.entries()) {
+            //console.log(`${key}: ${value}`);
+            data[key] = value;  
+        } 
+        data['hasTasks']= hasTasksCheckbox.checked;
+        data['tasks']= tasks;
+
+        // make submit button text loading
+        const submitButton = meetingForm2.querySelector('button[type="submit"]');
+        ShowLoading(submitButton);
+
+        RemoveAlerts();
+
+        fetch(meetingForm2.getAttribute('action'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if(data.isSuccess){
+                //redirect user to /Meetings/supervisorId?studentId
+                //window.location.href = "/Meeting/@supervisorId?studentId=@studentId";
+                // show success alert above form
+                CreateAndAddAlert("Meeting Created Successfully",false);
+                DisableLoading(submitButton);
+
+                return;
+                }
+                //show error alert above form
+                  
+                // create and alerts from errors in data.errors 
+                    if(data.errors && data.errors.length>0){
+                       
+                        for (const error of data.errors) {
+                            CreateAndAddAlert(error,true);
+                           }
+                       }
+
+                    DisableLoading(submitButton);
+
+                //location.reload();
+                // Redirect or show success message
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                 DisableLoading(submitButton);
+
+                    // show error alert above form
+                        CreateAndAddAlert("Error happen try again",true);
+            });
     });
+    // method used to show loading and disable submit button 
+    function ShowLoading(submitButton){
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+        submitButton.disabled = true;
+    }
+    // function to disable loading and enable submit button
+function DisableLoading(submitButton){
+        submitButton.innerHTML = 'Create Meeting';
+        submitButton.disabled = false;
+    }
+
+    // used to create alert and add it to the form
+    function CreateAndAddAlert(ErrorMessage,isError){
+    const alert = document.createElement('div'); 
+          let alertClass = "alert-success";
+
+          if(isError){
+          alertClass="alert-danger";
+          }
+          
+
+         alert.classList.add('alert', alertClass, 'alert-dismissible', 'fade', 'show');
+         alert.setAttribute('role', 'alert');
+         alert.innerHTML = ErrorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>';
+         meetingForm2.prepend(alert);
+    }
+
+    function RemoveAlerts(){
+        const alerts = meetingForm2.querySelectorAll('.alert');
+        for (const alert of alerts) {
+            alert.remove();
+        }
+    }
 
 </script>
 <!-- Free day change handling script -->
@@ -315,8 +459,6 @@
     var today = new Date().toISOString().split('T')[0];
     meetingDatePicker.setAttribute('min', today);
 
-    //set default values for date-time picker as current system date
-    meetingDatePicker.value = today;
 </script>
 
 <!-- Form handling script -->
@@ -345,10 +487,14 @@
             event.preventDefault();
             $('#meetingTaskModal').modal('show');
         });
-        let taskCounter = 1;
         // Save task event listener
         const saveTaskBtn = document.getElementById('save-task');
+        const addTaskForm = document.getElementById('add-task-form');
         saveTaskBtn.addEventListener('click', function () {
+            if (!addTaskForm.checkValidity()) {
+                return;
+            }
+
             const title = document.getElementById('task-title').value;
             const description = document.getElementById('task-description').value;
 
@@ -356,28 +502,32 @@
                 const newRow = tasksTableBody.insertRow();
                 const titleCell = newRow.insertCell(0);
                 const descriptionCell = newRow.insertCell(1);
+                const removeTaskCell = newRow.insertCell(2);
+
+                const removeTaskBtn = document.createElement('button');
+                removeTaskBtn.setAttribute('rel', 'tooltip');
+                removeTaskBtn.setAttribute('title', '');
+                removeTaskBtn.setAttribute('data-original-title', 'Remove Task');
+                removeTaskBtn.setAttribute('type', 'button');
+                removeTaskBtn.classList.add('btn', 'btn-danger', 'btn-link', 'btn-sm');
+
+                // Create a new icon element
+                const newIcon = document.createElement('i');
+                newIcon.classList.add('material-icons');
+                newIcon.textContent = 'close';
+
+                // Add the icon element as a child of the button element
+                removeTaskBtn.appendChild(newIcon);
+
+                removeTaskBtn.addEventListener('click', function () {
+                    if (confirm(`Are You Sure You Want To Remove Task With Title of ${title}`)) {
+                        tasksTableBody.removeChild(newRow);
+                    }
+                });
 
                 titleCell.textContent = title;
                 descriptionCell.textContent = description;
-
-                // Create hidden inputs for title and description
-                const titleInput = document.createElement('input');
-                titleInput.type = 'hidden';
-                titleInput.name = `tasks[${taskCounter}].title`;
-                titleInput.value = title;
-
-                const descriptionInput = document.createElement('input');
-                descriptionInput.type = 'hidden';
-                descriptionInput.name = `tasks[${taskCounter}].description`;
-                descriptionInput.value = description;
-
-                // Add hidden inputs to the form
-                const form = document.getElementById('meeting-form');
-                form.appendChild(titleInput);
-                form.appendChild(descriptionInput);
-
-                // Increment the task counter
-                taskCounter++;
+                removeTaskCell.appendChild(removeTaskBtn);
 
                 // Clear the input fields and close the modal
                 document.getElementById('task-title').value = '';
@@ -386,19 +536,6 @@
             }
         });
 
-
-        // Form submit event listener
-        meetingForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            if (meetingForm.checkValidity()) {
-                // Process form data
-                console.log('Form is valid');
-            } else {
-                // Show validation messages
-                event.stopPropagation();
-            }
-            meetingForm.classList.add('was-validated');
-        });
     });
 </script>
 

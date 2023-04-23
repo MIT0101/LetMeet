@@ -34,8 +34,6 @@ namespace LetMeet.Data.Entites.Meetigs
 
         public int endHour { get; set; }
 
-
-        [StringLength(maximumLength: 500, MinimumLength = 4, ErrorMessage = "Meeting Description Must Be Between 4 and 500 for length")]
         public string? description { get; set; }
 
         [Required(ErrorMessage = "Present is Required")]

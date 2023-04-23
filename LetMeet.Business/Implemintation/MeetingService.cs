@@ -51,6 +51,11 @@ public partial class MeetingService : IMeetingService
         {
             return new List<ServiceMassage> { new ServiceMassage($"Supervision has Expired Since {supervison.endDate.Date}") };
         }
+        //is supervision expired befor meeting date if yes return message
+        if (supervison.endDate <= _appTimeProvider.Now)
+        {
+            return new List<ServiceMassage> { new ServiceMassage($"Supervision will be Expired before {meetingDto.date.Date}") };
+        }
         //get supervisor and student mutual free days use DayHour
         Dictionary<int, DayHours> mutualDays =DayHours.GetMutualDays(supervison.supervisor.freeDays, supervison.student.freeDays);
 
@@ -66,18 +71,23 @@ public partial class MeetingService : IMeetingService
         }
 
         //check if we can add this meeting to this day using DayHours if not return message say cant add to this day
-        if (!mutualDays[(int)meetingDto.date.DayOfWeek].CanAdd(meetingDto.startHour, meetingDto.endHour))
+        if (!mutualDays[(int)meetingDto.date.DayOfWeek].CanAddMeet(meetingDto.startHour, meetingDto.endHour))
         {
             return new List<ServiceMassage> { new ServiceMassage($"There is No Available Free Hours is {meetingDto.date.DayOfWeek}") };
         }
         //check there is any meet at same date if there check if can add meet at same day
-        var meetAtSameDate = (await _meetingRepo.GetMeetingOn(meetingDto.supervisorId, meetingDto.studentId, meetingDto.date)).Result;
-        if (meetAtSameDate is not null
-            && new DayHours((int)meetAtSameDate.date.DayOfWeek, meetAtSameDate.startHour, meetAtSameDate.endHour)
-            .CanAdd(meetingDto.startHour, meetingDto.endHour))
+        var meetsAtSameDate = (await _meetingRepo.GetMeetingsOn(meetingDto.supervisorId, meetingDto.studentId, meetingDto.date)).Result;
+        if (meetsAtSameDate is not null && meetsAtSameDate.Count >0)
         {
-            return new List<ServiceMassage> { new ServiceMassage($"There is An Existing Meet At Same Date {meetAtSameDate.date.Date}") };
 
+            foreach (var meet in meetsAtSameDate)
+            {
+                
+                if (!new DayHours((int)meet.date.DayOfWeek, meet.startHour, meet.endHour).IsSaveToShareHours(meetingDto.startHour, meetingDto.endHour))
+                {
+                    return new List<ServiceMassage> { new ServiceMassage($"There is No Available Free Hours on "+ meetingDto.date.ToString("D")) };
+                }
+            }
         }
         //create meeting and save it 
         Meeting meeting = new Meeting
@@ -88,7 +98,7 @@ public partial class MeetingService : IMeetingService
             totalTimeHoure = meetingDto.totalTimeHoure,
             description = meetingDto.description,
             isPresent = false,
-            tasks = meetingDto.tasks?.Select(t => new MeetingTask { title = t.title, decription = t.decription, isCompleted = t.isCompleted }).ToList()
+            tasks = meetingDto.tasks?.Select(t => new MeetingTask { title = t.title, decription = t.description, /*isCompleted = t.isCompleted */}).ToList()
 
         };
         //must add meet to supervision meetings 

@@ -53,12 +53,12 @@ namespace LetMeet.Controllers
             MeetingTaskDto task1 = new MeetingTaskDto()
             {
                 title = "Task 1 Title",
-                decription = "Task 1 Description"
+                description = "Task 1 Description"
             };
             MeetingTaskDto task2 = new MeetingTaskDto()
             {
                 title = "Task 2 Title",
-                decription = "Task 2 Description"
+                description = "Task 2 Description"
             };
 
             MeetingDto meetingDto = new MeetingDto

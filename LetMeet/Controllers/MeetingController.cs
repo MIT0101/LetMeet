@@ -4,6 +4,11 @@ using LetMeet.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LetMeet.Business;
+using Newtonsoft.Json;
+using NuGet.Protocol;
+using LetMeet.Models;
+using LetMeet.Data.Entites.Meetigs;
+
 namespace LetMeet.Controllers;
 
 [Authorize]
@@ -13,11 +18,14 @@ public class MeetingController : Controller
     private readonly IMeetingService _meetingService;
     private readonly ISupervisionService _supervisionService;
     private readonly IStudentsService _studentsService;
-    public MeetingController(IMeetingService meetingService, ISupervisionService supervisionService, IStudentsService studentService)
+
+    private readonly IHttpContextAccessor _contextAccessor;
+    public MeetingController(IMeetingService meetingService, ISupervisionService supervisionService, IStudentsService studentService, IHttpContextAccessor contextAccessor)
     {
         _meetingService = meetingService;
         _supervisionService = supervisionService;
         _studentsService = studentService;
+        _contextAccessor = contextAccessor;
     }
     //show all meetings for supervisor can have filter for student and date
     [HttpGet]
@@ -70,19 +78,40 @@ public class MeetingController : Controller
     //, user has button to redirect him to create new meeting
     //3- create api endpoint to show meetings based on (all || today )
     [HttpPost()]
-    public async Task<IActionResult> Create(Guid id, MeetingDto meetingDto)
+    public async Task<IActionResult> Create(Guid id )
     {
         List<string> errors = new List<string>();
         List<string> messages = new List<string>();
-        var serviceResult = await _meetingService.Create(id, meetingDto);
+        // Read request body as a string
+        using var reader = new StreamReader(Request.Body);
+        string requestBody = await reader.ReadToEndAsync();
+        MeetingDto meetingDto = null;
+        // Deserialize the JSON content into a MeetingDto object
+        try
+        {
+            meetingDto = JsonConvert.DeserializeObject<MeetingDto>(requestBody);
+            var serviceResult = await _meetingService.Create(id, meetingDto);
 
-        serviceResult.Switch(
-            meeting => messages.Add("Meeting Created Successfully")
-            , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
-            , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+            Meeting resultMeeting=null; 
+            serviceResult.Switch(
+                meeting => {resultMeeting=meeting; messages.Add("Meeting Created Successfully"); }
+                , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
+                , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+
+            bool isSuccess=resultMeeting is not null;
+
+            return Json(new MeetingApiResponse { isSuccess= isSuccess ,status = isSuccess ? "Created" :"Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
+        }
+        catch (Exception ex)
+        {
+
+            return Json(MeetingApiResponse.Error(new List<string> { "Invalid data"}));
+        }
 
 
-        return RedirectToAction(nameof(MeetingController.Index), new { errors, messages });
+
+
+        //return RedirectToAction(nameof(MeetingController.Index), new { errors, messages });
     }
 
 }

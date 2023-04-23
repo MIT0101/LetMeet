@@ -11,7 +11,7 @@ namespace LetMeet.Repositories.Infrastructure;
 public interface IMeetingRepository
 {
     Task<RepositoryResult<Meeting>> AddMeetingToSupervsion(Meeting meeting,SupervisionInfo supervision);
-    Task<RepositoryResult<Meeting>> GetMeetingOn(Guid supervisorId, Guid studentId, DateTime date);
+    Task<RepositoryResult<List<Meeting>?>> GetMeetingsOn(Guid supervisorId, Guid studentId, DateTime date);
 
 
 }

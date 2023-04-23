@@ -71,19 +71,53 @@ public class DayHours
 
     }
 
-    public bool CanAdd(int toAddStartHour, int toAddEndHour)
+    public bool CanAddMeet(int reqStartHour, int reqEndHour)
     {
-        for (int i = toAddStartHour; i < toAddEndHour; i++)
+        // if to add and current are the same return false
+        if (reqStartHour == startHour && reqEndHour == endHour)
         {
-            if (!FreeHours.Contains(i))
-            {
-                return false;
-            }
+            return false;
         }
-        return true;
+        if (reqStartHour >= startHour && reqStartHour < endHour && reqEndHour <= endHour)
+        {
+            return true;
+        }
+        return false;
+        //// if to add is in the middle of current return false
+        //for (int i = reqStartHour; i < reqEndHour; i++)
+        //{
+        //    if (!FreeHours.Contains(i))
+        //    {
+        //        return false;
+        //    }
+        //}
+        //return true;
 
 
     }
+    //method to check if given start and end hours are not conflicting with current day hours
+
+    public bool IsSaveToShareHours(int reqStartHour, int reqEndHour)
+    {
+        // i am save if req is after my hours or before my hours
+        //before
+        if (reqStartHour <startHour && reqEndHour<=startHour)
+        {
+            return true;
+        }
+        //after
+        if (reqStartHour >= endHour && reqEndHour > endHour)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+
+
+
+
     public static Dictionary<int, DayHours> GetMutualDays(List<DayFree> supervisorFreeDays, List<DayFree> studentFreeDays)
     {
         supervisorFreeDays = supervisorFreeDays ?? new List<DayFree>();
