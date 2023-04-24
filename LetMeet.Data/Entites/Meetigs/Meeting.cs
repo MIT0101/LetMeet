@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LetMeet.Data.Entites.UsersInfo;
 
 namespace LetMeet.Data.Entites.Meetigs
 {
@@ -41,6 +42,8 @@ namespace LetMeet.Data.Entites.Meetigs
 
 
         public List<MeetingTask>? tasks { get; set; }
+
+        public SupervisionInfo SupervisionInfo { get; set; }
 
     }
 }

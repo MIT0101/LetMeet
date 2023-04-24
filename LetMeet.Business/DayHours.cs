@@ -118,7 +118,7 @@ public class DayHours
 
 
 
-    public static Dictionary<int, DayHours> GetMutualDays(List<DayFree> supervisorFreeDays, List<DayFree> studentFreeDays)
+    public static Dictionary<int, DayHours> GetMutualDays(List<DayFree>? supervisorFreeDays, List<DayFree>? studentFreeDays)
     {
         supervisorFreeDays = supervisorFreeDays ?? new List<DayFree>();
         studentFreeDays = studentFreeDays ?? new List<DayFree>();

@@ -35,11 +35,9 @@ public class MeetingRepository : IMeetingRepository
                 return RepositoryResult<Meeting>.FailureValidationResult(validationErrors.ValidationErrors);
             }
 
-            supervision.meetings = supervision.meetings ?? new List<Meeting>();
+            meeting.SupervisionInfo = supervision;
 
-            supervision.meetings.Add(meeting);
-
-             _mainDb.Update(supervision);
+            await _mainDb.Meetings.AddAsync(meeting);
 
             await _mainDb.SaveChangesAsync();
 
@@ -56,9 +54,8 @@ public class MeetingRepository : IMeetingRepository
     {
         try
         {
-
-            var foundMeets = (await _mainDb.SupervisionInfo
-                .Where(x => x.supervisor.id == supervisorId && x.student.id == studentId).Select(x => x.meetings).FirstOrDefaultAsync()).Where(m=>m.date.Date == date.Date).ToList();
+            var foundMeets = await _mainDb.Meetings
+                .Where(x => x.SupervisionInfo.supervisor.id == supervisorId && x.SupervisionInfo.student.id == studentId && x.date.Date == date.Date).ToListAsync();
 
             if (foundMeets is null || foundMeets.Count ==0) {
                 return RepositoryResult<List<Meeting>?>.FailureResult(ResultState.NotFound, null, new List<string> { $"No Meet Found On {date.Date}"});

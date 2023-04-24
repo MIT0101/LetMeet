@@ -15,6 +15,10 @@ public class MeetingDto
     [Display(Name = "Supervisor")]
     public Guid supervisorId { get; set; }
 
+    [Required(ErrorMessage ="Day Is Required")]
+    [Range(minimum:0,maximum:6,ErrorMessage ="Day Must be between 0 and 6")]
+    public int day { get; set; }
+
     [Required(ErrorMessage = "Student Is Required")]
     [Display(Name = "Student")]
     public Guid studentId { get; set; }

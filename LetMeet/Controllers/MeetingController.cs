@@ -77,8 +77,8 @@ public class MeetingController : Controller
     //user has show more button that call api to show more based on filter(all,today) 
     //, user has button to redirect him to create new meeting
     //3- create api endpoint to show meetings based on (all || today )
-    [HttpPost()]
-    public async Task<IActionResult> Create(Guid id )
+    [HttpPost("/[Controller]/api/Create/{id}")]
+    public async Task<ActionResult<IAppApiResponse>> Create(Guid id )
     {
         List<string> errors = new List<string>();
         List<string> messages = new List<string>();
@@ -86,7 +86,7 @@ public class MeetingController : Controller
         using var reader = new StreamReader(Request.Body);
         string requestBody = await reader.ReadToEndAsync();
         MeetingDto meetingDto = null;
-        // Deserialize the JSON content into a MeetingDto object
+        // De-serialize the JSON content into a MeetingDto object
         try
         {
             meetingDto = JsonConvert.DeserializeObject<MeetingDto>(requestBody);

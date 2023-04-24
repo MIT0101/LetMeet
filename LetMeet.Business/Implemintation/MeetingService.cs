@@ -15,33 +15,32 @@ public partial class MeetingService : IMeetingService
 {
     public readonly IMeetingRepository _meetingRepo;
     private readonly ISupervisonRepository _supervisionRepo;
+    private readonly IUserProfileRepository _userProfileRepo;
     private readonly AppTimeProvider _appTimeProvider;
 
-    public MeetingService(IMeetingRepository meetingRepo, ISupervisonRepository supervisionRepo, AppTimeProvider appTimeProvider)
+    public MeetingService(IMeetingRepository meetingRepo, ISupervisonRepository supervisionRepo, AppTimeProvider appTimeProvider, IUserProfileRepository userProfileRepo)
     {
         _meetingRepo = meetingRepo;
         _supervisionRepo = supervisionRepo;
         _appTimeProvider = appTimeProvider;
+        _userProfileRepo = userProfileRepo;
     }
 
     public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> Create(Guid supervisorId, MeetingDto meetingDto)
     {
-        // check if authorize
+        // check if the create is the same supervisor that is logged in
         if (supervisorId != meetingDto.supervisorId)
         {
             return new List<ValidationResult> { new ValidationResult("You CaN Create Meeting only For Your Students") };
-
         }
-        //validate Data 
-        var validationResult = RepositoryValidationResult.DataAnnotationsValidation(meetingDto);
-        if (!validationResult.IsValid)
+       //validate Data MeetingDto data
+        var validationErrors = ValidateMeetingDto(meetingDto);
+        if (validationErrors is not null && validationErrors.Any())
         {
-            return validationResult.ValidationErrors;
-
+            return validationErrors;
         }
-
+        var supervison = (await _supervisionRepo.GetSupervisionAsync(supervisorId: supervisorId, studentId: meetingDto.studentId)).Result;
         // check is there a supervision between supervisor and student if not return validation error 
-        var supervison = (await _supervisionRepo.GetSupervision_Meetings_FreeDaysAsync(supervisorId: meetingDto.supervisorId, studentId: meetingDto.studentId)).Result;
         if (supervison == null)
         {
             return new List<ValidationResult> { new ValidationResult($"No Supervision Between These Users") };
@@ -51,13 +50,12 @@ public partial class MeetingService : IMeetingService
         {
             return new List<ServiceMassage> { new ServiceMassage($"Supervision has Expired Since {supervison.endDate.Date}") };
         }
-        //is supervision expired befor meeting date if yes return message
-        if (supervison.endDate <= _appTimeProvider.Now)
-        {
-            return new List<ServiceMassage> { new ServiceMassage($"Supervision will be Expired before {meetingDto.date.Date}") };
-        }
+        //start new code
+        var supervisorFreeDaysList = (await _userProfileRepo.GetFreeDaysAsync(supervisorId)).Result;
+        var studentFreeDaysList = (await _userProfileRepo.GetFreeDaysAsync(meetingDto.studentId)).Result;
+
         //get supervisor and student mutual free days use DayHour
-        Dictionary<int, DayHours> mutualDays =DayHours.GetMutualDays(supervison.supervisor.freeDays, supervison.student.freeDays);
+        Dictionary<int, DayHours> mutualDays = DayHours.GetMutualDays(supervisorFreeDaysList, studentFreeDaysList);
 
         // if there is no mutual free days return Message 
         if (mutualDays.Count < 1)
@@ -73,19 +71,19 @@ public partial class MeetingService : IMeetingService
         //check if we can add this meeting to this day using DayHours if not return message say cant add to this day
         if (!mutualDays[(int)meetingDto.date.DayOfWeek].CanAddMeet(meetingDto.startHour, meetingDto.endHour))
         {
-            return new List<ServiceMassage> { new ServiceMassage($"There is No Available Free Hours is {meetingDto.date.DayOfWeek}") };
+            return new List<ServiceMassage> { new ServiceMassage($"There is No Available Free Hours on {meetingDto.date.DayOfWeek} , Try another Date") };
         }
         //check there is any meet at same date if there check if can add meet at same day
         var meetsAtSameDate = (await _meetingRepo.GetMeetingsOn(meetingDto.supervisorId, meetingDto.studentId, meetingDto.date)).Result;
-        if (meetsAtSameDate is not null && meetsAtSameDate.Count >0)
+        if (meetsAtSameDate is not null && meetsAtSameDate.Count > 0)
         {
 
             foreach (var meet in meetsAtSameDate)
             {
-                
+                //check if there any meet at same date and time
                 if (!new DayHours((int)meet.date.DayOfWeek, meet.startHour, meet.endHour).IsSaveToShareHours(meetingDto.startHour, meetingDto.endHour))
                 {
-                    return new List<ServiceMassage> { new ServiceMassage($"There is No Available Free Hours on "+ meetingDto.date.ToString("D")) };
+                    return new List<ServiceMassage> { new ServiceMassage("There is an Existing Meetings on " + meetingDto.date.ToString("D") + ", Try another Date") };
                 }
             }
         }
@@ -98,7 +96,7 @@ public partial class MeetingService : IMeetingService
             totalTimeHoure = meetingDto.totalTimeHoure,
             description = meetingDto.description,
             isPresent = false,
-            tasks = meetingDto.tasks?.Select(t => new MeetingTask { title = t.title, decription = t.description, /*isCompleted = t.isCompleted */}).ToList()
+            tasks = meetingDto.hasTasks ? meetingDto.tasks?.Select(t => new MeetingTask { title = t.title, decription = t.description, }).ToList() : null,
 
         };
         //must add meet to supervision meetings 
@@ -110,6 +108,29 @@ public partial class MeetingService : IMeetingService
             return new List<ServiceMassage> { new ServiceMassage("Can Not Create Meeting") };
         }
         return meeting;
+    }
+
+    //validate meetingDto
+    private List<ValidationResult>? ValidateMeetingDto(MeetingDto meetingDto)
+    {
+        var validationResult = RepositoryValidationResult.DataAnnotationsValidation(meetingDto);
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ValidationErrors;
+        }
+        // if tart hour is greater or equal than end hour return validation error
+        if (meetingDto.startHour >= meetingDto.endHour)
+        {
+            return new List<ValidationResult> { new ValidationResult("Start Hour Must Be Less Than End Hour", new string[] {nameof(meetingDto.startHour),nameof(meetingDto.endHour) }) };
+        }
+
+        // check if the day of meetingDto date is not equal meetingDto day
+        if ((int)meetingDto.date.Date.DayOfWeek != meetingDto.day)
+        {
+            return new List<ValidationResult> { new ValidationResult($"You Must Select Date with {(DayOfWeek)meetingDto.day} Day", new string[] { nameof(meetingDto.day) }) };
+        }
+
+        return null;
     }
 
 }

@@ -9,24 +9,22 @@
     Dictionary<int, ISet<int>>? daysFreeHours = ViewData[ViewStringHelper.MutualFreeDays] as Dictionary<int, ISet<int>>;
 
 
-    Guid supervisorId=Guid.Empty;
-    Guid studentId =Guid.Empty;
+    Guid supervisorId = Guid.Empty;
+    Guid studentId = Guid.Empty;
 
     try
     {
-           supervisorId= Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues["id"].ToString());
-           studentId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.Query["studentId"].ToString());
+        supervisorId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues["id"].ToString());
+        studentId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.Query["studentId"].ToString());
     }
     catch (Exception ex)
     {
-        
+
     }
 
 }
 
-<h2>Create Meeting</h2>
 @*create form to fill MeetingDto info*@
-
 
 <div class="container mt-5">
     <div class="card">
@@ -34,7 +32,7 @@
             <h4 class="card-title">Create Meeting With : <strong>@satudentSummary?.FullName</strong></h4>
         </div>
         <div class="card-body">
-            <form id="meeting-form" method="post" action="/Meeting/Create/@supervisorId?studentId=@studentId">
+            <form id="meeting-form" method="post" action="/Meeting/api/Create/@supervisorId?studentId=@studentId">
                 <!-- Supervisor ID -->
                 <div class="form-group">
                     <input hidden value="@supervisorId"
@@ -50,73 +48,71 @@
 
                 <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
 
-                        <!-- Day -->
+                    <!-- Day -->
 
-                        <tr >
-                            <td>
-                                <label for="day">Select Day</label>
+                    <tr>
+                        <td>
+                            <label for="day">Select Day</label>
 
-                            </td>
-                                <td>
-                                <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="day" name="day"
-                                        data-val="true" data-val-required="Day Is Required" required>
-                                    <!-- Days will be populated by JavaScript -->
-                                </select>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="day" data-valmsg-replace="true"></span>
-                            </td>
-
-
-                        </tr>
-
-                         <!-- Start Hour -->
-
-                        <tr>
-                            <td>
-                                <label for="startHour">Start Hour</label>
-                            </td>
-                            <td>
-                                <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="startHour" name="startHour"
-                                        data-val="true" data-val-required="Start Hour Is Required" required>
-                                    <!-- Start hours will be populated by JavaScript -->
-                                </select>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="startHour" data-valmsg-replace="true"></span>
-                            </td>
-                        </tr>
-
-                        <!-- End Hour -->
-
-                        <tr>
-                            <td>
-                                <label for="endHour">End Hour</label>
-                            </td>
-                            <td>
-                                <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="endHour" name="endHour"
-                                        data-val="true" data-val-required="End Hour Is Required" required>
-                                    <!-- End hours will be populated by JavaScript -->
-                                </select>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="endHour" data-valmsg-replace="true"></span>
-                            </td>
-                        </tr>
-
-                        <!-- Date -->
-
-                        <tr>
-                            <td>
-                                <label for="date">Date</label>
-                            </td>
-                            <td>
-                                <input min="@_appTimeProvider.Now" type="date" class="form-control" id="date" name="date"
-                                       data-val="true" data-val-required="Date Is Required" required>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="date" data-valmsg-replace="true"></span>
-                            </td>
-                        </tr>
+                        </td>
+                        <td>
+                            <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="day" name="day"
+                                    data-val="true" data-val-required="Day Is Required" required>
+                                <!-- Days will be populated by JavaScript -->
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="day" data-valmsg-replace="true"></span>
+                        </td>
 
 
-                        </table>
+                    </tr>
+
+                    <!-- Start Hour -->
+
+                    <tr>
+                        <td>
+                            <label for="startHour">Start Hour</label>
+                        </td>
+                        <td>
+                            <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="startHour" name="startHour"
+                                    data-val="true" data-val-required="Start Hour Is Required" required>
+                                <!-- Start hours will be populated by JavaScript -->
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="startHour" data-valmsg-replace="true"></span>
+                        </td>
+                    </tr>
+
+                    <!-- End Hour -->
+
+                    <tr>
+                        <td>
+                            <label for="endHour">End Hour</label>
+                        </td>
+                        <td>
+                            <select class="selectpicker btn btn-outline-rose btn-dark w-100" id="endHour" name="endHour"
+                                    data-val="true" data-val-required="End Hour Is Required" required>
+                                <!-- End hours will be populated by JavaScript -->
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="endHour" data-valmsg-replace="true"></span>
+                        </td>
+                    </tr>
+
+                    <!-- Date -->
+
+                    <tr>
+                        <td>
+                            <label for="date">Date</label>
+                        </td>
+                        <td>
+                            <input min="@_appTimeProvider.Now" type="date" class="form-control" id="date" name="date"
+                                   data-val="true" data-val-required="Date Is Required" required data-rule-day="2">
+                            <span class="text-danger field-validation-valid" data-valmsg-for="date" data-valmsg-replace="true"></span>
+                        </td>
+                    </tr>
+
+
+                </table>
 
                 <div class="form-group">
-
-
                 </div>
 
                 <!-- Description -->
@@ -223,13 +219,62 @@
         <script>
             var myHashSet = @Html.Raw(Json.Serialize(@freeday.Value.ToArray()));
             @*if no free hours in day we will not show the day *@
-                                                                                       if (myHashSet !== undefined && myHashSet.length !== 0) {
+                                                                                                   if (myHashSet !== undefined && myHashSet.length !== 0) {
                 freeDayHours.set(Number.parseInt('@freeday.Key'), new FreeDayJs(@freeday.Key, myHashSet));
             }
 
         </script>
     }
 }
+<!--For Rest All Meeting Tasks-->
+<script defer>
+    function RemoveAllTaksFromTable() {
+        // Select the tasks table body element
+        const tasksTableBody = document.getElementById("tasks-table-body");
+
+        // Loop through all the child elements of the tasks table body and remove them
+        while (tasksTableBody.firstChild) {
+            tasksTableBody.removeChild(tasksTableBody.firstChild);
+        }
+    }
+
+    function SelectFirstItem(selectElement) {
+        // Get all the options of the select element
+        const options = selectElement.options;
+
+        // Loop through the options and select the first available one
+        for (let i = 0; i < options.length; i++) {
+            if (!options[i].disabled ){
+                selectElement.selectedIndex = i;
+                break;
+            }
+        }
+        const event = new Event("change");
+        selectElement.dispatchEvent(event);
+    }
+
+    function ResutAllForm(){
+        RemoveAllTaksFromTable();
+        //REST DAYS
+        SelectFirstItem(document.getElementById('day'));
+        //REST START HOUR END HOUR WILL RESU AUTOMATIC BY CHANGE EVENT FOR SATRT HOUR
+        SelectFirstItem(document.getElementById('startHour'));
+        //rest date 
+        document.getElementById('date').value='';
+        //Rest Description
+        document.getElementById('description').value = '';
+        //rest meeting tasks checked
+        meetingTasksCheckBox = document.getElementById('hasTasks');
+        meetingTasksCheckBox.checked = false;
+        //target event manually
+        const event = new Event("change");
+        meetingTasksCheckBox.dispatchEvent(event);
+
+    }
+
+
+</script>
+
 <!--For Handle Form Submitting-->
 <script defer>
     const meetingForm2 = document.getElementById('meeting-form');
@@ -258,14 +303,14 @@
         const hasTasksCheckbox = meetingForm2.querySelector('input[name="hasTasks"]');
 
         // Log the form data
-        let data= {};
+        let data = {};
 
         for (const [key, value] of formData.entries()) {
             //console.log(`${key}: ${value}`);
-            data[key] = value;  
-        } 
-        data['hasTasks']= hasTasksCheckbox.checked;
-        data['tasks']= tasks;
+            data[key] = value;
+        }
+        data['hasTasks'] = hasTasksCheckbox.checked;
+        data['tasks'] = tasks;
 
         // make submit button text loading
         const submitButton = meetingForm2.querySelector('button[type="submit"]');
@@ -283,66 +328,66 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                if(data.isSuccess){
-                //redirect user to /Meetings/supervisorId?studentId
-                //window.location.href = "/Meeting/@supervisorId?studentId=@studentId";
-                // show success alert above form
-                CreateAndAddAlert("Meeting Created Successfully",false);
-                DisableLoading(submitButton);
-
-                return;
+                if (data.isSuccess) {
+                    //redirect user to /Meetings/supervisorId?studentId
+                    //window.location.href = "/Meeting/@supervisorId?studentId=@studentId";
+                    // show success alert above form
+                    CreateAndAddAlert("Meeting Created Successfully", false);
+                    DisableLoading(submitButton);
+                    ResutAllForm();
+                    return;
                 }
                 //show error alert above form
-                  
-                // create and alerts from errors in data.errors 
-                    if(data.errors && data.errors.length>0){
-                       
-                        for (const error of data.errors) {
-                            CreateAndAddAlert(error,true);
-                           }
-                       }
 
-                    DisableLoading(submitButton);
+                // create and alerts from errors in data.errors
+                if (data.errors && data.errors.length > 0) {
+
+                    for (const error of data.errors) {
+                        CreateAndAddAlert(error, true);
+                    }
+                }
+                DisableLoading(submitButton);
+
 
                 //location.reload();
                 // Redirect or show success message
             })
             .catch(error => {
                 console.error('Error:', error);
-                 DisableLoading(submitButton);
+                DisableLoading(submitButton);
 
-                    // show error alert above form
-                        CreateAndAddAlert("Error happen try again",true);
+                // show error alert above form
+                CreateAndAddAlert("Error happen try again", true);
             });
     });
-    // method used to show loading and disable submit button 
-    function ShowLoading(submitButton){
+    // method used to show loading and disable submit button
+    function ShowLoading(submitButton) {
         submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
         submitButton.disabled = true;
     }
     // function to disable loading and enable submit button
-function DisableLoading(submitButton){
+    function DisableLoading(submitButton) {
         submitButton.innerHTML = 'Create Meeting';
         submitButton.disabled = false;
     }
 
     // used to create alert and add it to the form
-    function CreateAndAddAlert(ErrorMessage,isError){
-    const alert = document.createElement('div'); 
-          let alertClass = "alert-success";
+    function CreateAndAddAlert(ErrorMessage, isError) {
+        const alert = document.createElement('div');
+        let alertClass = "alert-success";
 
-          if(isError){
-          alertClass="alert-danger";
-          }
-          
+        if (isError) {
+            alertClass = "alert-danger";
+        }
 
-         alert.classList.add('alert', alertClass, 'alert-dismissible', 'fade', 'show');
-         alert.setAttribute('role', 'alert');
-         alert.innerHTML = ErrorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>';
-         meetingForm2.prepend(alert);
+
+        alert.classList.add('alert', alertClass, 'alert-dismissible', 'fade', 'show');
+        alert.setAttribute('role', 'alert');
+        alert.innerHTML = ErrorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>';
+        meetingForm2.prepend(alert);
     }
 
-    function RemoveAlerts(){
+    function RemoveAlerts() {
         const alerts = meetingForm2.querySelectorAll('.alert');
         for (const alert of alerts) {
             alert.remove();
@@ -443,23 +488,15 @@ function DisableLoading(submitButton){
         }
     }
 
-    //validate user date input to make him select only dates with same day
+    //Set the value of min date to today date value
     const meetingDatePicker = document.getElementById('date');
-
-    meetingDatePicker.addEventListener('input', function (event) {
-        const selectedDate = new Date(event.target.value);
-        const specificDay = parseInt(daySelect.value); // 0 for Sunday, 1 for Monday, and so on
-
-        if (selectedDate.getDay() !== specificDay) {
-            alert('Please select a date with the ' + dayOfWeek[specificDay]);
-            meetingDatePicker.value = '';
-        }
-    });
 
     var today = new Date().toISOString().split('T')[0];
     meetingDatePicker.setAttribute('min', today);
 
 </script>
+
+
 
 <!-- Form handling script -->
 <script defer>
@@ -540,8 +577,6 @@ function DisableLoading(submitButton){
 </script>
 
 <partial name="_ValidationScriptsPartial" />
-
-
 
 
 

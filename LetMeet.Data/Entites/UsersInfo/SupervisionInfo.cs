@@ -27,7 +27,7 @@ namespace LetMeet.Data.Entites.UsersInfo
 
         public int extendTimes { get; set; } = 0;
 
-        public List<Meeting>? meetings { get; set; }
+        //public List<Meeting>? meetings { get; set; }
 
     }
 }

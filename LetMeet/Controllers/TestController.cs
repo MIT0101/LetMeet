@@ -13,6 +13,8 @@ using Microsoft.Extensions.Options;
 using System.ComponentModel.Design;
 using LetMeet.Data.Dtos.Meeting;
 using LetMeet.Business.Interfaces;
+using LetMeet.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LetMeet.Controllers
 {
@@ -30,7 +32,9 @@ namespace LetMeet.Controllers
 
         private readonly IMeetingService _meetingService;
 
-        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager, IPasswordGenrationRepository passwordGenration, ISelectionRepository selectionRepository, IMeetingService meetingService)
+        private readonly MainDbContext _mainDb;
+
+        public TestController(IGenericRepository<UserInfo, Guid> userRepository, IOptions<RepositoryDataSettings> settings, SignInManager<AppIdentityUser> signInManager, IPasswordGenrationRepository passwordGenration, ISelectionRepository selectionRepository, IMeetingService meetingService, MainDbContext mianDb)
         {
             _userRepository = userRepository;
             _settings = settings;
@@ -38,7 +42,79 @@ namespace LetMeet.Controllers
             _passwordGenration = passwordGenration;
             _selectionRepository = selectionRepository;
             _meetingService = meetingService;
+            _mainDb = mianDb;
         }
+        //test Create Meetings Withour Go To Supervsion
+        //test Create Meetings
+        public async Task<IActionResult> CreateMeeting2()
+        {
+            Guid supervisorId = Guid.Parse("e637d108-e910-46ec-b050-08db449a41ae");//Hasan Abbas (Sun 1-6)
+            Guid studentId = Guid.Parse("48be2203-c8ea-4939-b051-08db449a41ae");// ali adel
+
+            //when its Monday its not i free time
+            // 16 => sunday
+            //
+            DateTime date = new DateTime(2023, 4, 17);
+
+            MeetingTaskDto task1 = new MeetingTaskDto()
+            {
+                title = "Task 1 Title",
+                description = "Task 1 Description"
+            };
+            MeetingTaskDto task2 = new MeetingTaskDto()
+            {
+                title = "Task 2 Title",
+                description = "Task 2 Description"
+            };
+
+            MeetingDto meetingDto = new MeetingDto
+            {
+                date = date,
+                startHour = 1,
+                endHour = 2,
+                supervisorId = supervisorId,
+                studentId = studentId,
+                tasks = new List<MeetingTaskDto> { task1, task2 },
+                description = "Meeting Description",
+                hasTasks = true
+            };
+            var supervison = await _mainDb.SupervisionInfo.FirstOrDefaultAsync(x=>x.student.id == meetingDto.studentId
+            && x.supervisor.id==meetingDto.supervisorId);
+
+            List<MeetingTask> myTasks= new List<MeetingTask>();
+            myTasks.AddRange(meetingDto.tasks.Select(x => new MeetingTask{title=x.title,decription=x.description }));
+
+            Meeting meeting = new Meeting {
+            date=meetingDto.date,
+            startHour = meetingDto.startHour,
+            endHour = meetingDto.endHour,
+            tasks =myTasks,
+            description=meetingDto.description,
+            isPresent=false,
+            totalTimeHoure=meetingDto.endHour-meetingDto.startHour,
+            SupervisionInfo=supervison
+
+            };
+
+            await _mainDb.AddAsync(meeting);
+            await _mainDb.SaveChangesAsync();
+
+
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+
+            //var serviceResult = await _meetingService.Create(supervisorId, meetingDto);
+
+            //serviceResult.Switch(
+            //    meeting => messages.Add("Meeting Created Successfully")
+            //    , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
+            //    , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+
+
+            return Json(new { errors, messages });
+        }
+     
+
         //test Create Meetings
         public async Task<IActionResult> Create()
         {

@@ -1,7 +1,3 @@
-alraqym050@gmail.com,pYn5NP2zyPlrwZP3,Admin
-hasan@gmail.com,U$dHudgJZ%Zo&c#S,Supervisor
-ali@gmail.com,BJh0AqFGeeX0x$6s,Student
-hasan2@gmail.com,uyNrv&BKM1PypuPj,Supervisor
-ali2@gmail.com,&%mXQx%3nDUOtp!d,Student
-ramikhalid@gmail.com,zZUbLF!PXMw2SX49,Student
-ali3@gmail.com,stxTzbgXpQT@oT_!,Supervisor
+alraqym050@gmail.com,z6vKS&ktjbt6exgn,Admin
+hasan@gmail.com,12ASYjLNjQRvSS%p,Supervisor
+ali@gmail.com,y9UIDqseB0H7C2WE,Student

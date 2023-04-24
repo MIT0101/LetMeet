@@ -30,15 +30,14 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("SupervisionInfoid")
+                    b.Property<int>("SupervisionInfoid")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("endHour")
                         .HasColumnType("int");
@@ -193,10 +192,13 @@ namespace LetMeet.Data.Migrations.MainDb
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.Meeting", b =>
                 {
-                    b.HasOne("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", null)
-                        .WithMany("meetings")
+                    b.HasOne("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", "SupervisionInfo")
+                        .WithMany()
                         .HasForeignKey("SupervisionInfoid")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("SupervisionInfo");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.MeetingTask", b =>
@@ -237,11 +239,6 @@ namespace LetMeet.Data.Migrations.MainDb
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.Meeting", b =>
                 {
                     b.Navigation("tasks");
-                });
-
-            modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.SupervisionInfo", b =>
-                {
-                    b.Navigation("meetings");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.UserInfo", b =>
