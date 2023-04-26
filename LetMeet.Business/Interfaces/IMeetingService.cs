@@ -1,5 +1,5 @@
 ﻿using LetMeet.Business.Results;
-using LetMeet.Data.Dtos.Meeting;
+using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Data.Entites.Meetigs;
 using OneOf;
 using System;
@@ -14,6 +14,7 @@ namespace LetMeet.Business.Interfaces
     public interface IMeetingService
     {
         Task<OneOf<Meeting,IEnumerable<ValidationResult>,IEnumerable<ServiceMassage>>> Create(Guid supervisorId,MeetingDto meetingDto);
+        Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid supervisorId,Guid studentId,DateTime startDate,DateTime endDate);
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LetMeet.Data;
+using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Data.Entites.Meetigs;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories.Infrastructure;
@@ -34,7 +35,7 @@ public class MeetingRepository : IMeetingRepository
             {
                 return RepositoryResult<Meeting>.FailureValidationResult(validationErrors.ValidationErrors);
             }
-
+            meeting.created = _appTimeProvider.Now;
             meeting.SupervisionInfo = supervision;
 
             await _mainDb.Meetings.AddAsync(meeting);
@@ -47,6 +48,26 @@ public class MeetingRepository : IMeetingRepository
         {
           
             return RepositoryResult<Meeting>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+        }
+    }
+
+    public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsAsync(Guid supervisorId, Guid studentId, DateTime startDate, DateTime endDate)
+    {
+        try
+        {
+            var foundMeets = await _mainDb.Meetings
+                .Where(x => x.SupervisionInfo.supervisor.id == supervisorId && x.SupervisionInfo.student.id == studentId &&
+                x.date.Date >= startDate.Date && x.date.Date <= endDate.Date)
+                .Select(m=> MeetingFullDto.GetFromMeeting(m)).ToListAsync();
+            if (foundMeets is null || foundMeets.Count == 0)
+            {
+                return RepositoryResult<List<MeetingFullDto>?>.FailureResult(ResultState.NotFound, null, new List<string> { $"No Meet Found Between "+ startDate.Date.ToString("d") + " and "+ endDate.Date.ToString("d") });
+            }
+            return RepositoryResult<List<MeetingFullDto>?>.SuccessResult(ResultState.Seccess, foundMeets);
+        }
+        catch (Exception ex)
+        {
+            return RepositoryResult<List<MeetingFullDto>?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
         }
     }
 

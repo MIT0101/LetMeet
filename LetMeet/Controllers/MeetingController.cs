@@ -1,5 +1,5 @@
 ﻿using LetMeet.Business.Interfaces;
-using LetMeet.Data.Dtos.Meeting;
+using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using NuGet.Protocol;
 using LetMeet.Models;
 using LetMeet.Data.Entites.Meetigs;
+using System.Security.Claims;
 
 namespace LetMeet.Controllers;
 
@@ -38,6 +39,33 @@ public class MeetingController : Controller
         throw new NotImplementedException();
         return View();
     }
+    //show all meeting for student and supervisor can have filter for start date and end date
+    [HttpGet]
+    public async Task<IActionResult> Index(Guid id, Guid studentId, DateTime satrtDate, DateTime endDate, List<string> errors = null, List<string> messages = null)
+    {
+        
+        ViewData[ViewStringHelper.Errors] = errors ?? new List<string>();
+        ViewData[ViewStringHelper.Messages] = messages ?? new List<string>();
+        List<MeetingFullDto> meetings = new List<MeetingFullDto>();
+        //check if user is currentStudent or current supervisor or an admin 
+        //if (string.IsNullOrWhiteSpace(_contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)))
+        //{
+
+        //}
+
+
+
+        ////show all student meetings
+        //var meetingsResult = await _meetingService.GetMeetings(id, studentId, satrtDate, endDate);
+
+        //ViewData[ViewStringHelper.Meetings] =
+        //    meetingsResult.Switch(resultMeetings => { }, validationErrors => { }, serviceErrors => { });
+
+        throw new NotImplementedException();
+        return View();
+    }
+
+    //show create meeting form
     [HttpGet]
     public async Task<IActionResult> Create(Guid id, Guid studentId, List<string> errors, List<string> messages)
     {
@@ -70,15 +98,8 @@ public class MeetingController : Controller
 
         return View();
     }
-    //feture work 
-    //1-create ui to enable user top create new meeting
-    //2- create ui to show meetings as cards 
-    //, when user click on card he can update meeting info like tasks present when meet is in current time
-    //user has show more button that call api to show more based on filter(all,today) 
-    //, user has button to redirect him to create new meeting
-    //3- create api endpoint to show meetings based on (all || today )
     [HttpPost("/[Controller]/api/Create/{id}")]
-    public async Task<ActionResult<IAppApiResponse>> Create(Guid id )
+    public async Task<ActionResult<IAppApiResponse>> Create(Guid id)
     {
         List<string> errors = new List<string>();
         List<string> messages = new List<string>();
@@ -92,20 +113,20 @@ public class MeetingController : Controller
             meetingDto = JsonConvert.DeserializeObject<MeetingDto>(requestBody);
             var serviceResult = await _meetingService.Create(id, meetingDto);
 
-            Meeting resultMeeting=null; 
+            Meeting resultMeeting = null;
             serviceResult.Switch(
-                meeting => {resultMeeting=meeting; messages.Add("Meeting Created Successfully"); }
+                meeting => { resultMeeting = meeting; messages.Add("Meeting Created Successfully"); }
                 , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
                 , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
 
-            bool isSuccess=resultMeeting is not null;
+            bool isSuccess = resultMeeting is not null;
 
-            return Json(new MeetingApiResponse { isSuccess= isSuccess ,status = isSuccess ? "Created" :"Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
+            return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Created" : "Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
         }
         catch (Exception ex)
         {
 
-            return Json(MeetingApiResponse.Error(new List<string> { "Invalid data"}));
+            return Json(MeetingApiResponse.Error(new List<string> { "Invalid data" }));
         }
 
 

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.Design;
-using LetMeet.Data.Dtos.Meeting;
+using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Business.Interfaces;
 using LetMeet.Data;
 using Microsoft.EntityFrameworkCore;

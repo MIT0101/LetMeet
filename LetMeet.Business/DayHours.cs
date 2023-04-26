@@ -73,11 +73,12 @@ public class DayHours
 
     public bool CanAddMeet(int reqStartHour, int reqEndHour)
     {
-        // if to add and current are the same return false
+        // if to add and current are the same return true
         if (reqStartHour == startHour && reqEndHour == endHour)
         {
-            return false;
+            return true;
         }
+        // if to add in the range of current return true
         if (reqStartHour >= startHour && reqStartHour < endHour && reqEndHour <= endHour)
         {
             return true;

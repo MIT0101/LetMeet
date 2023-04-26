@@ -1,7 +1,7 @@
 ﻿using LetMeet.Business.Interfaces;
 using LetMeet.Business.Results;
 using LetMeet.Data;
-using LetMeet.Data.Dtos.Meeting;
+using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Data.Entites.Meetigs;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
@@ -90,7 +90,7 @@ public partial class MeetingService : IMeetingService
         //create meeting and save it 
         Meeting meeting = new Meeting
         {
-            date = meetingDto.date,
+            date = meetingDto.date.AddHours(meetingDto.startHour),
             startHour = meetingDto.startHour,
             endHour = meetingDto.endHour,
             totalTimeHoure = meetingDto.totalTimeHoure,
@@ -108,6 +108,27 @@ public partial class MeetingService : IMeetingService
             return new List<ServiceMassage> { new ServiceMassage("Can Not Create Meeting") };
         }
         return meeting;
+    }
+
+    public async Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid supervisorId, Guid studentId, DateTime startDate, DateTime endDate)
+    {
+        if (startDate == null) { 
+        return new List<ValidationResult> { new ValidationResult("Start Date Can Not Be Empty", new string[] { "startDate" }) };
+        }
+        if (endDate == null)
+        {
+            return new List<ValidationResult> { new ValidationResult("End Date Can Not Be Empty",new string[] { "endDate"}) };
+        }
+        if (startDate > endDate)
+        {
+            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Date", new string[] { "startDate", "endDate" }) };
+        }
+        var meetings = (await _meetingRepo.GetMeetingsAsync(supervisorId, studentId, startDate, endDate)).Result;
+        if (meetings is null || meetings.Count < 1)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("No Meetings Found") };
+        }
+        return meetings;
     }
 
     //validate meetingDto

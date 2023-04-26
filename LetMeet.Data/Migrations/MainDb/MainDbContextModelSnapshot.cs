@@ -33,6 +33,9 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<int>("SupervisionInfoid")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("created")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("date")
                         .HasColumnType("datetime2");
 

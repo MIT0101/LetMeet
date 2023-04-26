@@ -40,6 +40,7 @@ namespace LetMeet.Data.Entites.Meetigs
         [Required(ErrorMessage = "Present is Required")]
         public bool isPresent { get; set; } = false;
 
+        public DateTime created { get; set; }=DateTime.Now;
 
         public List<MeetingTask>? tasks { get; set; }
 

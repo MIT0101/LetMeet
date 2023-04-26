@@ -21,6 +21,8 @@
 
         public static string MutualFreeDays = "mutualFreeDays";
 
+        public static string Meetings = "meetings";
+
 
 
     }
