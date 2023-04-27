@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Manage Users";
     ViewBag.currentPage = "Manage Users";
+    //ViewData[ViewStringHelper.TabName]=RouteNameHelper.ManageUsersTab;
 
 }
 
@@ -230,7 +231,7 @@
                                             </a>
                                         }
 
-                                            <a rel="tooltip" title="" data-original-title="Show Profile" class="btn btn-info m-1" asp-controller="Account" asp-action="Details" asp-route-id="@item.id">
+                                            <a rel="tooltip" title="" data-original-title="Show Profile" class="btn btn-info m-1" asp-controller="Profile" asp-action="Details" asp-route-id="@item.id">
                                                 <i class="material-icons">person</i>
                                             </a>
 

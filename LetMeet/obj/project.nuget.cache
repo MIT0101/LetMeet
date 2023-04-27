@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "cxx4mAxkI2cEOSsLMhoOTPmxD84IZQhtew3CCdI7UoOxQvoE1fG86DQhq/xmaXU8JGfzcpe3XWocs5frOyf/cg==",
+  "dgSpecHash": "RMTGWhZSh0LwDNyIMrBG4GMwjXamJXGwZ1bfN+01dr05aWDwGYk14T1DWa3KT3LDzfBZb0TrUe2hpQGFUxVGNQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\LetMeet.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\M_IT_01\\.nuget\\packages\\alachisoft.ncache.sdk\\5.3.0\\alachisoft.ncache.sdk.5.3.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\entityframeworkcore.ncache\\5.3.0\\entityframeworkcore.ncache.5.3.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\fsharp.core\\6.0.3\\fsharp.core.6.0.3.nupkg.sha512",
-    "C:\\Users\\M_IT_01\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\M_IT_01\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\mailkit\\3.5.0\\mailkit.3.5.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\messagepack.annotations\\2.1.152\\messagepack.annotations.2.1.152.nupkg.sha512",

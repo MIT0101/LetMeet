@@ -2,6 +2,7 @@
 using LetMeet.Business.Results;
 using LetMeet.Data;
 using LetMeet.Data.Dtos.MeetingsStaff;
+using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Entites.Meetigs;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
@@ -34,7 +35,7 @@ public partial class MeetingService : IMeetingService
             return new List<ValidationResult> { new ValidationResult("You CaN Create Meeting only For Your Students") };
         }
        //validate Data MeetingDto data
-        var validationErrors = ValidateMeetingDto(meetingDto);
+        var validationErrors = ValidateMeetingDtoData(meetingDto);
         if (validationErrors is not null && validationErrors.Any())
         {
             return validationErrors;
@@ -110,29 +111,55 @@ public partial class MeetingService : IMeetingService
         return meeting;
     }
 
-    public async Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid supervisorId, Guid studentId, DateTime startDate, DateTime endDate)
+    public async Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid currentUserId, UserRole userRole, MeetingQuery query)
     {
-        if (startDate == null) { 
-        return new List<ValidationResult> { new ValidationResult("Start Date Can Not Be Empty", new string[] { "startDate" }) };
-        }
-        if (endDate == null)
+        //check if query is null
+        if (query is null)
         {
-            return new List<ValidationResult> { new ValidationResult("End Date Can Not Be Empty",new string[] { "endDate"}) };
+            return new List<ServiceMassage> { new ServiceMassage("Your Meeting Query Can Not Be Empty") };
         }
-        if (startDate > endDate)
+        //validate query using data annotation 
+        var validationErrors = ValidateMeetingQueryData(query);
+
+        if (validationErrors is not null && validationErrors.Any())
         {
-            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Date", new string[] { "startDate", "endDate" }) };
+            return validationErrors;
         }
-        var meetings = (await _meetingRepo.GetMeetingsAsync(supervisorId, studentId, startDate, endDate)).Result;
-        if (meetings is null || meetings.Count < 1)
+        //check if the current user is not a supervisor or student or not admin
+        if ( (currentUserId != query.studentId && currentUserId!=query.supervisorId) && userRole != UserRole.Admin) { 
+        return new List<ServiceMassage> { new ServiceMassage("You Can Not Get Meetings For Other Users") };
+        }
+        var repoResult = await _meetingRepo.GetMeetingsBetween(query);
+        List<MeetingFullDto>? meetings = repoResult.Result;
+        if (repoResult.State == ResultState.DbError) { 
+        return new List<ServiceMassage> { new ServiceMassage("Can Not Get Meetings") };
+        }
+        if (meetings is null || meetings?.Count < 1)
         {
             return new List<ServiceMassage> { new ServiceMassage("No Meetings Found") };
         }
         return meetings;
     }
 
+    // validate meeting query data
+    private List<ValidationResult>? ValidateMeetingQueryData(MeetingQuery query)
+    {
+        var validationResult = RepositoryValidationResult.DataAnnotationsValidation(query);
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ValidationErrors;
+        }
+        // if tart hour is greater or equal than end hour return validation error
+        if (query.startDate.Date >= query.endDate.Date)
+        {
+            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Hour", new string[] { nameof(query.startDate), nameof(query.endDate) }) };
+        }
+        return null;
+
+    }
+
     //validate meetingDto
-    private List<ValidationResult>? ValidateMeetingDto(MeetingDto meetingDto)
+    private List<ValidationResult>? ValidateMeetingDtoData(MeetingDto meetingDto)
     {
         var validationResult = RepositoryValidationResult.DataAnnotationsValidation(meetingDto);
         if (!validationResult.IsValid)

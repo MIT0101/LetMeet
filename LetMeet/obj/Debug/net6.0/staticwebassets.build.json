@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "B0lA42XdHQHCeGfx+/kOeINOTBDzb9Yt35TMo7H3+SU=",
+  "Hash": "WwFeasDZR3HaeVSDjjWjB7jcOpyAsG3IIOyFgcTZaoE=",
   "Source": "LetMeet",
   "BasePath": "_content/LetMeet",
   "Mode": "Default",
@@ -49,6 +49,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\LetMeet.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\AccessDeniedStyle.css",
+      "SourceId": "LetMeet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet",
+      "RelativePath": "css/Main/AccessDeniedStyle.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\Main\\AccessDeniedStyle.css"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\dark.css",

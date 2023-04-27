@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,17 +52,16 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
-    public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsAsync(Guid supervisorId, Guid studentId, DateTime startDate, DateTime endDate)
+    public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsAsync(Expression<Func<Meeting, bool>> filter)
     {
         try
         {
-            var foundMeets = await _mainDb.Meetings
-                .Where(x => x.SupervisionInfo.supervisor.id == supervisorId && x.SupervisionInfo.student.id == studentId &&
-                x.date.Date >= startDate.Date && x.date.Date <= endDate.Date)
-                .Select(m=> MeetingFullDto.GetFromMeeting(m)).ToListAsync();
+            var foundMeets = await _mainDb.Meetings.Include(x => x.tasks)
+                .Where(filter)
+                .Select(m=> MeetingFullDto.GetFromMeeting(m,m.SupervisionInfo.supervisor.id,m.SupervisionInfo.student.id,m.SupervisionInfo.supervisor.fullName,m.SupervisionInfo.student.fullName)).ToListAsync();
             if (foundMeets is null || foundMeets.Count == 0)
             {
-                return RepositoryResult<List<MeetingFullDto>?>.FailureResult(ResultState.NotFound, null, new List<string> { $"No Meet Found Between "+ startDate.Date.ToString("d") + " and "+ endDate.Date.ToString("d") });
+                return RepositoryResult<List<MeetingFullDto>?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
             }
             return RepositoryResult<List<MeetingFullDto>?>.SuccessResult(ResultState.Seccess, foundMeets);
         }
@@ -70,7 +70,11 @@ public class MeetingRepository : IMeetingRepository
             return RepositoryResult<List<MeetingFullDto>?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
         }
     }
-
+    public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsBetween(MeetingQuery query)
+    { 
+    return await GetMeetingsAsync(x => x.SupervisionInfo.supervisor.id == query.supervisorId
+        && x.SupervisionInfo.student.id == query.studentId && x.date.Date >= query.startDate.Date && x.date.Date <= query.endDate.Date);
+    }
     public async Task<RepositoryResult<List<Meeting>?>> GetMeetingsOn(Guid supervisorId, Guid studentId, DateTime date)
     {
         try

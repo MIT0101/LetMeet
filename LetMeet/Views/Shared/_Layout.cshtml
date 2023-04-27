@@ -86,7 +86,7 @@
                 <ul class="nav">
                     @*admin*@
 
-                    <li class="nav-item ">
+                    <li class="nav-item " >
                         <a class="nav-link" asp-controller="Account" asp-action="ManageUsers">
                             <i class="material-icons">people</i>
                             <p class="side-nav-title">Manage Users</p>
@@ -94,7 +94,7 @@
                     </li>
 
 
-                    <li class="nav-item ">
+                    <li class="nav-item " >
                         <a class="nav-link" href="#">
                             <i class="material-icons">dashboard</i>
                             <p class="side-nav-title">Dashboard</p>
@@ -102,22 +102,23 @@
                     </li>
 
 
-                    <li class="nav-item ">
-                        <a class="nav-link" href="./userProfile.html">
+                    <li class="nav-item " >
+                        @inject IHttpContextAccessor _contextAccessor
+                        <a class="nav-link" asp-controller="Profile" asp-action="Details" asp-route-id="@_contextAccessor.HttpContext?.User.FindFirstValue(ClaimsNameHelper.UserInfoId)">
                             <i class="material-icons">person</i>
                             <p class="side-nav-title">User Profile</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="./tables.html">
+                    <li class="nav-item " >
+                        <a class="nav-link" href="">
                             <i class="material-icons">meeting_room</i>
                             <p class="side-nav-title">Meetings</p>
                         </a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="./typography.html">
-                            <i class="material-icons">library_books</i>
-                            <p class="side-nav-title">Typography</p>
+                        <a class="nav-link" href="">
+                            <i class="material-icons">code</i>
+                            <p class="side-nav-title">Manage Supervision</p>
                         </a>
                     </li>
                     <li class="nav-item ">
@@ -266,6 +267,7 @@
         let currentPage = '@ViewBag.currentPage';
 
         navTitlesMap.get(currentPage)?.parentElement.parentElement.classList.add("active");
+
 
     </script>
 

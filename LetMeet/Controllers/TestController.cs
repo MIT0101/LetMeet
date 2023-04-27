@@ -15,6 +15,8 @@ using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Business.Interfaces;
 using LetMeet.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using LetMeet.Helpers;
 
 namespace LetMeet.Controllers
 {
@@ -44,6 +46,20 @@ namespace LetMeet.Controllers
             _meetingService = meetingService;
             _mainDb = mianDb;
         }
+        //Test GetUserInfoId and GetUserRole
+        [HttpGet]
+        public IActionResult InfoIdAndUserRole()
+        {
+            Guid userInfoId = GenricControllerHelper.GetUserInfoId(User);
+            UserRole userRole = GenricControllerHelper.GetUserRole(User);
+            //user identity id
+            string identityStr = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "No Identity Id";
+            Guid identityId= Guid.Parse(identityStr);
+
+            return Json(new { userInfoId,role= userRole.ToString(),identityId});
+        }
+
+
         //test Create Meetings Withour Go To Supervsion
         //test Create Meetings
         public async Task<IActionResult> CreateMeeting2()

@@ -23,6 +23,10 @@
 
         public static string Meetings = "meetings";
 
+        public static string ReturnUrl = "returnUrl";
+
+
+        public static string TabName= "tabName";
 
 
     }

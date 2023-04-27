@@ -316,6 +316,10 @@
               "target": "Package",
               "version": "[5.3.0, )"
             },
+            "Humanizer.Core": {
+              "target": "Package",
+              "version": "[2.14.1, )"
+            },
             "MailKit": {
               "target": "Package",
               "version": "[3.5.0, )"

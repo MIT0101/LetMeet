@@ -3,6 +3,8 @@
 *@
 @{
     ViewData["Title"]= Model.fullName+" Profile";
+    ViewBag.currentPage = "User Profile";
+
 }
 @model UserInfo
 
@@ -12,7 +14,6 @@
 <div class="container-fluid">
 
     @{
-
 
         List<string> roles = ViewData[ViewStringHelper.UserRoles] as List<string> ?? new List<string>();
         List<string> stages = ViewData[ViewStringHelper.UserStages] as List<string> ?? new List<string>();

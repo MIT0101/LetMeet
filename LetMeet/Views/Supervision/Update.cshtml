@@ -1,5 +1,8 @@
 ﻿@using Microsoft.Extensions.Options;
 @{
+
+
+
     SupervisorSelectDto? currentSupervisor = ViewData[ViewStringHelper.Supervisor] as SupervisorSelectDto;
 
 
@@ -9,7 +12,9 @@
 
     List<StudentDatedSelectDto> supervisorStudents = ViewData[ViewStringHelper.SupervisorStudents] as List<StudentDatedSelectDto> ?? new List<StudentDatedSelectDto>();
     string supervisorName = currentSupervisor?.FullName ?? "No Supervisor";
+    ViewData["Title"] = "Manage "+supervisorName +" Supervision";
 
+    ViewBag.currentPage = "Manage Supervision";
 
 }
 @inject AppTimeProvider TimeProvider;
@@ -137,7 +142,7 @@
             </div>
             <div class="modal-footer">
                 <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button id="submitBtn" type="submit" onclick="return DisplayprogressMessage('supervisStudentFrm',this, 'Saving...');" class="btn btn-rose">Supervis Student</button>
+                <button id="submitBtn" type="submit" onclick="return DisplayprogressMessage('supervisStudentFrm',this, 'Saving...');" class="btn btn-primary">Supervis Student</button>
 
             </div>
         </div>
@@ -153,7 +158,7 @@
 
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header card-header-rose">
+            <div class="card-header card-header-primary">
                 <h4 class="card-title">Supervisor Students</h4>
                 <p class="category">All Students </p>
             </div>
@@ -171,7 +176,7 @@
                 {
 
                     @*add user button*@
-                    <button rel="tooltip" title="" data-original-title="Add Student" type="button" class="btn btn-rose d-block ml-auto" data-toggle="modal" data-target="#supervisStudentModal">
+                    <button rel="tooltip" title="" data-original-title="Add Student" type="button" class="btn btn-primary d-block ml-auto" data-toggle="modal" data-target="#supervisStudentModal">
                         Add Student
                     </button>
                 }
@@ -240,6 +245,22 @@
                                             @Html.DisplayFor(modelItem => student.endDate)
                                         </td>
 
+                                        <td>
+
+
+                                            <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="ExtendStudnetSupervisorTime" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
+                                                @Html.AntiForgeryToken()
+
+                                                <input name="studentId" hidden value="@student.id">
+
+
+                                                <button rel="tooltip" title="" data-original-title="Extend Supervision" type="submit" onclick="return confirm('Are you sure you want to Extend @student.FullName Supervision with @serviceOptions.Value.NumberOfMonthsPerExtend Mouths ?');" class="btn btn-outline-info p-2">
+                                                    <i class="material-icons">add_box</i>
+                                                </button>
+
+                                            </form>
+                                        </td>
+
 
                                         <td class="td-actions text-right">
 
@@ -254,7 +275,7 @@
 
 
 
-                                                    <button rel="tooltip" title="" data-original-title="Unsupervis" type="submit" onclick="return confirm('Are you sure you want to Unsupervis @student.FullName?');" class="btn btn-danger btn-link btn-sm">
+                                                    <button rel="tooltip" title="" data-original-title="Unsupervis" type="submit" onclick="return confirm('Are you sure you want to Unsupervis @student.FullName?');" class="btn btn-outline-danger">
                                                         <i class="material-icons">close</i>
                                                     </button>
 

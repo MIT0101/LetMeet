@@ -52,7 +52,12 @@ namespace LetMeet.Controllers
             _selectionRepository = selectionRepository;
             _userProfileRepo = userProfileRepository;
         }
-
+        //AccessDenied endpoint
+        [AllowAnonymous]
+        public async Task<IActionResult> AccessDenied(string ReturnUrl="") {
+            ViewData[ViewStringHelper.ReturnUrl] = ReturnUrl;
+            return View();
+        }
 
         //for update user profile image
 

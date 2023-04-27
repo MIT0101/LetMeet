@@ -9,6 +9,7 @@
       "LetMeet/1.0.0": {
         "dependencies": {
           "EntityFrameworkCore.NCache": "5.3.0",
+          "Humanizer.Core": "2.14.1",
           "LetMeet.Business": "1.0.0",
           "LetMeet.Data": "1.0.0",
           "LetMeet.Repositories": "1.0.0",
@@ -178,11 +179,11 @@
           }
         }
       },
-      "Humanizer.Core/2.8.26": {
+      "Humanizer.Core/2.14.1": {
         "runtime": {
-          "lib/netstandard2.0/Humanizer.dll": {
-            "assemblyVersion": "2.8.0.0",
-            "fileVersion": "2.8.26.1919"
+          "lib/net6.0/Humanizer.dll": {
+            "assemblyVersion": "2.14.0.0",
+            "fileVersion": "2.14.1.48190"
           }
         }
       },
@@ -521,7 +522,7 @@
       },
       "Microsoft.CodeAnalysis.CSharp.Features/4.0.0": {
         "dependencies": {
-          "Humanizer.Core": "2.8.26",
+          "Humanizer.Core": "2.14.1",
           "Microsoft.CodeAnalysis.CSharp": "4.0.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.0.0",
           "Microsoft.CodeAnalysis.Common": "4.0.0",
@@ -633,7 +634,7 @@
       },
       "Microsoft.CodeAnalysis.CSharp.Workspaces/4.0.0": {
         "dependencies": {
-          "Humanizer.Core": "2.8.26",
+          "Humanizer.Core": "2.14.1",
           "Microsoft.CodeAnalysis.CSharp": "4.0.0",
           "Microsoft.CodeAnalysis.Common": "4.0.0",
           "Microsoft.CodeAnalysis.Workspaces.Common": "4.0.0"
@@ -973,7 +974,7 @@
       },
       "Microsoft.CodeAnalysis.Workspaces.Common/4.0.0": {
         "dependencies": {
-          "Humanizer.Core": "2.8.26",
+          "Humanizer.Core": "2.14.1",
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
           "Microsoft.CodeAnalysis.Common": "4.0.0",
           "System.Composition": "1.0.31",
@@ -1204,7 +1205,7 @@
       "Microsoft.EntityFrameworkCore.Analyzers/6.0.13": {},
       "Microsoft.EntityFrameworkCore.Design/6.0.13": {
         "dependencies": {
-          "Humanizer.Core": "2.8.26",
+          "Humanizer.Core": "2.14.1",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.13"
         },
         "runtime": {
@@ -3551,12 +3552,12 @@
       "path": "fsharp.core/6.0.3",
       "hashPath": "fsharp.core.6.0.3.nupkg.sha512"
     },
-    "Humanizer.Core/2.8.26": {
+    "Humanizer.Core/2.14.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-OiKusGL20vby4uDEswj2IgkdchC1yQ6rwbIkZDVBPIR6al2b7n3pC91elBul9q33KaBgRKhbZH3+2Ur4fnWx2A==",
-      "path": "humanizer.core/2.8.26",
-      "hashPath": "humanizer.core.2.8.26.nupkg.sha512"
+      "sha512": "sha512-lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
+      "path": "humanizer.core/2.14.1",
+      "hashPath": "humanizer.core.2.14.1.nupkg.sha512"
     },
     "MailKit/3.5.0": {
       "type": "package",

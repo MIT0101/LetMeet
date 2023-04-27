@@ -91,7 +91,8 @@ namespace LetMeet.Business.Implemintation
                 return new List<ServiceMassage>() { new ServiceMassage($"Can Not Extend Supervision Because Student has Reached Max Number Of Extending {supervision.extendTimes} Times") };
             }
 
-            supervision.endDate.AddMonths(_options.NumberOfMonthsPerExtend);
+            supervision.endDate= supervision.endDate.AddMonths(_options.NumberOfMonthsPerExtend);
+            supervision.extendTimes++;
 
             var updateResult = await _supervionsRepo.UpdateAsync(supervision);
 

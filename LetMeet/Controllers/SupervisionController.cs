@@ -9,6 +9,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LetMeet.Controllers
 {
+    [Authorize(Roles ="Admin")]
+
     public class SupervisionController : Controller
     {
         private readonly ILogger<SupervisionController> _logger;
@@ -22,7 +24,6 @@ namespace LetMeet.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles ="Admin")]
         public async Task<IActionResult> Update(Guid id, List<string> errors, List<string> messages)
         {
             var suprvisors = await _supervisionService.GetSupervisor(id);
@@ -95,6 +96,36 @@ namespace LetMeet.Controllers
             result.Switch(
                             supervisionInfo =>
                                messages.Add("Student Removed From supervisor")
+                            ,
+
+                            validationResults =>
+                               errors.AddRange(validationResults?.Select(e => e.ErrorMessage))
+                            ,
+
+                           serviceMassages =>
+                              errors.AddRange(serviceMassages.Select(m => m.Message))
+                            );
+
+            return RedirectToAction(actionName: nameof(SupervisionController.Update), new { id, errors, messages });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExtendStudnetSupervisorTime(Guid id, Guid studentId)
+        {
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+            if (!ModelState.IsValid)
+            {
+                errors.AddRange(ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return RedirectToAction(actionName: nameof(SupervisionController.Update), new { id, errors, messages });
+            }
+            OneOf.OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>> result =
+                await _supervisionService.ExtendStudentSupervisionExpire(studentId);
+
+            result.Switch(
+                            supervisionInfo =>
+                               messages.Add($"Student Supervision Time Extends to {supervisionInfo.endDate}")
                             ,
 
                             validationResults =>

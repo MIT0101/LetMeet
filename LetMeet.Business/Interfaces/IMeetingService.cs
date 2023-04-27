@@ -1,6 +1,8 @@
 ﻿using LetMeet.Business.Results;
 using LetMeet.Data.Dtos.MeetingsStaff;
+using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Entites.Meetigs;
+using LetMeet.Repositories;
 using OneOf;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,6 @@ namespace LetMeet.Business.Interfaces
     public interface IMeetingService
     {
         Task<OneOf<Meeting,IEnumerable<ValidationResult>,IEnumerable<ServiceMassage>>> Create(Guid supervisorId,MeetingDto meetingDto);
-        Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid supervisorId,Guid studentId,DateTime startDate,DateTime endDate);
-
+        Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid currentUserId , UserRole userRole, MeetingQuery query);
     }
 }

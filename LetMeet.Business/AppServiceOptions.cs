@@ -22,4 +22,6 @@ public class AppServiceOptions
 
     [Range(minimum: 1, maximum: 3)]
     public int MaxExtendTimes { get; set; } = 2;
+    [Range(minimum: 0.0, maximum: 24.0)]
+    public float PaddingMeetHours { get; set; } = 0f;
 }
