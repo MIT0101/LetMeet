@@ -447,13 +447,13 @@ namespace LetMeet.Controllers
             {
 
 
-                var emailResult = await _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject: "Acount Created",
+                var emailResult =  _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject: "Acount Created",
                      body: $"You Account Cridantional is:<br>" +
                      $"Email : {userToRegister.emailAddress} <br>" +
                      $"Password :{password} <br>" +
                      $"Please Change Your Password .");
 
-                if (emailResult.state != ResultState.Seccess)
+                if (emailResult.Result.state != ResultState.Seccess)
                 {
                     //save to file or some ware
                 }

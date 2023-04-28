@@ -18,9 +18,9 @@ public interface ISupervisionService
     Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> RemoveStudentFromSupervisor(Guid supervisorId, Guid studentId);
     Task<OneOf<SupervisionInfo, List<ValidationResult>, List<ServiceMassage>>> ExtendStudentSupervisionExpire(Guid studentId);
 
-    Task<List<SupervisorSelectDto>> GetAllAvailableSupervisorsAsync();
+    Task<List<SupervisorOrStudentSelectDto>> GetAllAvailableSupervisorsAsync();
 
-    Task<SupervisorSelectDto> GetSupervisor(Guid studentInfoId);
+    Task<SupervisorOrStudentSelectDto> GetSupervisorOrStudent(Guid userInfoId);
     Task<IEnumerable<StudentDatedSelectDto>> GetAllSupervisorStudents(Guid supervisorId);
 
     Task<IEnumerable<StudentSelectDto>> GetUnSupervisedStudents();

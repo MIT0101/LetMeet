@@ -7,6 +7,7 @@ using LetMeet.Data.Entites.Meetigs;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
 using LetMeet.Repositories.Infrastructure;
+using Microsoft.Extensions.Options;
 using OneOf;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,13 +19,15 @@ public partial class MeetingService : IMeetingService
     private readonly ISupervisonRepository _supervisionRepo;
     private readonly IUserProfileRepository _userProfileRepo;
     private readonly AppTimeProvider _appTimeProvider;
+    private readonly AppServiceOptions _serviceOptions;
 
-    public MeetingService(IMeetingRepository meetingRepo, ISupervisonRepository supervisionRepo, AppTimeProvider appTimeProvider, IUserProfileRepository userProfileRepo)
+    public MeetingService(IMeetingRepository meetingRepo, ISupervisonRepository supervisionRepo, AppTimeProvider appTimeProvider, IUserProfileRepository userProfileRepo, IOptions<AppServiceOptions> appServiceOptions)
     {
         _meetingRepo = meetingRepo;
         _supervisionRepo = supervisionRepo;
         _appTimeProvider = appTimeProvider;
         _userProfileRepo = userProfileRepo;
+        _serviceOptions = appServiceOptions.Value;
     }
 
     public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> Create(Guid supervisorId, MeetingDto meetingDto)
@@ -34,7 +37,7 @@ public partial class MeetingService : IMeetingService
         {
             return new List<ValidationResult> { new ValidationResult("You CaN Create Meeting only For Your Students") };
         }
-       //validate Data MeetingDto data
+        //validate Data MeetingDto data
         var validationErrors = ValidateMeetingDtoData(meetingDto);
         if (validationErrors is not null && validationErrors.Any())
         {
@@ -96,7 +99,8 @@ public partial class MeetingService : IMeetingService
             endHour = meetingDto.endHour,
             totalTimeHoure = meetingDto.totalTimeHoure,
             description = meetingDto.description,
-            isPresent = false,
+            isStudentPresent = false,
+            isSupervisorPresent = false,
             tasks = meetingDto.hasTasks ? meetingDto.tasks?.Select(t => new MeetingTask { title = t.title, decription = t.description, }).ToList() : null,
 
         };
@@ -126,13 +130,15 @@ public partial class MeetingService : IMeetingService
             return validationErrors;
         }
         //check if the current user is not a supervisor or student or not admin
-        if ( (currentUserId != query.studentId && currentUserId!=query.supervisorId) && userRole != UserRole.Admin) { 
-        return new List<ServiceMassage> { new ServiceMassage("You Can Not Get Meetings For Other Users") };
+        if ((currentUserId != query.studentId && currentUserId != query.supervisorId) && userRole != UserRole.Admin)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Get Meetings For Other Users") };
         }
         var repoResult = await _meetingRepo.GetMeetingsBetween(query);
         List<MeetingFullDto>? meetings = repoResult.Result;
-        if (repoResult.State == ResultState.DbError) { 
-        return new List<ServiceMassage> { new ServiceMassage("Can Not Get Meetings") };
+        if (repoResult.State == ResultState.DbError)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Can Not Get Meetings") };
         }
         if (meetings is null || meetings?.Count < 1)
         {
@@ -169,7 +175,7 @@ public partial class MeetingService : IMeetingService
         // if tart hour is greater or equal than end hour return validation error
         if (meetingDto.startHour >= meetingDto.endHour)
         {
-            return new List<ValidationResult> { new ValidationResult("Start Hour Must Be Less Than End Hour", new string[] {nameof(meetingDto.startHour),nameof(meetingDto.endHour) }) };
+            return new List<ValidationResult> { new ValidationResult("Start Hour Must Be Less Than End Hour", new string[] { nameof(meetingDto.startHour), nameof(meetingDto.endHour) }) };
         }
 
         // check if the day of meetingDto date is not equal meetingDto day
@@ -181,4 +187,40 @@ public partial class MeetingService : IMeetingService
         return null;
     }
 
+    public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RemoveMeeting(Guid currentUserId, UserRole userRole, int meetingId)
+    {
+
+        //get meeting
+        var meeting = (await _meetingRepo.GetMeetingAsync(meetingId)).Result;
+        if (meeting is null)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
+        }
+        //check if the current user is not a supervisor or student or not admin
+        if ((currentUserId != meeting.SupervisionInfo.supervisor.id) && userRole != UserRole.Admin)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Remove Meetings For Other Users") };
+        }
+        // check if we can delete this meeting using MeetingFullDto
+        MeetingFullDto meetingFullDto = new MeetingFullDto
+        {
+            startHour = meeting.startHour,
+            endHour = meeting.endHour,
+            date = meeting.date,
+
+        };
+
+        if (!meetingFullDto.CanDelete(_appTimeProvider.Now, _serviceOptions.PaddingMeetHours)) {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Remove Meeting") };
+        }
+
+        //remove meeting
+        var repoResult = await _meetingRepo.RemoveMeetingAsync(meetingId);
+        if (repoResult.State == ResultState.DbError || repoResult.State != ResultState.Seccess)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Can Not Remove Meeting") };
+        }
+        return meeting;
+
+    }
 }

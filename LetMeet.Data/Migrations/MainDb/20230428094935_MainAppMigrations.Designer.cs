@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetMeet.Data.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230426174521_MainAppMigrations")]
+    [Migration("20230428094935_MainAppMigrations")]
     partial class MainAppMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,10 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<int>("endHour")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isPresent")
+                    b.Property<bool>("isStudentPresent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isSupervisorPresent")
                         .HasColumnType("bit");
 
                     b.Property<int>("startHour")

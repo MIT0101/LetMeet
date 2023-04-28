@@ -3,7 +3,7 @@
 
 
 
-    SupervisorSelectDto? currentSupervisor = ViewData[ViewStringHelper.Supervisor] as SupervisorSelectDto;
+    SupervisorOrStudentSelectDto? currentSupervisor = ViewData[ViewStringHelper.Supervisor] as SupervisorOrStudentSelectDto;
 
 
     List<StudentSelectDto> unsupervisedStudents = ViewData[ViewStringHelper.UnSupervisedStudents] as List<StudentSelectDto> ?? new List<StudentSelectDto>();
@@ -71,7 +71,7 @@
 
 </script>
 
-<!-- Modal Supervis Student-->
+<!-- Modal Supervise Student-->
 <div class="modal fade" id="supervisStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog " role="document">
         <div class="modal-content">
@@ -245,8 +245,9 @@
                                             @Html.DisplayFor(modelItem => student.endDate)
                                         </td>
 
-                                        <td>
+                                        <td class="td-actions text-right">
 
+                                            <div class="d-flex flex-row justify-content-end">
 
                                             <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="ExtendStudnetSupervisorTime" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
                                                 @Html.AntiForgeryToken()
@@ -259,13 +260,6 @@
                                                 </button>
 
                                             </form>
-                                        </td>
-
-
-                                        <td class="td-actions text-right">
-
-                                            <div class="d-flex flex-row justify-content-end">
-
 
                                                 <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="RemoveStudnetFromSupervisor" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
                                                     @Html.AntiForgeryToken()
@@ -273,13 +267,13 @@
                                                     <input name="studentId" hidden value="@student.id">
                                                     <input name="supervisorId" hidden value="@currentSupervisor?.id">
 
-
-
-                                                    <button rel="tooltip" title="" data-original-title="Unsupervis" type="submit" onclick="return confirm('Are you sure you want to Unsupervis @student.FullName?');" class="btn btn-outline-danger">
+                                                    <button rel="tooltip" title="" data-original-title="Unsupervis" type="submit" onclick="return confirm('Are you sure you want to Unsupervis @student.FullName?');" class="btn btn-outline-danger p-2">
                                                         <i class="material-icons">close</i>
                                                     </button>
 
                                                 </form>
+
+                                                
 
                                             </div>
 

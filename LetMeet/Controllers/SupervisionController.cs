@@ -26,7 +26,7 @@ namespace LetMeet.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(Guid id, List<string> errors, List<string> messages)
         {
-            var suprvisors = await _supervisionService.GetSupervisor(id);
+            var suprvisors = await _supervisionService.GetSupervisorOrStudent(id);
             if(suprvisors is null)
             {
                 return View();

@@ -1,0 +1,97 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = LetMeet.Web
+build_property.RootNamespace = LetMeet.Web
+build_property.ProjectDir = C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\M_IT_01\source\repos\LetMeet\LetMeet
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Account/ManageUsers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxNYW5hZ2VVc2Vycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Account/SignIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxTaWduSW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Meeting/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVldGluZ1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Meeting/ShowMeetings.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVldGluZ1xTaG93TWVldGluZ3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Profile/EditProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxFZGl0UHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/Partials/ErrorsAndMessageNotificationPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxzXEVycm9yc0FuZE1lc3NhZ2VOb3RpZmljYXRpb25QYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/Partials/FrormInputChangeListnerPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxzXEZyb3JtSW5wdXRDaGFuZ2VMaXN0bmVyUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/Partials/ItemLoadingPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxzXEl0ZW1Mb2FkaW5nUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/Partials/MainLoadingPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxzXE1haW5Mb2FkaW5nUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/Partials/PaginationPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxzXFBhZ2luYXRpb25QYXJ0aWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Supervision/Update.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJ2aXNpb25cVXBkYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Test/formValidationJquery.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVzdFxmb3JtVmFsaWRhdGlvbkpxdWVyeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/M_IT_01/source/repos/LetMeet/LetMeet/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-cx263byw89

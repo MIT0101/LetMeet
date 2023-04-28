@@ -5,6 +5,10 @@ public class MeetingFullDto : MeetingTypedTaskDto<MeetingTask> {
     public DateTime created{ get; init; }
     public string studentName { get; init; }
     public string supervisorName { get; init; }
+
+    public bool isSupervisorPresent { get; init; }
+
+    public bool isStudentPresent { get; init; } 
     public MeetingFullDto() { 
     }
     public static MeetingFullDto GetFromMeeting(Meeting m,Guid supervisorId,Guid StudentId,string supervisorName,string studentName)
@@ -23,7 +27,10 @@ public class MeetingFullDto : MeetingTypedTaskDto<MeetingTask> {
             studentId = supervisorId,
             supervisorId = StudentId,
             studentName = studentName,
-            supervisorName = supervisorName
+            supervisorName = supervisorName,
+            isSupervisorPresent=m.isSupervisorPresent,
+            isStudentPresent=m.isStudentPresent
+
         };
     }
 

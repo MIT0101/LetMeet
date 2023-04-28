@@ -25,8 +25,12 @@
 
         public static string ReturnUrl = "returnUrl";
 
-
         public static string TabName= "tabName";
+
+
+        public static string RequestedMeetingQuery = "requestedMeetingQuery";
+        public static string RequestedSupervisorName = "requestedSupervisorName";
+        public static string RequestedStudentName = "requestedStudentName";
 
 
     }

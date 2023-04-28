@@ -86,7 +86,8 @@ namespace LetMeet.Data.Migrations.MainDb
                     startHour = table.Column<int>(type: "int", nullable: false),
                     endHour = table.Column<int>(type: "int", nullable: false),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    isPresent = table.Column<bool>(type: "bit", nullable: false),
+                    isStudentPresent = table.Column<bool>(type: "bit", nullable: false),
+                    isSupervisorPresent = table.Column<bool>(type: "bit", nullable: false),
                     created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SupervisionInfoid = table.Column<int>(type: "int", nullable: false)
                 },

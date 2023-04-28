@@ -103,7 +103,7 @@ namespace LetMeet.Business.Implemintation
             return supervision;
         }
 
-        public async Task<List<SupervisorSelectDto>> GetAllAvailableSupervisorsAsync()
+        public async Task<List<SupervisorOrStudentSelectDto>> GetAllAvailableSupervisorsAsync()
         {
             return (await _supervionsRepo.GetAvailableSupervisorNamesAsync(_options.MaxStudentsPerSupervisor)).Result;
         }
@@ -113,13 +113,13 @@ namespace LetMeet.Business.Implemintation
             return (await _supervionsRepo.GetSupervisorStudents(supervisorId)).Result ?? new List<StudentDatedSelectDto>();
         }
 
-        public async Task<SupervisorSelectDto?> GetSupervisor(Guid supervisorInfoId)
+        public async Task<SupervisorOrStudentSelectDto?> GetSupervisorOrStudent(Guid userInfoId)
         {
-            var supervisor= (await _userProfileRepo.GetUserByIdAsync(supervisorInfoId)).Result;
+            var supervisor= (await _userProfileRepo.GetUserByIdAsync(userInfoId)).Result;
             if (supervisor is null) {
                 return null;
             }
-            return new SupervisorSelectDto(supervisor.id,supervisor.fullName);
+            return new SupervisorOrStudentSelectDto(supervisor.id,supervisor.fullName);
         }
 
         public async Task<IEnumerable<StudentSelectDto>> GetUnSupervisedStudents()

@@ -37,8 +37,11 @@ namespace LetMeet.Data.Entites.Meetigs
 
         public string? description { get; set; }
 
-        [Required(ErrorMessage = "Present is Required")]
-        public bool isPresent { get; set; } = false;
+        [Required(ErrorMessage = "Student Present is Required")]
+        public bool isStudentPresent { get; set; } = false;
+
+        [Required(ErrorMessage = "Supervisor is Required")]
+        public bool isSupervisorPresent { get; set; } = false;
 
         public DateTime created { get; set; }=DateTime.Now;
 

@@ -14570,9 +14570,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\LetMeet.csproj",
-      "projectName": "LetMeet",
-      "projectPath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\LetMeet.csproj",
+      "projectUniqueName": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\LetMeet.Web.csproj",
+      "projectName": "LetMeet.Web",
+      "projectPath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\LetMeet.Web.csproj",
       "packagesPath": "C:\\Users\\M_IT_01\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\obj\\",
       "projectStyle": "PackageReference",

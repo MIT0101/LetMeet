@@ -8,9 +8,26 @@
     ViewBag.currentPage = "Meetings";
 
     List<MeetingFullDto> meetings = ViewData[ViewStringHelper.Meetings] as List<MeetingFullDto> ?? new List<MeetingFullDto>();
+
+    MeetingQuery currentQuery = ViewData[ViewStringHelper.RequestedMeetingQuery] as MeetingQuery ?? new MeetingQuery();
+    string supervisorName = ViewData[ViewStringHelper.RequestedSupervisorName] as string ?? string.Empty;
+    string studentName = ViewData[ViewStringHelper.RequestedStudentName] as string ?? string.Empty;
+    bool isSupervisor = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role) == UserRole.Supervisor.ToString();
 }
 
-<h1>Show All Meetings</h1>
+<h4>@supervisorName as supervisor ,  @studentName as student</h4>
+<h5>All Meetings From @currentQuery.startDate.Date.ToString("d") To @currentQuery.endDate.Date.ToString("d")</h5>
+
+
+@{
+    if (meetings is null || meetings.Count < 1)
+    {
+        <h3 class="mt-5 p-5 text-center text-black text-uppercase alert alert-danger">No Meetings Found</h3>
+
+        return;
+
+    }
+}
 
 
 <style>
@@ -65,11 +82,11 @@
 </style>
 
 
-
 <div class="row ">
 
     @foreach (var meeting in meetings)
     {
+
         int tasksNumber = meeting.tasks?.Count ?? 0;
         int numberOfTasksDone = meeting.tasks?.Where(t => t.isCompleted).Count() ?? 0;
         int numberOfTasksNotDone = tasksNumber - numberOfTasksDone;
@@ -77,13 +94,13 @@
         <div class="col-lg-4 col-xl-6 col-md-6 col-sm-12">
             <div class="card equal-height-card meeting-card">
                 <div class="card-header card-header-primary" style="border-radius:6px;">
-                    <div class="card-title d-flex justify-content-between">
-                        
-                     <div>
+                    <div class="card-title d-flex justify-content-between" data-meeting-id="@meeting.id">
+
+                        <div>
                             <h4>@meeting.supervisorName</h4>
 
-                     </div>
-                        
+                        </div>
+
 
                         @{
                             string meetingPassedClass = string.Empty;
@@ -100,8 +117,8 @@
                             }
                         }
 
-                        <span class="@meetingPassedClass rounded p-2" >@meeting.date.Humanize() </span>
-                    
+                        <span class="@meetingPassedClass rounded p-2">@meeting.date.Humanize() </span>
+
                     </div>
 
                     <div class="category">
@@ -109,6 +126,7 @@
                         <div>@meeting.date.ToString("D")</div>
                     </div>
                 </div>
+
                 <div class="card-body position-relative ">
                     <p>Student : @meeting.studentName</p>
 
@@ -129,30 +147,31 @@
                     <div class="d-flex justify-content-center align-items-center meet-overlay">
 
 
-                        @if (meeting.CanRun(_appTimeProvider.Now,_serviceOptions.Value.PaddingMeetHours))
+                        @if (isSupervisor && meeting.CanRun(_appTimeProvider.Now, _serviceOptions.Value.PaddingMeetHours))
                         {
-                        <button id="runMeetingBtn" class="btn btn-success m-1 " rel="tooltip" title="" data-original-title="Run Meeting">
-                            <i class="material-icons">not_started</i>
-                        </button>
+                            <button id="runMeetingBtn" class="btn btn-success m-1 runMeetingBtn" rel="tooltip" title="" data-original-title="Run Meeting">
+                                <i class="material-icons">not_started</i>
+                            </button>
                         }
-                        
-                        <button id="viewMeetingBtn" rel="tooltip" title="" data-original-title="Show Meeting" class="btn btn-info m-1">
+
+                        <button class="btn btn-info m-1 viewMeetingBtn" rel="tooltip" title="" data-original-title="Show Meeting">
                             <i class="material-icons">visibility</i>
                         </button>
-                        
 
-                        @if (meeting.CanDelete(_appTimeProvider.Now,_serviceOptions.Value.PaddingMeetHours))
+
+                        @if (meeting.CanDelete(_appTimeProvider.Now, _serviceOptions.Value.PaddingMeetHours))
                         {
-                        <!--delete meeting form must contains meet id and current userId-->
-                        <form>
-                            <input type="hidden" name="currentUserId" value="@_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimsNameHelper.UserInfoId)" />
-                            <input type="hidden" name="meetingId" value="@meeting.id" />
+                            var currentUrlWithoutDomain = Context.Request.Path + Context.Request.QueryString;
+                            <!--delete meeting form must contains meet id and current userId-->
+                            <form class="w-0" method="post" action="/Meeting/api/Remove/@meeting.id">
+                                <input type="hidden" name="meetingId" value="@meeting.id" />
+                                <button id="deleteMeetingBtn" rel="tooltip" title="" data-original-title="Delete Meeting" type="submit" onclick="return confirm('Are you sure you want to delete this meeting ?');" class="btn btn-danger m-1">
+                                    <i class="material-icons">delete</i>
+                                </button>
 
-                            <button rel="tooltip" title="" data-original-title="Delete Meeting" type="submit" onclick="return confirm('Are you sure you want to delete this meeting ?');" class="btn btn-danger m-1">
-                                <i class="material-icons">delete</i>
-                            </button>
+                            </form>
 
-                        </form>
+
                         }
 
                     </div>
@@ -165,37 +184,501 @@
     }
 
 
+</div>
 
+<!--Message And Errors Modal-->
+<div class="modal fade" id="messagesModal" tabindex="-1" role="dialog" aria-labelledby="messagesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messagesModalLabel">Messages</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Message1</span>
+                <span>Message2</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <h1 class="loading-text" style="color:whitesmoke">Deleting meeting, please wait...</h1>
+</div>
+
+<style>
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+</style>
+
+
+<script>
+    document.getElementById("deleteMeetingBtn").addEventListener("click", (e)=> {
+
+        let loadingMessage = document.getElementById("loadingOverlay");
+        let form = e.target.closest("form");
+        let requestData = new FormData(form);
+        let meetingId = requestData.get("meetingId");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+        });
+
+
+        // Show loading message
+        loadingMessage.style.display = "flex";
+
+        fetch(form.getAttribute('action'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: requestData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if (data.isSuccess) {
+                    // Hide loading message
+                    loadingMessage.style.display = "none";
+                    showMessagesModal(["Meeting Removed Sucessfully"]);
+
+                    var meetingCard = document.querySelector(`.meeting-card[data-meeting-id="${meetingId}"]`);
+                    console.log('card :', meetingCard);
+
+                    meetingCard.remove();
+                    return;
+                }
+                //show error alert above form
+
+                // create and alerts from errors in data.errors
+                if (data.errors && data.errors.length > 0) {
+
+                    showMessagesModal(data.errors);
+
+                }
+                //// Hide loading message
+                //loadingMessage.style.display = "none";
+                //location.reload();
+                // Redirect or show success message
+            })
+            .catch(error => {
+                // Hide loading message
+                loadingMessage.style.display = "none";
+
+                // show error alert above form
+                showMessagesModal(["Error happen try again"]);
+            });
+
+
+    });
+
+    function showMessagesModal(messages) {
+        var modalBody = document.querySelector("#messagesModal .modal-body");
+        modalBody.innerHTML = "";
+
+        messages.forEach(function (message) {
+            var messageSpan = document.createElement("span");
+            messageSpan.textContent = message;
+            messageSpan.classList.add("d-block", "mb-2");
+            modalBody.appendChild(messageSpan);
+        });
+
+        $("#messagesModal").modal("show");
+    }
+</script>
+
+<div>
+
+    <!--check if current user is supervisor-->
+    @if (isSupervisor)
+    {
+        <!-- Modal Run Meeting-->
+        <div class="modal fade show" id="RunMeetingModal" tabindex="-1" role="dialog" aria-labelledby="RunMeetingModalLable" aria-modal="true">
+            <div class="modal-dialog " role="document">
+                <div class="modal-content">
+
+                    <form id="runMeetFrm" asp-controller="@RouteNameHelper.MeetingControllerName" asp-action="CompleteMeeting">
+
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="RunMeetingModalLable">View Meeting : 2</h5>
+
+                            <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+
+                        </div>
+                        <div class="modal-body pb-0">
+
+                            <input hidden name="meetingId" id="meetingId" value="">
+                            @*content start *@
+                            <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
+                                <tbody>
+
+                                    <!--Supervisor Name-->
+                                    <tr>
+                                        <td>
+                                            <label class="label-control" for="supervisorName">Supervisor<span class="star">&#x2605;</span> Name : </label>
+                                        </td>
+                                        <td>
+                                            <input id="supervisorName" name="supervisorName" class="form-control px-2" type="text" placeholder="example name here…" value="" readonly>
+                                            <input id="supervisorId" name="supervisorId" value="" hidden>
+                                        </td>
+                                    </tr>
+
+                                    <!--Student Name-->
+                                    <tr>
+                                    <tr>
+                                        <td>
+                                            <label class="label-control" for="studentName">Student Name : </label>
+                                        </td>
+                                        <td>
+                                            <input id="studentName" name="studentName" class="form-control px-2" type="text" placeholder="example name here…" value="" readonly>
+
+                                            <input hidden id="studentId" name="studentId" value="">
+                                        </td>
+                                    </tr>
+
+                                    <!--Start At-->
+                                    <tr>
+                                        <td>
+                                            <label class="label-control" for="startAt">Start At : </label>
+                                        </td>
+                                        <td>
+                                            <input id="startAt" name="startAt" class="form-control px-2" type="text" placeholder="example date here…" value="" readonly>
+                                        </td>
+                                    </tr>
+
+                                    <!--End At-->
+                                    <tr>
+                                        <td>
+                                            <label class="label-control" for="endAt">End At : </label>
+                                        </td>
+                                        <td>
+                                            <input id="endAt" name="endAt" class="form-control px-2" type="text" placeholder="example date here…" value="" readonly>
+                                        </td>
+                                    </tr>
+
+                                    <!--Meeting Description -->
+                                    <tr>
+
+                                        <td colspan="2">
+                                            <label class="label-control " for="meetingDescription">Description : </label>
+
+                                            <textarea rows="2" id="meetingDescription" name="meetingDescription" class="d-block form-control w-100 px-2 mb-2" type="text" placeholder="example date here…" readonly>                                         
+
+                                                                   </textarea>
+                                        </td>
+                                    </tr>
+
+                                    <!-- is Student Present-->
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    Student is Present
+                                                    <input id="isStudentPresent" class="form-check-input" type="checkbox" value="">
+                                                    <span class="form-check-sign">
+                                                        <span class="check "></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </td>
+
+
+
+                                    </tr>
+                                </tbody>
+
+
+                            </table>
+
+                            <p class=" mt-2" for="totalTasks">Total Tasks : <span id="totalTaksToCheck"></span> </p>
+
+
+                            <!--Meeting Tasks-->
+                            <div id="meeting-tasks">
+                                <h5>Meeting Tasks</h5>
+
+                                <table class="table">
+
+                                    <tbody id="tasks-table-body">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            @*content end*@
+                        </div>
+                        <div class="modal-footer">
+                            <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button id="completeMeetingBtn" class="btn btn-success">Complete Meeting </button>
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    }
+    <!-- Modal View Meeting-->
+    <div class="modal fade" id="ViewMeetingModal" tabindex="-1" role="dialog" aria-labelledby="ViewMeetingModalLable" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ViewMeetingModalLable">Run Meeting : <span id="meetingIdShow">2</span></h5>
+
+                    <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body pb-0">
+                    @*content start *@
+
+                    <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
+                        <tbody>
+                            <style>
+                                .star {
+                                    color: purple;
+                                    font-size: smaller;
+                                    display: inline-block;
+                                    top: -5px;
+                                    position: relative;
+                                }
+                            </style>
+                            <!--Supervisor Name-->
+                            <tr>
+                                <td>
+                                    <label class="label-control" for="supervisorNameShow">Supervisor<span class="star">&#x2605;</span> Name : </label>
+                                </td>
+                                <td>
+                                    <input id="supervisorNameShow" name="supervisorNameShow" class="form-control px-2" type="text" placeholder="example name here…" value="" readonly>
+                                </td>
+                            </tr>
+
+                            <!--Student Name-->
+                            <tr>
+                                <td>
+                                    <label class="label-control" for="studentNameShow">Student Name : </label>
+                                </td>
+                                <td>
+                                    <input id="studentNameShow" name="studentNameShow" class="form-control px-2" type="text" placeholder="example name here…" value="" readonly>
+                                </td>
+                            </tr>
+
+                            <!--Created At-->
+                            <tr>
+                                <td>
+                                    <label class="label-control" for="createdShow">Created At : </label>
+                                </td>
+                                <td>
+                                    <input id="createdShow" name="createdShow" class="form-control px-2" type="text" placeholder="example date here…" value="" readonly>
+                                </td>
+                            </tr>
+
+                            <!--Started At-->
+                            <tr>
+                                <td>
+                                    <label class="label-control" for="startAtShow">Start At : </label>
+                                </td>
+                                <td>
+                                    <input id="startAtShow" name="startAtShow" class="form-control px-2" type="text" placeholder="example date here…" value="" readonly>
+                                </td>
+                            </tr>
+
+                            <!--Total Hours At-->
+                            <tr>
+                                <td>
+                                    <label class="label-control" for="totalHoursShow">Total Hours: </label>
+                                </td>
+                                <td>
+                                    <input id="totalHoursShow" name="startAtShow" class="form-control px-2" type="text" placeholder="example date here…" value="Hours" readonly>
+                                </td>
+                            </tr>
+
+                            <!--Meeting Description-->
+                            <tr>
+
+                                <td colspan="2">
+                                    <label class="label-control " for="meetingDescriptionShow">Description : </label>
+
+                                    <textarea rows="4" id="meetingDescriptionShow" name="meetingDescriptionShow" class="d-block form-control w-100 px-2" type="text" placeholder="example date here…" readonly>                                         
+
+                                                        </textarea>
+                                </td>
+                            </tr>
+
+                            <!--Meeting Presents-->
+                            <tr>
+
+                                <td colspan="2">
+
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Is Student Present</th>
+                                                <th>Is Supervisor Present</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="isStudentPresentShow" name="isStudentPresentShow" class="form-control px-2" type="text" placeholder="example date here…" value="" readonly>
+                                                </td>
+                                                <td>
+                                                    <input id="isSupervisorPresentShow" name="isSupervisorPresentShow" class="form-control px-2" type="text" placeholder="example date here…" value="" readonly>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <p class=" mt-2" for="totalTasks">Total Tasks : <span id="totalTaksShow"></span> </p>
+
+
+                    <!--Total Hours At-->
+                    <div id="meeting-tasksShow">
+                        <h5>Meeting Tasks</h5>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Is Completed</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-table-bodyShow">
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    @*content end*@
+                </div>
+                <div class="modal-footer">
+                    <button id="closeBtn" type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 
 
-<script>
+<script defer>
     let myMeetings = @Html.Raw(Json.Serialize(meetings));
+    let paddingHours = '@_serviceOptions.Value.PaddingMeetHours';
 
     //[{
-    //    "created": "2023-04-27T00:54:20.5296405",
-    //    "studentName": "Ali Adel",
-    //    "supervisorName": "Abass Ahmed",
-    //    "id": 4,
-    //    "supervisorId": "364c30ec-c44e-4afa-9d2b-08db467e2311",
-    //    "day": 1,
-    //    "studentId": "8b775583-83fa-4fd5-9d2c-08db467e2311",
-    //    "totalTimeHoure": 1,
-    //    "date": "2023-05-15T02:00:00",
-    //    "startHour": 2,
-    //    "endHour": 3,
-    //    "description": "",
-    //    "hasTasks": true,
-    //    "tasks": [
-    //        {
-    //            "id": 2,
-    //            "title": "ttiasdas",
-    //            "decription": "asdihgasdas",
-    //            "isCompleted": false
-    //        }
-    //    ]
-    //}]
+    //"created": "2023-04-28T17:17:34.3012546",
+    //"studentName": "Ali Adel",
+    //"supervisorName": "Abass Ahmed",
+    //"isSupervisorPresent": false,
+    //"isStudentPresent": false,
+    //"id": 2,
+    //"supervisorId": "b56fdc70-d25c-4e97-86b5-08db47ce2769",
+    //"day": 0,
+    //"studentId": "7cd969d7-3f83-4535-86b6-08db47ce2769",
+    //"totalTimeHoure": 1,
+    //"date": "2023-06-11T02:00:00",
+    //"startHour": 2,
+    //"endHour": 3,
+    //"description": "meeting description here",
+    //"hasTasks": true,
+    //"tasks": [
+    //    {
+    //        "id": 2,
+    //        "title": "task1",
+    //        "decription": "desc1",
+    //        "isCompleted": false
+    //    },
+    //    {
+    //        "id": 3,
+    //        "title": "task 2",
+    //        "decription": "desc2",
+    //        "isCompleted": false
+    //    }]
+
+    //Function to show meeting To Run
+    function ShowMeetingToRun(meetingId) {
+        const meeting = meetingsMap.get(parseInt(meetingId));
+
+        $('#meetingId').val(meeting.id);
+        $('#studentId').val(meeting.studentId);
+        $('#supervisorId').val(meeting.studentId);
+        $('#supervisorName').val(meeting.supervisorName);
+        $('#studentName').val(meeting.studentName);
+        $('#startAt').val(formatDate(meeting.date));
+        $('#endAt').val(formatDate(addHoursToDate(meeting.date, parseInt(meeting.endHour) - parseInt(meeting.startHour))));
+        $('#expireAt').val(formatDate(addHoursToDate(meeting.date, parseInt(meeting.endHour) - parseInt(meeting.startHour) + parseInt(paddingHours))));
+        $('#meetingDescription').val(meeting.description);
+        let totalTaskText = meeting.tasks.length > 0 ? meeting.tasks.length : 'No Tasks';
+        $('#totalTaksToCheck').text(totalTaskText);
+        $('#isStudentPresent').prop('checked', meeting.isStudentPresent);
+        //generate checkbox element text
+
+        // Clear previous tasks
+        $('#tasks-table-body').empty();
+
+        // Add tasks to the table
+        meeting.tasks.forEach(task => {
+            const completed = task.isCompleted;
+            const taskRow = `<tr>
+                                                       <td data-task-id='${task.id}'>${GenerateChechBoxText(completed)}</td>
+                                                       <td>${task.title}</td>
+                                                  </tr>`;
+            $('#tasks-table-body').append(taskRow);
+        });
+
+        // if there no tasks hide the tasks table
+        if (meeting.tasks.length == 0) {
+            $('#meeting-tasks').hide();
+        } else {
+            $('#meeting-tasks').show();
+        }
+
+        $('#RunMeetingModal').modal('show');
+    }
 
     let meetingsMap = new Map();
     //loop through myMeeting and add to map the key is the id and the value is the object
@@ -203,8 +686,144 @@
         meetingsMap.set(meeting.id, meeting);
     });
 
+    const runMeetingButtons = document.querySelectorAll('.runMeetingBtn');
+
+    runMeetingButtons.forEach((button) => {
+        button.addEventListener('click', function () {
+            const meetingCard = button.closest('.card');
+            const cardTitle = meetingCard.querySelector('.card-title');
+            const meetingId = cardTitle.getAttribute('data-meeting-id');
+            ShowMeetingToRun(meetingId);
+        });
+    });
+
+    const viewMeetingBtns = document.querySelectorAll('.viewMeetingBtn');
+
+    viewMeetingBtns.forEach((button) => {
+        button.addEventListener('click', function () {
+            const meetingCard = button.closest('.card');
+            const cardTitle = meetingCard.querySelector('.card-title');
+            const meetingId = cardTitle.getAttribute('data-meeting-id');
+
+            showMeetingToView(meetingId);
+
+
+        });
+    });
+
+    //Function To Generate checkbox
+
+    function GenerateChechBoxText(isChecked) {
+
+        let check = isChecked ? "checked" : "";
+
+        let txt = `  <div class="form-check">
+                                         <label class="form-check-label">
+                                                     <input  class="form-check-input" type="checkbox" value="" check>
+                                                 <span class="form-check-sign">
+                                                 <span class="check "></span>
+                                                       </span>
+                                             </label>
+                                                                </div>`
+
+        return txt;
+    }
+
+    // Function to show meeting details in the modal
+    function showMeetingToView(meetingId) {
+        const meeting = meetingsMap.get(parseInt(meetingId));
+        // Fill the modal with meeting data
+        $('#meetingIdShow').text(meeting.id);
+        $('#supervisorNameShow').val(meeting.supervisorName);
+        $('#studentNameShow').val(meeting.studentName);
+        $('#createdShow').val(formatDate(meeting.created));
+        $('#startAtShow').val(formatDate(meeting.date));
+        $('#totalHoursShow').val(meeting.totalTimeHoure + ' Hours');
+        $('#meetingDescriptionShow').val(meeting.description);
+        let totalTaskText = meeting.tasks.length > 0 ? meeting.tasks.length : 'No Tasks';
+        $('#totalTaksShow').text(totalTaskText);
+        $('#isStudentPresentShow').val(meeting.isStudentPresent ? 'Yes' : 'No');
+        $('#isSupervisorPresentShow').val(meeting.isSupervisorPresent ? 'Yes' : 'No');
+        // Clear previous tasks
+        $('#tasks-table-bodyShow').empty();
+
+        // Add tasks to the table
+        meeting.tasks.forEach(task => {
+            const completed = task.isCompleted ? 'Yes' : 'No';
+            const taskRow = `<tr>
+                                                                                        <td>${task.title}</td>
+                                                                                        <td>${task.decription}</td>
+                                                                                        <td>${completed}</td>
+                                                                                     </tr>`;
+            $('#tasks-table-bodyShow').append(taskRow);
+        });
+
+        // if there no tasks hide the tasks table
+        if (meeting.tasks.length == 0) {
+            $('#meeting-tasksShow').hide();
+        } else {
+            $('#meeting-tasksShow').show();
+        }
+
+        $('#ViewMeetingModal').modal('show');
+    }
+
+    // Function to format date with AM/PM and day of the week
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Intl.DateTimeFormat('en-US', options).format(date);
+    }
+
+    function addHoursToDate(dateStr, hours) {
+        const date = new Date(dateStr);
+
+        // Adding hours to the date
+        date.setHours(date.getHours() + hours);
+
+        // Formatting the date to match the input format
+        const formattedDate = date.toISOString().substring(0, 19);
+
+        return formattedDate;
+    }
+
+    //send form data
+    document.getElementById("completeMeetingBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        let data = {};
+        let runMeetFrm = document.getElementById("runMeetFrm");
+        let formData = new FormData(runMeetFrm);
+
+        for (const [key, value] of formData) {
+
+            data[key] = value;
+
+        }
+
+        const isStudentPresent = $('#isStudentPresent').is(':checked');
+        const tasks = [];
+
+        $('#tasks-table-body tr').each(function () {
+            const taskId = $(this).find('td[data-task-id]').data('task-id');
+            const isTaskComplete = $(this).find('.form-check-input').is(':checked');
+            tasks.push({
+                id: taskId,
+                isCompleted: isTaskComplete,
+            });
+        });
+        data.hasTasks = tasks.length > 0;
+        data.tasks = tasks;
+        data.isStudentPresent = isStudentPresent;
+
+        console.log(data);
+
+
+    });
+
+
 </script>
 
-<script defer>
 
-</script>
+
+
+

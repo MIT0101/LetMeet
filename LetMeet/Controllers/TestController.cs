@@ -106,7 +106,8 @@ namespace LetMeet.Controllers
             endHour = meetingDto.endHour,
             tasks =myTasks,
             description=meetingDto.description,
-            isPresent=false,
+            isStudentPresent =false,
+            isSupervisorPresent=false,
             totalTimeHoure=meetingDto.endHour-meetingDto.startHour,
             SupervisionInfo=supervison
 

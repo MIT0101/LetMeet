@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetMeet.Data.Migrations
 {
     [DbContext(typeof(MainIdentityDbContext))]
-    [Migration("20230426174455_IdentityMigrations")]
+    [Migration("20230428094930_IdentityMigrations")]
     partial class IdentityMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,29 +58,29 @@ namespace LetMeet.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f132cfc1-3884-47b0-b835-fc226aca9731"),
-                            ConcurrencyStamp = "29775b09-9945-4926-8065-119d8e8c83c9",
+                            Id = new Guid("886d2f29-0309-4b42-9b47-c6ec112a06df"),
+                            ConcurrencyStamp = "803f1671-a73a-40d3-9cae-09d2b2019c08",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("c37de864-be90-4770-b5d3-a1a643df910d"),
-                            ConcurrencyStamp = "8000499b-904a-482c-86b2-6bfd2ae657d5",
+                            Id = new Guid("03747a9a-60e1-487f-92ee-70b711ecc948"),
+                            ConcurrencyStamp = "8e9312ba-5e84-4d1f-9289-c93fb36c6a66",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("fa74b7a7-4482-4aa9-9d1f-375fbd02c3c7"),
-                            ConcurrencyStamp = "5cf83db5-cf37-4875-a51f-5a09c9d36411",
+                            Id = new Guid("838d95c9-2d5f-4027-b2e9-bb86d1774aab"),
+                            ConcurrencyStamp = "32c62905-0a23-4ee4-855e-a9c1f8eaf525",
                             Name = "Supervisor",
                             NormalizedName = "SUPERVISOR"
                         },
                         new
                         {
-                            Id = new Guid("c147f7ac-e53b-4d5d-bbb7-ea9e3679a255"),
-                            ConcurrencyStamp = "67f95f38-4971-4bdd-bd40-7cc5c6ee1dbf",
+                            Id = new Guid("17252daf-49f3-45da-ae21-a9ba0048c4ea"),
+                            ConcurrencyStamp = "88cd023b-20b7-4e38-be5c-f8ae31b4d051",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });

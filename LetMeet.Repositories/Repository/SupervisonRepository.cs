@@ -41,7 +41,7 @@ namespace LetMeet.Repositories.Repository
          return _supervionGRepo.CreateAsync(supervisionInfo);
         }
 
-        public async Task<RepositoryResult<List<SupervisorSelectDto>>> GetAvailableSupervisorNamesAsync(int maxStudentsPerSupervisor)
+        public async Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAvailableSupervisorNamesAsync(int maxStudentsPerSupervisor)
         {
             try
             {
@@ -49,14 +49,14 @@ namespace LetMeet.Repositories.Repository
          
                 var res = await _mainDb.UserInfos.Where(u => u.userRole == UserRole.Supervisor &&
                 _mainDb.SupervisionInfo.Count(s => s.supervisor==u&&s.endDate >= _appTimeProvider.Now) < maxStudentsPerSupervisor).
-                Select(u => new SupervisorSelectDto(u.id, u.fullName)).ToListAsync();
+                Select(u => new SupervisorOrStudentSelectDto(u.id, u.fullName)).ToListAsync();
 
-                return RepositoryResult<List<SupervisorSelectDto>>.SuccessResult(ResultState.Seccess,res);
+                return RepositoryResult<List<SupervisorOrStudentSelectDto>>.SuccessResult(ResultState.Seccess,res);
             }
             catch (Exception ex)
             {
 
-                return RepositoryResult<List<SupervisorSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+                return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
 
             }
         }
@@ -66,20 +66,20 @@ namespace LetMeet.Repositories.Repository
             return await _supervionGRepo.CountQueryAsync(s=>s.endDate>=_appTimeProvider.Now&&s.supervisor==supervisor);
         }
 
-        public async Task<RepositoryResult<SupervisorSelectDto>> GetStudentSupervisor(Guid studentInfoId)
+        public async Task<RepositoryResult<SupervisorOrStudentSelectDto>> GetStudentSupervisor(Guid studentInfoId)
         {
             try
             {
-               var result=await _supervisionInfo.Where(s => s.student.id == studentInfoId).Select(s=>new SupervisorSelectDto(s.supervisor.id,s.supervisor.fullName)).SingleOrDefaultAsync();
+               var result=await _supervisionInfo.Where(s => s.student.id == studentInfoId).Select(s=>new SupervisorOrStudentSelectDto(s.supervisor.id,s.supervisor.fullName)).SingleOrDefaultAsync();
                 if (result is null)
                 {
-                    return RepositoryResult<SupervisorSelectDto>.FailureResult(ResultState.NotFound, null);
+                    return RepositoryResult<SupervisorOrStudentSelectDto>.FailureResult(ResultState.NotFound, null);
                 }
-                return RepositoryResult<SupervisorSelectDto>.SuccessResult(ResultState.Seccess, result);
+                return RepositoryResult<SupervisorOrStudentSelectDto>.SuccessResult(ResultState.Seccess, result);
             }
             catch (Exception ex)
             {
-                return RepositoryResult<SupervisorSelectDto>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+                return RepositoryResult<SupervisorOrStudentSelectDto>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
 
 
             }

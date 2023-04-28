@@ -16,6 +16,9 @@ public interface IMeetingRepository
     Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsBetween(MeetingQuery query);
     Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsAsync(Expression<Func<Meeting, bool>> filter);
     Task<RepositoryResult<List<Meeting>?>> GetMeetingsOn(Guid supervisorId, Guid studentId, DateTime date);
+    Task<RepositoryResult<Meeting?>> GetMeetingAsync(int meetingId);
+    Task<RepositoryResult<Meeting?>> RemoveMeetingAsync(int meetingId);
+
 
 
 }

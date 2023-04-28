@@ -13,6 +13,7 @@ using OneOf.Types;
 using Alachisoft.NCache.Security.Config;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Org.BouncyCastle.Asn1.Ocsp;
+using LetMeet.Data.Dtos.Supervision;
 
 namespace LetMeet.Controllers;
 
@@ -32,6 +33,24 @@ public class MeetingController : Controller
         _studentsService = studentService;
         _contextAccessor = contextAccessor;
     }
+    // remove meeting 
+    [HttpPost("/[Controller]/api/Remove/{id}")]
+    public async Task<ActionResult<IAppApiResponse>> Remove(int id)
+    {
+        List<string> errors = new List<string>();
+        List<string> messages = new List<string>();
+
+        // remove meeting
+        var result = await _meetingService.RemoveMeeting(GenricControllerHelper.GetUserInfoId(User),GenricControllerHelper.GetUserRole(User),id);
+        Meeting? resultMeeting = null;
+        result.Switch(
+                       meetingDto => { resultMeeting = meetingDto; messages.Add("Meeting removed successfully"); }
+                      , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
+                       , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+        bool isSuccess = resultMeeting is not null;
+        return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Removed" : "Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
+    }
+
     // show meetings for admin
     [HttpGet("/[Controller]/Admin/Search")]
     [Authorize(Roles = "Admin")]
@@ -56,12 +75,34 @@ public class MeetingController : Controller
         MeetingQuery? query = await GetMeetingQueryForSupervisor(_contextAccessor.HttpContext.Request, GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User));
         return await Search(query, GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), errors, messages);
     }
-    private async Task<IActionResult> Search(MeetingQuery query, Guid currentUserInfoId, UserRole currentUserRole, List<string> errors = null, List<string> messages = null)
+    private async Task<IActionResult> Search(MeetingQuery? query, Guid currentUserInfoId, UserRole currentUserRole, List<string> errors = null, List<string> messages = null)
     {
         InitAndAssginErrorsAndMessagesForView(ref errors, ref messages);
 
         List<MeetingFullDto> meetings = new List<MeetingFullDto>();
         ViewData[ViewStringHelper.Meetings] = meetings;
+        ViewData[ViewStringHelper.RequestedMeetingQuery] = query;
+        string supervisorName = string.Empty;
+        string studentName = string.Empty;
+        if (query is null) { 
+        return BadRequest();
+        }
+
+        //get supervisor name for supervisorId in query
+        if (query.supervisorId != null)
+        {
+            SupervisorOrStudentSelectDto? supervisorResult = await _supervisionService.GetSupervisorOrStudent(query.supervisorId);
+            supervisorName= supervisorResult?.FullName;
+        }
+        //get student name for studentId in query
+        if (query.studentId != null)
+        {
+            SupervisorOrStudentSelectDto? studentResult = await _supervisionService.GetSupervisorOrStudent(query.studentId);
+            studentName = studentResult?.FullName;
+        }
+
+        ViewData[ViewStringHelper.RequestedSupervisorName] = supervisorName;
+        ViewData[ViewStringHelper.RequestedStudentName] = studentName;
         //Get All Meeting for current data use MeetingQuery and Meeting service use switch to handle result
         var meetingsResult = await _meetingService.GetMeetings(currentUserInfoId, currentUserRole, query);
         meetingsResult.Switch(
@@ -145,7 +186,7 @@ public class MeetingController : Controller
         {
             InitalStartEndDateMeetingQuery(request, ref query);
             query.studentId = currentUserId;
-            query.supervisorId = (await _supervisionService.GetSupervisor(currentUserId)).id;
+            query.supervisorId = (await _supervisionService.GetSupervisorOrStudent(currentUserId)).id;
             return query;
         }
         catch (Exception ex)
@@ -160,7 +201,7 @@ public class MeetingController : Controller
         //get object of MeetingQuery from query string
         try
         {
-            query.supervisorId = Guid.Parse(request.Query[QueryStringHelper.MeetingQuerySupervisorId]);
+            query.supervisorId = currentUserId;
             InitalStartEndDateMeetingQuery(request, ref query);
             try
             {

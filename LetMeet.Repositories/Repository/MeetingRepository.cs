@@ -52,6 +52,28 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
+    public async Task<RepositoryResult<Meeting?>> GetMeetingAsync(int meetingId)
+    {
+        try
+        {
+            var foundMeet = await _mainDb.Meetings.Include(x => x.SupervisionInfo.supervisor).Include(x=>x.SupervisionInfo.student)
+                .Where(x=>x.id==meetingId)
+                .FirstOrDefaultAsync();
+                
+            if (foundMeet is null)
+            {
+                return RepositoryResult<Meeting?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
+            }
+            return RepositoryResult<Meeting?>.SuccessResult(ResultState.Seccess, foundMeet);
+
+        }
+        catch (Exception ex)
+        {
+
+            return RepositoryResult<Meeting?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+        }
+    }
+
     public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsAsync(Expression<Func<Meeting, bool>> filter)
     {
         try
@@ -91,6 +113,28 @@ public class MeetingRepository : IMeetingRepository
         {
 
             return RepositoryResult<List<Meeting>?>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error"});
+        }
+    }
+
+    public async Task<RepositoryResult<Meeting?>> RemoveMeetingAsync(int meetingId)
+    {
+        try
+        {
+            var foundMeeting = await _mainDb.Meetings.Include(x=>x.tasks).Where(x => x.id == meetingId).FirstOrDefaultAsync();
+
+            if (foundMeeting is null)
+            {
+                return RepositoryResult<Meeting?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
+            }
+            _mainDb.Meetings.Remove(foundMeeting);
+            _mainDb.MeetingTasks.RemoveRange(foundMeeting.tasks);
+
+            await _mainDb.SaveChangesAsync();
+            return RepositoryResult<Meeting?>.SuccessResult(ResultState.Seccess, foundMeeting);
+        }
+        catch (Exception ex)
+        {
+            return RepositoryResult<Meeting?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
         }
     }
 }

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet", "LetMeet\LetMeet.csproj", "{52DF6379-E0D4-4A00-AF9E-0DC7AD2D16F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet.Web", "LetMeet\LetMeet.Web.csproj", "{52DF6379-E0D4-4A00-AF9E-0DC7AD2D16F4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet.Data", "LetMeet.Data\LetMeet.Data.csproj", "{422676C3-558A-43C1-A29E-86DCF2457648}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet.Repositories", "LetMeet.Repositories\LetMeet.Repositories.csproj", "{8A52C836-08EC-4D9B-B58E-10BDB165787B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetMeet.Business", "LetMeet.Business\LetMeet.Business.csproj", "{B50CA460-D29F-4B74-A96E-06EEA3250386}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetMeet.Business", "LetMeet.Business\LetMeet.Business.csproj", "{B50CA460-D29F-4B74-A96E-06EEA3250386}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

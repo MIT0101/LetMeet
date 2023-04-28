@@ -45,7 +45,10 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<int>("endHour")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isPresent")
+                    b.Property<bool>("isStudentPresent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isSupervisorPresent")
                         .HasColumnType("bit");
 
                     b.Property<int>("startHour")
