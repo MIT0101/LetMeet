@@ -1,0 +1,58 @@
+﻿/***********************************************************----------Show Meeting Style------------****************************************/
+.star {
+    color: purple;
+    font-size: smaller;
+    display: inline-block;
+    top: -5px;
+    position: relative;
+}
+/***********************************************************----------Cards Style ------------****************************************/
+
+.equal-height-card {
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+}
+
+.equal-height-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tasks-container {
+    margin-top: auto;
+}
+
+/*meeting description truncted */
+.meeting-card p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/*meeting overlay for delete and other buttons*/
+.meet-overlay {
+    position: absolute;
+    /*width: fit-content;*/
+    width: 100%;
+    height: 0%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: gray;
+    overflow: hidden;
+    transition: .3s ease;
+    z-index: 100;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    /*margin:  0 auto;*/
+    padding: 0 5px;
+}
+
+.meeting-card:hover .meet-overlay {
+    height: 60px;
+}

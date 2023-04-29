@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <_PublishTargetUrl>bin\Release\net6.0\publish\</_PublishTargetUrl>
     <History>True|2023-02-24T10:46:28.8528622Z;True|2023-02-24T13:43:10.9038529+03:00;True|2023-02-24T13:40:29.2936124+03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
@@ -24,5 +24,28 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <EFMigrations Include="LetMeet.Data.MainIdentityDbContext">
       <Value>Data Source=.\SQLEXPRESS%3bInitial Catalog=LetMeetIdentityDb%3bIntegrated Security=True%3b</Value>
     </EFMigrations>
+  </ItemGroup>
+  <ItemGroup>
+    <File Include="wwwroot/js/Main/NotificationCreating.js">
+      <publishTime>02/04/2023 08:51:42</publishTime>
+    </File>
+    <File Include="wwwroot/js/Main/Rtl.js">
+      <publishTime>02/11/2023 01:08:44</publishTime>
+    </File>
+    <File Include="wwwroot/js/Main/Theme.js">
+      <publishTime>02/18/2023 20:28:50</publishTime>
+    </File>
+    <File Include="wwwroot/js/Meetings/ShowAndRunMeetings.js">
+      <publishTime>04/29/2023 14:45:22</publishTime>
+    </File>
+    <File Include="wwwroot/js/Profile/EditProfile.js">
+      <publishTime>04/20/2023 12:15:19</publishTime>
+    </File>
+    <File Include="wwwroot/js/RegisterUser.js">
+      <publishTime>02/24/2023 21:05:58</publishTime>
+    </File>
+    <File Include="wwwroot/js/site.js">
+      <publishTime>02/12/2023 17:46:05</publishTime>
+    </File>
   </ItemGroup>
 </Project>

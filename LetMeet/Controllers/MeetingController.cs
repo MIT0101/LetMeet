@@ -33,6 +33,20 @@ public class MeetingController : Controller
         _studentsService = studentService;
         _contextAccessor = contextAccessor;
     }
+    [HttpPost("/[Controller]/api/CompleteMeeting")]
+    [Authorize(Roles = "Supervisor")]
+    public async Task<ActionResult<IAppApiResponse>> CompleteMeeting(CompleteMeetingDto meetingDto) { 
+
+        List<string> errors = new List<string>();
+        List<string> messages = new List<string>();
+        Meeting? resultMeeting = null;
+
+    
+        return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Completed" : "Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
+
+    }
+
+
     // remove meeting 
     [HttpPost("/[Controller]/api/Remove/{id}")]
     public async Task<ActionResult<IAppApiResponse>> Remove(int id)

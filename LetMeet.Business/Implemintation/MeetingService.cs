@@ -223,4 +223,9 @@ public partial class MeetingService : IMeetingService
         return meeting;
 
     }
+
+    public Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> CompleteMeeting(Guid currentUserId, UserRole userRole, CompleteMeetingDto meetingDto)
+    {
+        throw new NotImplementedException();
+    }
 }

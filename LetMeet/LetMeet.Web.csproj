@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\js\Meetings\" />
     <Folder Include="wwwroot\lib\material-dashboard\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>

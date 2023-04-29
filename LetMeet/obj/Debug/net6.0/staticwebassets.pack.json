@@ -41,6 +41,10 @@
       "PackagePath": "staticwebassets\\css\\Main\\mainloadiersStyle.css"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Meetings\\ShowAndRunMeetings.css",
+      "PackagePath": "staticwebassets\\css\\Meetings\\ShowAndRunMeetings.css"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Profile\\EditProfileStyle.css",
       "PackagePath": "staticwebassets\\css\\Profile\\EditProfileStyle.css"
     },
@@ -109,12 +113,20 @@
       "PackagePath": "staticwebassets\\js\\Main\\Theme.js"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\ShowAndRunMeetings.js",
+      "PackagePath": "staticwebassets\\js\\Meetings\\ShowAndRunMeetings.js"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Profile\\EditProfile.js",
       "PackagePath": "staticwebassets\\js\\Profile\\EditProfile.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\RegisterUser.js",
       "PackagePath": "staticwebassets\\js\\RegisterUser.js"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Shared.js",
+      "PackagePath": "staticwebassets\\js\\Shared.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\site.js",
