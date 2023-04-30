@@ -14,6 +14,7 @@ using Alachisoft.NCache.Security.Config;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Org.BouncyCastle.Asn1.Ocsp;
 using LetMeet.Data.Dtos.Supervision;
+using LetMeet.Web.Models;
 
 namespace LetMeet.Controllers;
 
@@ -35,14 +36,20 @@ public class MeetingController : Controller
     }
     [HttpPost("/[Controller]/api/CompleteMeeting")]
     [Authorize(Roles = "Supervisor")]
-    public async Task<ActionResult<IAppApiResponse>> CompleteMeeting(CompleteMeetingDto meetingDto) { 
+    public async Task<ActionResult<IAppApiResponse>> CompleteMeeting([FromBody]CompleteMeetingDto meetingDto) { 
 
         List<string> errors = new List<string>();
         List<string> messages = new List<string>();
-        Meeting? resultMeeting = null;
+        Meeting? completedMeeting = null;
 
-    
-        return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Completed" : "Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
+        var result = await _meetingService.CompleteMeeting(GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), meetingDto);
+        result.Switch(
+                       meeting => { completedMeeting = meeting; messages.Add("Meeting completed successfully"); }
+                       , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
+                        , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+        bool isSuccess = completedMeeting is not null;
+
+        return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Completed" : "Error", messages = messages, errors = errors, data = completedMeeting }); ; ;
 
     }
 
@@ -56,13 +63,13 @@ public class MeetingController : Controller
 
         // remove meeting
         var result = await _meetingService.RemoveMeeting(GenricControllerHelper.GetUserInfoId(User),GenricControllerHelper.GetUserRole(User),id);
-        Meeting? resultMeeting = null;
+        MeetingDeleteRecoDto? resultMeeting = null;
         result.Switch(
                        meetingDto => { resultMeeting = meetingDto; messages.Add("Meeting removed successfully"); }
                       , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
                        , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
         bool isSuccess = resultMeeting is not null;
-        return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Removed" : "Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
+        return Json(new MeetingDeleteApiResponse { isSuccess = isSuccess, status = isSuccess ? "Removed" : "Error", messages = messages, errors = errors, data = resultMeeting }); ; ;
     }
 
     // show meetings for admin
@@ -129,6 +136,7 @@ public class MeetingController : Controller
 
     //show create meeting form
     [HttpGet]
+    [Authorize(Roles = "Supervisor")]
     public async Task<IActionResult> Create(Guid id, Guid studentId, List<string> errors, List<string> messages)
     {
         InitAndAssginErrorsAndMessagesForView(ref errors, ref messages);
@@ -160,6 +168,7 @@ public class MeetingController : Controller
         return View();
     }
     [HttpPost("/[Controller]/api/Create/{id}")]
+    [Authorize(Roles = "Supervisor")]
     public async Task<ActionResult<IAppApiResponse>> Create(Guid id)
     {
         List<string> errors = new List<string>();
@@ -192,6 +201,8 @@ public class MeetingController : Controller
 
         //return RedirectToAction(nameof(MeetingController.Index), new { errors, messages });
     }
+    /**********************************************------------GET MEETING QUERY --------------****************************************/
+    //for students
     private async Task<MeetingQuery?> GetMeetingQueryForStudent(HttpRequest request, Guid currentUserId, UserRole currentUserRole)
     {
         MeetingQuery query = new MeetingQuery();
@@ -209,6 +220,7 @@ public class MeetingController : Controller
         }
 
     }
+    //for supervisors
     private async Task<MeetingQuery?> GetMeetingQueryForSupervisor(HttpRequest request, Guid currentUserId, UserRole currentUserRole)
     {
         MeetingQuery query = new MeetingQuery();
@@ -242,6 +254,7 @@ public class MeetingController : Controller
             return null;
         }
     }
+    //for admin
     private MeetingQuery? GetMeetingQueryFromRequest(HttpRequest request)
     {
         MeetingQuery query = new MeetingQuery();

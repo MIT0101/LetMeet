@@ -21,10 +21,10 @@ runMeetingButtons.forEach((button) => {
 //Function to show meeting To Run
 function ShowMeetingToRun(meetingId) {
     const meeting = meetingsMap.get(parseInt(meetingId));
-
+    $('#meetingIdRun').text(meeting.id);
     $('#meetingId').val(meeting.id);
     $('#studentId').val(meeting.studentId);
-    $('#supervisorId').val(meeting.studentId);
+    $('#supervisorId').val(meeting.supervisorId);
     $('#supervisorName').val(meeting.supervisorName);
     $('#studentName').val(meeting.studentName);
     $('#startAt').val(formatDate(meeting.date));
@@ -74,6 +74,7 @@ function GenerateChechBoxText(isChecked) {
 
     return txt;
 }
+/*****************************************************************------COMPLETE MEETING------**************************************************/
 //send run meeting data
 //get all buttons with completeMeetingBtn class
 const completeMeetingBtns = document.querySelectorAll(".completeMeetingBtn");
@@ -99,7 +100,7 @@ completeMeetingBtns.forEach((btn) => {
             });
         });
         data.hasTasks = tasks.length > 0;
-        data.tasks = tasks;
+        data.meetingTasks = tasks;
         data.isStudentPresent = isStudentPresent;
 
         CreateAndShowLoadingOverLay("Saving Meeting Complete ....");
@@ -108,24 +109,24 @@ completeMeetingBtns.forEach((btn) => {
 
         console.log("Data to send",data);
         
-        //SendRequest({ url, data }, (data) => {
-        //    hideLoadingOverlayIfShown();
-        //    // check if the request is success
-        //    if (data.success) {
-        //        console.log("all response is ",data);
-        //        // show success message
-        //        CreateAndshowMessagesModal(["Meeting Completed Successfully"]);
-        //        window.location.reload();
-        //        return;
-        //    } 
-        //    // show error message
-        //    CreateAndshowMessagesModal(data.errors);
+        SendRequest({ url, data }, (data) => {
+            hideLoadingOverlayIfShown();
+            // check if the request is success
+            if (data.isSuccess) {
+                console.log("all response is ",data);
+                // show success message
+                CreateAndshowMessagesModal(["Meeting Completed Successfully"]);
+                window.location.reload();
+                return;
+            } 
+            // show error message
+            CreateAndshowMessagesModal(data.errors);
 
-        //}, (error) => {
-        //    hideLoadingOverlayIfShown();
-        //    // show error message
-        //    CreateAndshowMessagesModal(["Error Happened Please Try Again"]);
-        //});
+        }, (error) => {
+            hideLoadingOverlayIfShown();
+            // show error message
+            CreateAndshowMessagesModal(["Error Happened Please Try Again"]);
+        });
 
     });
 });

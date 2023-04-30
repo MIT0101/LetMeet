@@ -18,6 +18,8 @@ public interface IMeetingRepository
     Task<RepositoryResult<List<Meeting>?>> GetMeetingsOn(Guid supervisorId, Guid studentId, DateTime date);
     Task<RepositoryResult<Meeting?>> GetMeetingAsync(int meetingId);
     Task<RepositoryResult<Meeting?>> RemoveMeetingAsync(int meetingId);
+    Task<RepositoryResult<Meeting?>> UpdateMeetingAsync(Meeting meeting);
+    Task<RepositoryResult<MeetingDeleteRecoDto?>> GetMeetingToDeleteAsync(int meetingId);
 
 
 

@@ -32,13 +32,14 @@ function CreateAndshowMessagesModal(messages) {
             </div>`;
         document.body.appendChild(messagesModal);
     }
-    var modalBody = document.querySelector("#messagesModal .modal-body");
+    var modalBody = messagesModal.querySelector("#messagesModal .modal-body");
     modalBody.innerHTML = "";
     messages.forEach(function (message) {
         var messageSpan = document.createElement("span");
         messageSpan.textContent = message;
         messageSpan.classList.add("d-block", "mb-2");
         modalBody.appendChild(messageSpan);
+        console.log("Message is :", message);
     });
     $("#messagesModal").modal("show");
 }

@@ -19,11 +19,13 @@ namespace LetMeet.Data.Dtos.MeetingsStaff
         [Required(ErrorMessage = "Student Id is Required")]
         public Guid studentId { get; set; } = Guid.Empty;
 
+        [Required(ErrorMessage = "Student Present is Required")]
         public bool isStudentPresent { get; set; } = false;
 
+        [Required(ErrorMessage ="Must Specify if meeting has tasks or not")]
         public bool hasTasks { get; set; } = false;
 
-        List<MeetingTaskComplete> meetingTasks { get; set; }
+        public List<MeetingTaskComplete> meetingTasks { get; set; }
     }
 
     public class MeetingTaskComplete
@@ -31,6 +33,7 @@ namespace LetMeet.Data.Dtos.MeetingsStaff
         [Required(ErrorMessage ="Task id Is Required")]
         public int id { get; set; }
 
+        [Required(ErrorMessage ="Task Completion is Required")]
         public bool isCompleted { get; set; } = false;
     }
 }

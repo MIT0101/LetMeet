@@ -40,6 +40,7 @@ namespace LetMeet.Configure
             //supervisions Info Repository
             services.AddScoped<ISupervisonRepository, SupervisonRepository>();
             services.AddScoped<IMeetingRepository, MeetingRepository>();
+            services.AddScoped<IMeetingTaskRepository, MeetingTaskRepository>();
 
             string validPasswordChars = configuration.GetValue<string>("ValidPasswordChars") ?? PasswordGenrationRepository.DefaultValidChars;
             //password generation repository

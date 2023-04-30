@@ -17,7 +17,7 @@ namespace LetMeet.Business.Interfaces
     {
         Task<OneOf<Meeting,IEnumerable<ValidationResult>,IEnumerable<ServiceMassage>>> Create(Guid supervisorId,MeetingDto meetingDto);
         Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid currentUserId , UserRole userRole, MeetingQuery query);
-        Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RemoveMeeting(Guid currentUserId, UserRole userRole,int meetingId);
+        Task<OneOf<MeetingDeleteRecoDto, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RemoveMeeting(Guid currentUserId, UserRole userRole,int meetingId);
 
         Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> CompleteMeeting(Guid currentUserId, UserRole userRole, CompleteMeetingDto meetingDto);
     }

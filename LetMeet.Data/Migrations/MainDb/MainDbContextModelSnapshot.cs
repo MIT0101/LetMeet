@@ -72,9 +72,6 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int?>("Meetingid")
-                        .HasColumnType("int");
-
                     b.Property<string>("decription")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -83,6 +80,9 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<bool>("isCompleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("meetingid")
+                        .HasColumnType("int");
+
                     b.Property<string>("title")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -90,7 +90,7 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     b.HasKey("id");
 
-                    b.HasIndex("Meetingid");
+                    b.HasIndex("meetingid");
 
                     b.ToTable("MeetingTasks");
                 });
@@ -209,10 +209,13 @@ namespace LetMeet.Data.Migrations.MainDb
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.MeetingTask", b =>
                 {
-                    b.HasOne("LetMeet.Data.Entites.Meetigs.Meeting", null)
+                    b.HasOne("LetMeet.Data.Entites.Meetigs.Meeting", "meeting")
                         .WithMany("tasks")
-                        .HasForeignKey("Meetingid")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("meetingid")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("meeting");
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.DayFree", b =>

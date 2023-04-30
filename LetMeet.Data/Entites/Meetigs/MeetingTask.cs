@@ -27,6 +27,5 @@ namespace LetMeet.Data.Entites.Meetigs
 
         public bool isCompleted { get; set; }=false;
 
-
     }
 }

@@ -47,7 +47,7 @@ public class MeetingRepository : IMeetingRepository
         }
         catch (Exception ex)
         {
-          
+
             return RepositoryResult<Meeting>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
         }
     }
@@ -56,10 +56,10 @@ public class MeetingRepository : IMeetingRepository
     {
         try
         {
-            var foundMeet = await _mainDb.Meetings.Include(x => x.SupervisionInfo.supervisor).Include(x=>x.SupervisionInfo.student)
-                .Where(x=>x.id==meetingId)
+            var foundMeet = await _mainDb.Meetings
+                .Where(x => x.id == meetingId)
                 .FirstOrDefaultAsync();
-                
+
             if (foundMeet is null)
             {
                 return RepositoryResult<Meeting?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
@@ -74,13 +74,36 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
+    public async Task<RepositoryResult<MeetingDeleteRecoDto?>> GetMeetingToDeleteAsync(int meetingId)
+    {
+        try
+        {
+            var foundMeet = await _mainDb.Meetings
+                .Where(x => x.id == meetingId)
+                .Select(m=>new MeetingDeleteRecoDto(m.id,m.SupervisionInfo.supervisor.id,m.SupervisionInfo.student.id,m.date,m.startHour,m.endHour))
+                .FirstOrDefaultAsync();
+
+            if (foundMeet is null)
+            {
+                return RepositoryResult<MeetingDeleteRecoDto?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
+            }
+            return RepositoryResult<MeetingDeleteRecoDto?>.SuccessResult(ResultState.Seccess, foundMeet);
+
+        }
+        catch (Exception ex)
+        {
+
+            return RepositoryResult<MeetingDeleteRecoDto?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+        }
+    }
+
     public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsAsync(Expression<Func<Meeting, bool>> filter)
     {
         try
         {
             var foundMeets = await _mainDb.Meetings.Include(x => x.tasks)
                 .Where(filter)
-                .Select(m=> MeetingFullDto.GetFromMeeting(m,m.SupervisionInfo.supervisor.id,m.SupervisionInfo.student.id,m.SupervisionInfo.supervisor.fullName,m.SupervisionInfo.student.fullName)).ToListAsync();
+                .Select(m => MeetingFullDto.GetFromMeeting(m, m.SupervisionInfo.supervisor.id, m.SupervisionInfo.student.id, m.SupervisionInfo.supervisor.fullName, m.SupervisionInfo.student.fullName)).ToListAsync();
             if (foundMeets is null || foundMeets.Count == 0)
             {
                 return RepositoryResult<List<MeetingFullDto>?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
@@ -93,9 +116,9 @@ public class MeetingRepository : IMeetingRepository
         }
     }
     public async Task<RepositoryResult<List<MeetingFullDto>?>> GetMeetingsBetween(MeetingQuery query)
-    { 
-    return await GetMeetingsAsync(x => x.SupervisionInfo.supervisor.id == query.supervisorId
-        && x.SupervisionInfo.student.id == query.studentId && x.date.Date >= query.startDate.Date && x.date.Date <= query.endDate.Date);
+    {
+        return await GetMeetingsAsync(x => x.SupervisionInfo.supervisor.id == query.supervisorId
+            && x.SupervisionInfo.student.id == query.studentId && x.date.Date >= query.startDate.Date && x.date.Date <= query.endDate.Date);
     }
     public async Task<RepositoryResult<List<Meeting>?>> GetMeetingsOn(Guid supervisorId, Guid studentId, DateTime date)
     {
@@ -104,15 +127,16 @@ public class MeetingRepository : IMeetingRepository
             var foundMeets = await _mainDb.Meetings
                 .Where(x => x.SupervisionInfo.supervisor.id == supervisorId && x.SupervisionInfo.student.id == studentId && x.date.Date == date.Date).ToListAsync();
 
-            if (foundMeets is null || foundMeets.Count ==0) {
-                return RepositoryResult<List<Meeting>?>.FailureResult(ResultState.NotFound, null, new List<string> { $"No Meet Found On {date.Date}"});
+            if (foundMeets is null || foundMeets.Count == 0)
+            {
+                return RepositoryResult<List<Meeting>?>.FailureResult(ResultState.NotFound, null, new List<string> { $"No Meet Found On {date.Date}" });
             }
-            return RepositoryResult<List<Meeting>?>.SuccessResult(ResultState.Seccess,foundMeets);
+            return RepositoryResult<List<Meeting>?>.SuccessResult(ResultState.Seccess, foundMeets);
         }
         catch (Exception ex)
         {
 
-            return RepositoryResult<List<Meeting>?>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error"});
+            return RepositoryResult<List<Meeting>?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
         }
     }
 
@@ -120,7 +144,7 @@ public class MeetingRepository : IMeetingRepository
     {
         try
         {
-            var foundMeeting = await _mainDb.Meetings.Include(x=>x.tasks).Where(x => x.id == meetingId).FirstOrDefaultAsync();
+            var foundMeeting = await _mainDb.Meetings.Include(x => x.tasks).Where(x => x.id == meetingId).FirstOrDefaultAsync();
 
             if (foundMeeting is null)
             {
@@ -131,6 +155,32 @@ public class MeetingRepository : IMeetingRepository
 
             await _mainDb.SaveChangesAsync();
             return RepositoryResult<Meeting?>.SuccessResult(ResultState.Seccess, foundMeeting);
+        }
+        catch (Exception ex)
+        {
+            return RepositoryResult<Meeting?>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+        }
+    }
+
+    public async Task<RepositoryResult<Meeting?>> UpdateMeetingAsync(Meeting meeting)
+    {
+        try
+        {
+            // try to get the meeting 
+            var foundMeeting = await _mainDb.Meetings.FirstOrDefaultAsync(m=>m.id== meeting.id);
+            if (foundMeeting is null)
+            {
+                return RepositoryResult<Meeting?>.FailureResult(ResultState.NotFound, null, new List<string> { "No Meeting Found " });
+
+            }
+            // update the meeting
+            _mainDb.Update(meeting);
+            if (meeting.tasks is not null && meeting.tasks.Any()) {
+                _mainDb.UpdateRange(meeting.tasks);
+            }
+            await _mainDb.SaveChangesAsync();
+            return RepositoryResult<Meeting?>.SuccessResult(ResultState.Seccess, meeting);
+
         }
         catch (Exception ex)
         {

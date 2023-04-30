@@ -16,18 +16,21 @@ namespace LetMeet.Business.Implemintation;
 public partial class MeetingService : IMeetingService
 {
     public readonly IMeetingRepository _meetingRepo;
+    private readonly IMeetingTaskRepository _taskRepo;
     private readonly ISupervisonRepository _supervisionRepo;
     private readonly IUserProfileRepository _userProfileRepo;
     private readonly AppTimeProvider _appTimeProvider;
     private readonly AppServiceOptions _serviceOptions;
 
-    public MeetingService(IMeetingRepository meetingRepo, ISupervisonRepository supervisionRepo, AppTimeProvider appTimeProvider, IUserProfileRepository userProfileRepo, IOptions<AppServiceOptions> appServiceOptions)
+
+    public MeetingService(IMeetingRepository meetingRepo, ISupervisonRepository supervisionRepo, AppTimeProvider appTimeProvider, IUserProfileRepository userProfileRepo, IOptions<AppServiceOptions> appServiceOptions, IMeetingTaskRepository taskRepo)
     {
         _meetingRepo = meetingRepo;
         _supervisionRepo = supervisionRepo;
         _appTimeProvider = appTimeProvider;
         _userProfileRepo = userProfileRepo;
         _serviceOptions = appServiceOptions.Value;
+        _taskRepo = taskRepo;
     }
 
     public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> Create(Guid supervisorId, MeetingDto meetingDto)
@@ -163,7 +166,137 @@ public partial class MeetingService : IMeetingService
         return null;
 
     }
+   
 
+    public async Task<OneOf<MeetingDeleteRecoDto, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RemoveMeeting(Guid currentUserId, UserRole userRole, int meetingId)
+    {
+
+        //get meeting
+        var meeting = (await _meetingRepo.GetMeetingToDeleteAsync(meetingId)).Result;
+        if (meeting is null)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
+        }
+        //check if the current user is not a supervisor or student or not admin
+        if ((currentUserId != meeting.supervisorId) && userRole != UserRole.Admin)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Remove Meetings For Other Users") };
+        }
+        // check if we can delete this meeting using MeetingFullDto
+        MeetingFullDto meetingFullDto = new MeetingFullDto
+        {
+            startHour = meeting.startHour,
+            endHour = meeting.endHour,
+            date = meeting.date,
+
+        };
+
+        if (!meetingFullDto.CanDelete(_appTimeProvider.Now, _serviceOptions.PaddingMeetHours))
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Remove Meeting") };
+        }
+
+        //remove meeting
+        var repoResult = await _meetingRepo.RemoveMeetingAsync(meetingId);
+        if (repoResult.State == ResultState.DbError || repoResult.State != ResultState.Seccess)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Can Not Remove Meeting") };
+        }
+        return meeting;
+
+    }
+    public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> CompleteMeeting(Guid currentUserId, UserRole userRole, CompleteMeetingDto meetingDto)
+    {
+        //validate meetingDto 
+        var validationErrors = ValidateCompleteMeetingDtoData(meetingDto);
+        if (validationErrors is not null && validationErrors.Any())
+        {
+            return validationErrors;
+        }
+        // check if the current user is not the same meeting supervisor
+        if ((currentUserId != meetingDto.supervisorId)&& userRole !=UserRole.Supervisor)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Complete Meetings For Other Users") };
+        }
+        // check if the student is not supervised bu the same supervisor
+        var supervisorStudents=await _supervisionRepo.GetSupervisorStudents(meetingDto.supervisorId);
+        if (supervisorStudents.State == ResultState.DbError || supervisorStudents.Result is null || supervisorStudents.Result.Count() < 1)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Haven't Students Yet") };
+        }
+        //check if the student is supervised by the same supervisor
+        if (!supervisorStudents.Result.Any(s => s.id == meetingDto.studentId))
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Not Complete Meetings For Other Users") };
+        }
+        // get meeting and update the meeting student and supervisor presence
+        var meeting = (await _meetingRepo.GetMeetingAsync(meetingDto.meetingId)).Result;
+        if (meeting is null)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
+        }
+        // check if we can delete this meeting using MeetingFullDto
+        MeetingFullDto meetingFullDto = new MeetingFullDto
+        {
+            startHour = meeting.startHour,
+            endHour = meeting.endHour,
+            date = meeting.date,
+
+        };
+
+        if (!meetingFullDto.CanRun(_appTimeProvider.Now, _serviceOptions.PaddingMeetHours))
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Complete Meeting At Current Time ") };
+        }
+
+        meeting.isStudentPresent = meetingDto.isStudentPresent;
+        meeting.isSupervisorPresent = true;
+        //set the meeting tasks if the meeting has tasks 
+        if (meetingDto.hasTasks)
+        {
+            //get meeting tasks by meeting id
+            var meetingTasks = (await _taskRepo.GetTasksByMeetingId(meetingDto.meetingId)).Result;
+            if (meetingTasks is null || meetingTasks.Count() <1) { 
+            return new List<ServiceMassage> { new ServiceMassage("Meeting Tasks Not Found") };
+            }
+            //update the completed tasks use Dictionary<int,MeetingTask>  to achive
+            var meetingTasksMap = meetingDto.meetingTasks.ToDictionary(t => t.id, t => t);
+            //loop through tasks in meetingDto  and update the meeting task complete using the meeting task id
+            foreach (var task in meetingTasks)
+            {
+                if (meetingTasksMap.ContainsKey(task.id))
+                {
+                    bool isCompleted = meetingTasksMap[task.id].isCompleted;
+                    task.isCompleted = isCompleted;
+                }
+            }
+            meeting.tasks = meetingTasks;
+        }
+        // update meeting
+        var repoResult = await _meetingRepo.UpdateMeetingAsync(meeting);
+        // check if the meeting is not updated
+        if (repoResult.State == ResultState.DbError || repoResult.State != ResultState.Seccess) { 
+        
+        return new List<ServiceMassage> { new ServiceMassage("Can Not Complete Meeting") };
+        }
+        return meeting;
+    }
+    /*****************************************************--------------VALIDATEION-----------*******************************************/
+    //validate CompleteMeetingDto
+    private List<ValidationResult>? ValidateCompleteMeetingDtoData(CompleteMeetingDto meetingDto)
+    {
+        var validationResult = RepositoryValidationResult.DataAnnotationsValidation(meetingDto);
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ValidationErrors;
+        }
+        // if the meeting hasTasks is true and the meetingDto tasks is null or empty return validation error
+        if (meetingDto.hasTasks && (meetingDto.meetingTasks is null || meetingDto.meetingTasks.Count < 1))
+        {
+            return new List<ValidationResult> { new ValidationResult("You Must Specify Tasks Info ", new string[] { nameof(meetingDto.meetingTasks) }) };
+        }
+        return null;
+    }
     //validate meetingDto
     private List<ValidationResult>? ValidateMeetingDtoData(MeetingDto meetingDto)
     {
@@ -187,45 +320,4 @@ public partial class MeetingService : IMeetingService
         return null;
     }
 
-    public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RemoveMeeting(Guid currentUserId, UserRole userRole, int meetingId)
-    {
-
-        //get meeting
-        var meeting = (await _meetingRepo.GetMeetingAsync(meetingId)).Result;
-        if (meeting is null)
-        {
-            return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
-        }
-        //check if the current user is not a supervisor or student or not admin
-        if ((currentUserId != meeting.SupervisionInfo.supervisor.id) && userRole != UserRole.Admin)
-        {
-            return new List<ServiceMassage> { new ServiceMassage("You Can Not Remove Meetings For Other Users") };
-        }
-        // check if we can delete this meeting using MeetingFullDto
-        MeetingFullDto meetingFullDto = new MeetingFullDto
-        {
-            startHour = meeting.startHour,
-            endHour = meeting.endHour,
-            date = meeting.date,
-
-        };
-
-        if (!meetingFullDto.CanDelete(_appTimeProvider.Now, _serviceOptions.PaddingMeetHours)) {
-            return new List<ServiceMassage> { new ServiceMassage("You Can Not Remove Meeting") };
-        }
-
-        //remove meeting
-        var repoResult = await _meetingRepo.RemoveMeetingAsync(meetingId);
-        if (repoResult.State == ResultState.DbError || repoResult.State != ResultState.Seccess)
-        {
-            return new List<ServiceMassage> { new ServiceMassage("Can Not Remove Meeting") };
-        }
-        return meeting;
-
-    }
-
-    public Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> CompleteMeeting(Guid currentUserId, UserRole userRole, CompleteMeetingDto meetingDto)
-    {
-        throw new NotImplementedException();
-    }
 }

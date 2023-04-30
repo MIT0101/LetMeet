@@ -56,29 +56,29 @@ namespace LetMeet.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("886d2f29-0309-4b42-9b47-c6ec112a06df"),
-                            ConcurrencyStamp = "803f1671-a73a-40d3-9cae-09d2b2019c08",
+                            Id = new Guid("be40c57a-60ad-437c-98fa-1bb35583cb04"),
+                            ConcurrencyStamp = "4f1fbf50-520f-49ac-ae5e-3b6b70059369",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("03747a9a-60e1-487f-92ee-70b711ecc948"),
-                            ConcurrencyStamp = "8e9312ba-5e84-4d1f-9289-c93fb36c6a66",
+                            Id = new Guid("7959c71f-1434-4baf-b605-d9caa69b7c4a"),
+                            ConcurrencyStamp = "5ece5bfa-7607-4199-b935-0714012392f2",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("838d95c9-2d5f-4027-b2e9-bb86d1774aab"),
-                            ConcurrencyStamp = "32c62905-0a23-4ee4-855e-a9c1f8eaf525",
+                            Id = new Guid("9007426b-e2bd-409d-8727-7eedb9b9b4a0"),
+                            ConcurrencyStamp = "889886b5-230f-418e-9609-ec5c52d0bfcc",
                             Name = "Supervisor",
                             NormalizedName = "SUPERVISOR"
                         },
                         new
                         {
-                            Id = new Guid("17252daf-49f3-45da-ae21-a9ba0048c4ea"),
-                            ConcurrencyStamp = "88cd023b-20b7-4e38-be5c-f8ae31b4d051",
+                            Id = new Guid("3bed67f3-f36c-4ba0-8d03-c65a37f884d2"),
+                            ConcurrencyStamp = "c3213bcf-140e-48c4-95aa-319f8a406d6b",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });

@@ -11,7 +11,7 @@ public class MeetingFullDto : MeetingTypedTaskDto<MeetingTask> {
     public bool isStudentPresent { get; init; } 
     public MeetingFullDto() { 
     }
-    public static MeetingFullDto GetFromMeeting(Meeting m,Guid supervisorId,Guid StudentId,string supervisorName,string studentName)
+    public static MeetingFullDto GetFromMeeting(Meeting m,Guid supervisorId,Guid studentId,string supervisorName,string studentName)
     {
         return new MeetingFullDto
         {
@@ -24,8 +24,8 @@ public class MeetingFullDto : MeetingTypedTaskDto<MeetingTask> {
             description = m.description,
             hasTasks = (m.tasks != null && m.tasks.Count > 0),
             tasks = m.tasks,
-            studentId = supervisorId,
-            supervisorId = StudentId,
+            studentId = studentId,
+            supervisorId = supervisorId,
             studentName = studentName,
             supervisorName = supervisorName,
             isSupervisorPresent=m.isSupervisorPresent,
