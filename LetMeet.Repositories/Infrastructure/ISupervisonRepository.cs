@@ -20,20 +20,11 @@ namespace LetMeet.Repositories.Infrastructure
         Task<RepositoryResult<SupervisorOrStudentSelectDto>> GetStudentSupervisor(Guid studentInfoId);
 
         Task<RepositoryResult<IEnumerable<StudentDatedSelectDto>>> GetSupervisorStudents(Guid supervisorId);
-
-
         Task<RepositoryResult<IEnumerable<StudentSelectDto>>> GetUnSupervisedStudents();
-
-        //Task<RepositoryResult<SupervisionInfo>> GetSupervision_Meetings_FreeDaysAsync(Guid supervisorId, Guid studentId);
 
         Task<RepositoryResult<SupervisionInfo>> GetSupervisionAsync(Guid supervisorId, Guid studentId);
 
-
-
-
-
-
-
+        Task<RepositoryResult<List<SupervsionSummary>>> GetSupervisionsSummary();
 
     }
 }

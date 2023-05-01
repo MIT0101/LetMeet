@@ -6,6 +6,41 @@ let meetingsMap = new Map();
 myMeetings.forEach(meeting => {
     meetingsMap.set(meeting.id, meeting);
 });
+/*****************************************************************------RIGISTER STUDENT PRESENSE ------**************************************************/
+
+const studentPresentBtns = document.querySelectorAll(".studentPresentBtn");
+studentPresentBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+        // get the meeting id
+        const meetingId = btn.getAttribute("data-meeting-id");
+        const url = `/Meetings/api/RegisterStudentPresence/${meetingId}`;
+        //send request to server
+        CreateAndShowLoadingOverLay("Registering Student Presence ....");
+
+        SendRequest({ url}, (data) => {
+            hideLoadingOverlayIfShown();
+            // check if the request is success
+            if (data.isSuccess) {
+                // show success message
+                CreateAndshowMessagesModal(["Student Presence Registered Successfully"]);
+                window.location.reload();
+                return;
+            }
+            // show error message
+            CreateAndshowMessagesModal(data.errors);
+
+        }, (error) => {
+            hideLoadingOverlayIfShown();
+            // show error message
+            CreateAndshowMessagesModal(["Error Happened Please Try Again"]);
+        });
+
+
+    });
+
+});
+
+
 /*****************************************************************------RUN MEETING------**************************************************/
 
 // all the buttons that run the meeting
@@ -107,18 +142,18 @@ completeMeetingBtns.forEach((btn) => {
         //get url from form action
         let url = runMeetFrm.getAttribute("action");
 
-        console.log("Data to send",data);
-        
+        console.log("Data to send", data);
+
         SendRequest({ url, data }, (data) => {
             hideLoadingOverlayIfShown();
             // check if the request is success
             if (data.isSuccess) {
-                console.log("all response is ",data);
+                console.log("all response is ", data);
                 // show success message
                 CreateAndshowMessagesModal(["Meeting Completed Successfully"]);
                 window.location.reload();
                 return;
-            } 
+            }
             // show error message
             CreateAndshowMessagesModal(data.errors);
 
@@ -236,7 +271,7 @@ function formatDate(dateString) {
 function addHoursToDate(dateStr, hours) {
     const date = new Date(dateStr);
     // Adding hours to the date
-    
+
     // Formatting the date to match the input format
     //const formattedDate = date.toISOString().substring(0, 19);
     return date.setHours(date.getHours() + parseInt(hours));;

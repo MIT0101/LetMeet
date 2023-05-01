@@ -3,16 +3,9 @@ using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using LetMeet.Business;
 using Newtonsoft.Json;
-using NuGet.Protocol;
 using LetMeet.Models;
 using LetMeet.Data.Entites.Meetigs;
-using System.Security.Claims;
-using OneOf.Types;
-using Alachisoft.NCache.Security.Config;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Org.BouncyCastle.Asn1.Ocsp;
 using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Web.Models;
 
@@ -34,9 +27,29 @@ public class MeetingController : Controller
         _studentsService = studentService;
         _contextAccessor = contextAccessor;
     }
+
+    //Register Student Presence and supervisor obscene
+    [HttpPost("/Meetings/api/RegisterStudentPresence/{id}")]
+    [Authorize(Roles = "Student")]
+    public async Task<ActionResult<IAppApiResponse>> RegisterStudentPresence(int id)
+    {
+        List<string> errors = new List<string>();
+        List<string> messages = new List<string>();
+        Meeting? meeting = null;
+        var result = await _meetingService.RegisterStudentPresence(GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), id);
+        result.Switch(
+                      meetingDto => { meeting = meetingDto; messages.Add("Student presence registered successfully"); }
+                      , validationErrors => errors.AddRange(validationErrors.Select(x => x.ErrorMessage))
+                      , serviceMessages => errors.AddRange(serviceMessages.Select(x => x.Message)));
+        bool isSuccess = meeting is not null;
+        return Json(new MeetingApiResponse { isSuccess = isSuccess, status = isSuccess ? "Registered" : "Error", messages = messages, errors = errors, data = meeting }); ; ;
+    }
+
+    //Complete Meeting
     [HttpPost("/[Controller]/api/CompleteMeeting")]
     [Authorize(Roles = "Supervisor")]
-    public async Task<ActionResult<IAppApiResponse>> CompleteMeeting([FromBody]CompleteMeetingDto meetingDto) { 
+    public async Task<ActionResult<IAppApiResponse>> CompleteMeeting([FromBody] CompleteMeetingDto meetingDto)
+    {
 
         List<string> errors = new List<string>();
         List<string> messages = new List<string>();
@@ -62,7 +75,7 @@ public class MeetingController : Controller
         List<string> messages = new List<string>();
 
         // remove meeting
-        var result = await _meetingService.RemoveMeeting(GenricControllerHelper.GetUserInfoId(User),GenricControllerHelper.GetUserRole(User),id);
+        var result = await _meetingService.RemoveMeeting(GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), id);
         MeetingDeleteRecoDto? resultMeeting = null;
         result.Switch(
                        meetingDto => { resultMeeting = meetingDto; messages.Add("Meeting removed successfully"); }
@@ -73,11 +86,15 @@ public class MeetingController : Controller
     }
 
     // show meetings for admin
-    [HttpGet("/[Controller]/Admin/Search")]
+    [HttpGet("/[Controller]/Admin")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AdminSearch(List<string> errors = null, List<string> messages = null)
     {
-        MeetingQuery? query = GetMeetingQueryFromRequest(_contextAccessor.HttpContext.Request);
+        var supervsions = await _supervisionService.GetSupervisionsSummary(GenricControllerHelper.GetUserRole(User));
+        ViewData[ViewStringHelper.SupervsionSummary] = supervsions;
+
+
+        MeetingQuery? query = await GetMeetingQueryForAdmin(_contextAccessor.HttpContext.Request, supervsions);
         return await Search(query, GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), errors, messages);
     }
     // show meetings for student
@@ -94,6 +111,7 @@ public class MeetingController : Controller
     public async Task<IActionResult> Supervisor(List<string> errors = null, List<string> messages = null)
     {
         MeetingQuery? query = await GetMeetingQueryForSupervisor(_contextAccessor.HttpContext.Request, GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User));
+        ViewData[ViewStringHelper.SupervisorStudents] = await _supervisionService.GetAllSupervisorStudents(GenricControllerHelper.GetUserInfoId(User));
         return await Search(query, GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), errors, messages);
     }
     private async Task<IActionResult> Search(MeetingQuery? query, Guid currentUserInfoId, UserRole currentUserRole, List<string> errors = null, List<string> messages = null)
@@ -105,15 +123,16 @@ public class MeetingController : Controller
         ViewData[ViewStringHelper.RequestedMeetingQuery] = query;
         string supervisorName = string.Empty;
         string studentName = string.Empty;
-        if (query is null) { 
-        return BadRequest();
+        if (query is null)
+        {
+            return BadRequest();
         }
 
         //get supervisor name for supervisorId in query
         if (query.supervisorId != null)
         {
             SupervisorOrStudentSelectDto? supervisorResult = await _supervisionService.GetSupervisorOrStudent(query.supervisorId);
-            supervisorName= supervisorResult?.FullName;
+            supervisorName = supervisorResult?.FullName;
         }
         //get student name for studentId in query
         if (query.studentId != null)
@@ -211,7 +230,7 @@ public class MeetingController : Controller
         {
             InitalStartEndDateMeetingQuery(request, ref query);
             query.studentId = currentUserId;
-            query.supervisorId = (await _supervisionService.GetSupervisorOrStudent(currentUserId)).id;
+            query.supervisorId = (await _supervisionService.GetStudentSupervisor(currentUserId)).id;
             return query;
         }
         catch (Exception ex)
@@ -255,32 +274,61 @@ public class MeetingController : Controller
         }
     }
     //for admin
-    private MeetingQuery? GetMeetingQueryFromRequest(HttpRequest request)
+    private async Task<MeetingQuery>? GetMeetingQueryForAdmin(HttpRequest request, List<SupervsionSummary>? supervsions)
     {
         MeetingQuery query = new MeetingQuery();
         //get object of MeetingQuery from query string
         try
         {
-            query.supervisorId = Guid.Parse(request.Query[QueryStringHelper.MeetingQuerySupervisorId]);
-            query.studentId = Guid.Parse(Request.Query[QueryStringHelper.MeetingQueryStudentId]);
-            InitalStartEndDateMeetingQuery(request,ref query);
-            return query;
+            InitalStartEndDateMeetingQuery(request, ref query);
+
+            try
+            {
+                //get supervsionId from query string
+                string supervsionIdStr = request.Query[QueryStringHelper.MeetingQuerySupervsionId];
+                int supervsionId= int.Parse(supervsionIdStr);
+
+                var supervsion = supervsions?.FirstOrDefault(x => x.supervsionId == supervsionId);
+
+                if (supervsion != null)
+                {
+                    query.supervisorId = supervsion.supervisorId;
+                    query.studentId = supervsion.studentId;
+                }
+
+                return query;
 
         }
+        catch (Exception ex)
+        {
+            var supervision = supervsions?.FirstOrDefault();
+
+            if (supervision is null)
+            {
+                return null;
+            }
+            query.supervisorId = supervision.supervisorId;
+            query.studentId = supervision.studentId;
+
+        }
+        return query;
+
+    }
         catch (Exception ex)
         {
             return null;
         }
     }
-    private void InitalStartEndDateMeetingQuery(HttpRequest request, ref MeetingQuery query) {
-        query.startDate = DateTime.Parse(request.Query[QueryStringHelper.MeetingQueryStartDate]);
-        query.endDate = DateTime.Parse(request.Query[QueryStringHelper.MeetingQueryEndDate]);
-    }
-    private void InitAndAssginErrorsAndMessagesForView(ref List<string>? errors, ref List<string>? messages)
-    {
-        errors ??= new List<string>();
-        messages ??= new List<string>();
-        ViewData[ViewStringHelper.Errors] = errors;
-        ViewData[ViewStringHelper.Messages] = messages;
-    }
+    private void InitalStartEndDateMeetingQuery(HttpRequest request, ref MeetingQuery query)
+{
+    query.startDate = DateTime.Parse(request.Query[QueryStringHelper.MeetingQueryStartDate]);
+    query.endDate = DateTime.Parse(request.Query[QueryStringHelper.MeetingQueryEndDate]);
+}
+private void InitAndAssginErrorsAndMessagesForView(ref List<string>? errors, ref List<string>? messages)
+{
+    errors ??= new List<string>();
+    messages ??= new List<string>();
+    ViewData[ViewStringHelper.Errors] = errors;
+    ViewData[ViewStringHelper.Messages] = messages;
+}
 }

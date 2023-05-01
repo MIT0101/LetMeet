@@ -1,6 +1,7 @@
 ﻿using LetMeet.Business.Interfaces;
 using LetMeet.Business.Results;
 using LetMeet.Data.Dtos.Supervision;
+using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
 using LetMeet.Repositories.Infrastructure;
@@ -173,5 +174,26 @@ namespace LetMeet.Business.Implemintation
             return new List<ServiceMassage>() { new ServiceMassage($"Can Not Remove Supervision of {student.fullName} with {supervisor.fullName} Supervisor") };
         }
 
+        public async Task<SupervisorOrStudentSelectDto> GetStudentSupervisor(Guid studentId)
+        {
+            var foundSupervisor=(await _supervionsRepo.GetStudentSupervisor(studentId)).Result;
+            if (foundSupervisor is null)
+            {
+                return null;
+            }
+            return foundSupervisor;
+        }
+
+        public async Task<List<SupervsionSummary>> GetSupervisionsSummary(UserRole userRole)
+        {
+            if (userRole != UserRole.Admin) {
+                return new List<SupervsionSummary>();
+            }
+            var supervions=(await _supervionsRepo.GetSupervisionsSummary()).Result;
+            if (supervions is null || supervions.Count <1) {
+                return new List<SupervsionSummary>();
+            }
+            return supervions;
+        }
     }
 }

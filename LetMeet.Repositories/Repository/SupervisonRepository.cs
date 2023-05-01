@@ -167,5 +167,23 @@ namespace LetMeet.Repositories.Repository
         {
             return _supervionGRepo.FirstOrDefaultAsync(s => s.supervisor.id == supervisorId && s.student.id == studentId);
         }
+
+        public async Task<RepositoryResult<List<SupervsionSummary>>> GetSupervisionsSummary()
+        {
+            try
+            {
+                var supervisons = await _mainDb.SupervisionInfo
+                    .Select(s=>new SupervsionSummary(s.id,s.supervisor.id,s.student.id,s.supervisor.fullName,s.student.fullName,s.endDate)).ToListAsync();
+                if (supervisons is null || supervisons.Count < 1) { 
+                return RepositoryResult<List<SupervsionSummary>>.FailureResult(ResultState.NotFound, null);
+                }
+                return RepositoryResult<List<SupervsionSummary>>.SuccessResult(ResultState.Seccess, supervisons);
+            }
+            catch (Exception ex)
+            {
+
+                return RepositoryResult<List<SupervsionSummary>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
+            }
+        }
     }
 }

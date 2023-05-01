@@ -32,7 +32,54 @@ public partial class MeetingService : IMeetingService
         _serviceOptions = appServiceOptions.Value;
         _taskRepo = taskRepo;
     }
+    /*************************************************------------REGISTER STUDENT PRESENCE---------***************************************/
+    public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RegisterStudentPresence(Guid currentUserId, UserRole userRole, int meetingId)
+    {
+        //get meeting by id
+        var meetingTemp = (await _meetingRepo.GetMeetingToDeleteAsync(meetingId)).Result;
+        //check if meeting is null
+        if (meetingTemp == null)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
+        }
+        //check if the student is the same student that is logged in
+        if (meetingTemp.studentId != currentUserId && userRole!= UserRole.Student)
+        {
+            return new List<ValidationResult> { new ValidationResult("You Can Register Presence only For Your Meetings") };
+        }
+        //check if we can run this meeting if not return message
+        bool canRunMeeting = CanRunMeeting(meetingTemp.date,meetingTemp.startHour,meetingTemp.endHour);
+        if (!canRunMeeting)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("You Can Register Presence Only At Meeting Time") };
+        }
+        //get meeting to update
+        var meeting = (await _meetingRepo.GetMeetingAsync(meetingId)).Result;
+        //check if meeting is null
+        if (meeting == null)
+        {
+            return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
+        }
+        //check if supervisor Presence if true return message
+        if (meeting.isSupervisorPresent) { 
+        return new List<ServiceMassage> { new ServiceMassage("Supervisor Already Registered Presence") };
+        }
+        if (meeting.isStudentPresent) { 
+        return new List<ServiceMassage> { new ServiceMassage("Your Presence Already Registered ") };
+        }
+        //set student presence to true
+        meeting.isStudentPresent = true;
+        //update meeting
+        var updateRepoResult = await _meetingRepo.UpdateMeetingAsync(meeting);
+        //check if meeting updated
+        if (updateRepoResult.State != ResultState.Seccess) { 
+        return new List<ServiceMassage> { new ServiceMassage("Can't Register Presence") };
+        }
+        //return meeting
+        return meeting;
+    }
 
+    /*************************************************------------CREATE NEW MEETING---------***************************************/
     public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> Create(Guid supervisorId, MeetingDto meetingDto)
     {
         // check if the create is the same supervisor that is logged in
@@ -117,6 +164,7 @@ public partial class MeetingService : IMeetingService
         }
         return meeting;
     }
+    /*************************************************------------GET MEETINGS BY QUERY---------***************************************/
 
     public async Task<OneOf<List<MeetingFullDto>, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> GetMeetings(Guid currentUserId, UserRole userRole, MeetingQuery query)
     {
@@ -150,23 +198,9 @@ public partial class MeetingService : IMeetingService
         return meetings;
     }
 
-    // validate meeting query data
-    private List<ValidationResult>? ValidateMeetingQueryData(MeetingQuery query)
-    {
-        var validationResult = RepositoryValidationResult.DataAnnotationsValidation(query);
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ValidationErrors;
-        }
-        // if tart hour is greater or equal than end hour return validation error
-        if (query.startDate.Date >= query.endDate.Date)
-        {
-            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Hour", new string[] { nameof(query.startDate), nameof(query.endDate) }) };
-        }
-        return null;
 
-    }
-   
+
+    /*************************************************------------REMOVE MEETING---------***************************************/
 
     public async Task<OneOf<MeetingDeleteRecoDto, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> RemoveMeeting(Guid currentUserId, UserRole userRole, int meetingId)
     {
@@ -205,6 +239,7 @@ public partial class MeetingService : IMeetingService
         return meeting;
 
     }
+    /*************************************************------------COMPLETE MEETING---------**********************************/
     public async Task<OneOf<Meeting, IEnumerable<ValidationResult>, IEnumerable<ServiceMassage>>> CompleteMeeting(Guid currentUserId, UserRole userRole, CompleteMeetingDto meetingDto)
     {
         //validate meetingDto 
@@ -214,12 +249,12 @@ public partial class MeetingService : IMeetingService
             return validationErrors;
         }
         // check if the current user is not the same meeting supervisor
-        if ((currentUserId != meetingDto.supervisorId)&& userRole !=UserRole.Supervisor)
+        if ((currentUserId != meetingDto.supervisorId) && userRole != UserRole.Supervisor)
         {
             return new List<ServiceMassage> { new ServiceMassage("You Can Not Complete Meetings For Other Users") };
         }
         // check if the student is not supervised bu the same supervisor
-        var supervisorStudents=await _supervisionRepo.GetSupervisorStudents(meetingDto.supervisorId);
+        var supervisorStudents = await _supervisionRepo.GetSupervisorStudents(meetingDto.supervisorId);
         if (supervisorStudents.State == ResultState.DbError || supervisorStudents.Result is null || supervisorStudents.Result.Count() < 1)
         {
             return new List<ServiceMassage> { new ServiceMassage("You Haven't Students Yet") };
@@ -235,18 +270,11 @@ public partial class MeetingService : IMeetingService
         {
             return new List<ServiceMassage> { new ServiceMassage("Meeting Not Found") };
         }
-        // check if we can delete this meeting using MeetingFullDto
-        MeetingFullDto meetingFullDto = new MeetingFullDto
+        // check if we can run this meeting to complete it
+        bool canRunMeeting = CanRunMeeting(meeting.date,meeting.startHour,meeting.endHour);
+        if (!canRunMeeting)
         {
-            startHour = meeting.startHour,
-            endHour = meeting.endHour,
-            date = meeting.date,
-
-        };
-
-        if (!meetingFullDto.CanRun(_appTimeProvider.Now, _serviceOptions.PaddingMeetHours))
-        {
-            return new List<ServiceMassage> { new ServiceMassage("You Can Complete Meeting At Current Time ") };
+            return new List<ServiceMassage> { new ServiceMassage("You Can't Complete Meeting At Current Time ") };
         }
 
         meeting.isStudentPresent = meetingDto.isStudentPresent;
@@ -256,8 +284,9 @@ public partial class MeetingService : IMeetingService
         {
             //get meeting tasks by meeting id
             var meetingTasks = (await _taskRepo.GetTasksByMeetingId(meetingDto.meetingId)).Result;
-            if (meetingTasks is null || meetingTasks.Count() <1) { 
-            return new List<ServiceMassage> { new ServiceMassage("Meeting Tasks Not Found") };
+            if (meetingTasks is null || meetingTasks.Count() < 1)
+            {
+                return new List<ServiceMassage> { new ServiceMassage("Meeting Tasks Not Found") };
             }
             //update the completed tasks use Dictionary<int,MeetingTask>  to achive
             var meetingTasksMap = meetingDto.meetingTasks.ToDictionary(t => t.id, t => t);
@@ -275,13 +304,29 @@ public partial class MeetingService : IMeetingService
         // update meeting
         var repoResult = await _meetingRepo.UpdateMeetingAsync(meeting);
         // check if the meeting is not updated
-        if (repoResult.State == ResultState.DbError || repoResult.State != ResultState.Seccess) { 
-        
-        return new List<ServiceMassage> { new ServiceMassage("Can Not Complete Meeting") };
+        if (repoResult.State == ResultState.DbError || repoResult.State != ResultState.Seccess)
+        {
+
+            return new List<ServiceMassage> { new ServiceMassage("Can Not Complete Meeting") };
         }
         return meeting;
     }
     /*****************************************************--------------VALIDATEION-----------*******************************************/
+
+    //check if we can run meeting
+    private bool CanRunMeeting(DateTime date,int startHour,int endHour)
+    {
+        MeetingFullDto meetingFullDto = new MeetingFullDto
+        {
+            startHour = startHour,
+            endHour = endHour,
+            date = date,
+
+        };
+
+        return meetingFullDto.CanRun(_appTimeProvider.Now, _serviceOptions.PaddingMeetHours);
+    }
+
     //validate CompleteMeetingDto
     private List<ValidationResult>? ValidateCompleteMeetingDtoData(CompleteMeetingDto meetingDto)
     {
@@ -319,5 +364,22 @@ public partial class MeetingService : IMeetingService
 
         return null;
     }
+    // validate meeting query data
+    private List<ValidationResult>? ValidateMeetingQueryData(MeetingQuery query)
+    {
+        var validationResult = RepositoryValidationResult.DataAnnotationsValidation(query);
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ValidationErrors;
+        }
+        // if tart hour is greater or equal than end hour return validation error
+        if (query.startDate.Date >= query.endDate.Date)
+        {
+            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Hour", new string[] { nameof(query.startDate), nameof(query.endDate) }) };
+        }
+        return null;
+
+    }
+
 
 }

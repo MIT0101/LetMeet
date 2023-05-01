@@ -113,6 +113,10 @@
       "PackagePath": "staticwebassets\\js\\Main\\Theme.js"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\MeetringsSearch.js",
+      "PackagePath": "staticwebassets\\js\\Meetings\\MeetringsSearch.js"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\ShowAndRunMeetings.js",
       "PackagePath": "staticwebassets\\js\\Meetings\\ShowAndRunMeetings.js"
     },

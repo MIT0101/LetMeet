@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "YMUbOd5LTgLwgcOhBu8uZdl0BNJ0LxnWfqA5yuzBfMI=",
+  "Hash": "YmvImsJysBBQL3QLCRJfH59VIkULLbOVq6oMAlg9Pgw=",
   "Source": "LetMeet.Web",
   "BasePath": "_content/LetMeet.Web",
   "Mode": "Default",
@@ -406,6 +406,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\Main\\Theme.js"
+    },
+    {
+      "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\MeetringsSearch.js",
+      "SourceId": "LetMeet.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\",
+      "BasePath": "_content/LetMeet.Web",
+      "RelativePath": "js/Meetings/MeetringsSearch.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\Meetings\\MeetringsSearch.js"
     },
     {
       "Identity": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\ShowAndRunMeetings.js",

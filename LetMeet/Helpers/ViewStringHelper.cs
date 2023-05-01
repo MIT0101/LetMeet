@@ -32,6 +32,8 @@
         public static string RequestedSupervisorName = "requestedSupervisorName";
         public static string RequestedStudentName = "requestedStudentName";
 
+        public static string SupervsionSummary= "supervsionSummary";
+
 
     }
 }

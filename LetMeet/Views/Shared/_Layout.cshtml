@@ -1,4 +1,8 @@
 ﻿
+@inject IHttpContextAccessor _contextAccessor
+@inject AppTimeProvider _appTimeProvider;
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -105,14 +109,35 @@
 
 
                     <li class="nav-item " >
-                        @inject IHttpContextAccessor _contextAccessor
                         <a class="nav-link" asp-controller="Profile" asp-action="Details" asp-route-id="@_contextAccessor.HttpContext?.User.FindFirstValue(ClaimsNameHelper.UserInfoId)">
                             <i class="material-icons">person</i>
                             <p class="side-nav-title">User Profile</p>
                         </a>
                     </li>
                     <li class="nav-item " >
-                        <a class="nav-link" href="">
+                        @{
+                            string meetingsUrl=  Url.Action("Student", "Meetings");
+                            DateTime now = _appTimeProvider.Now;
+                            //get this month start Date and end date
+                            DateTime monthStart = new DateTime(now.Year, now.Month, 1);
+                            DateTime monthEnd = monthStart.AddMonths(1).AddDays(-1);
+                            string dateFromat= "yyyy-MM-dd";
+
+                            if (_contextAccessor.HttpContext.User.IsInRole(UserRole.Student.ToString()))
+                            {
+                                meetingsUrl = "Student";
+                            }
+                            if (_contextAccessor.HttpContext.User.IsInRole(UserRole.Supervisor.ToString()))
+                            {
+                                meetingsUrl = "Supervisor";
+                            
+                            }
+                            if (_contextAccessor.HttpContext.User.IsInRole(UserRole.Admin.ToString()))
+                            {
+                                meetingsUrl = "Admin";
+                            }
+                        }
+                        <a class="nav-link" href="/Meeting/@meetingsUrl?startDate=@monthStart.ToString(dateFromat)&endDate=@monthEnd.ToString(dateFromat)">
                             <i class="material-icons">meeting_room</i>
                             <p class="side-nav-title">Meetings</p>
                         </a>
@@ -171,7 +196,7 @@
             <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
                 <div class="container-fluid">
                     <div class="navbar-wrapper">
-                        <a class="navbar-brand" href="javascript:;">Notifications</a>
+                        <a class="navbar-brand" href="javascript:;">@ViewBag.currentPage</a>
                     </div>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                             aria-expanded="false" aria-label="Toggle navigation">
