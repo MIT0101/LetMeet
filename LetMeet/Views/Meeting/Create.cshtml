@@ -16,7 +16,7 @@
 
     try
     {
-        supervisorId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues["id"].ToString());
+        supervisorId = Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimsNameHelper.UserInfoId));
         studentId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.Query["studentId"].ToString());
     }
     catch (Exception ex)
@@ -34,7 +34,7 @@
             <h4 class="card-title">Create Meeting With : <strong>@satudentSummary?.FullName</strong></h4>
         </div>
         <div class="card-body">
-            <form id="meeting-form" method="post" action="/Meeting/api/Create/@supervisorId?studentId=@studentId">
+            <form id="meeting-form" method="post" action="/Meeting/api/Create?studentId=@studentId">
                 <!-- Supervisor ID -->
                 <div class="form-group">
                     <input hidden value="@supervisorId"
@@ -221,7 +221,7 @@
         <script>
             var myHashSet = @Html.Raw(Json.Serialize(@freeday.Value.ToArray()));
             @*if no free hours in day we will not show the day *@
-                                                                                                   if (myHashSet !== undefined && myHashSet.length !== 0) {
+                                                                                                               if (myHashSet !== undefined && myHashSet.length !== 0) {
                 freeDayHours.set(Number.parseInt('@freeday.Key'), new FreeDayJs(@freeday.Key, myHashSet));
             }
 
@@ -246,7 +246,7 @@
 
         // Loop through the options and select the first available one
         for (let i = 0; i < options.length; i++) {
-            if (!options[i].disabled ){
+            if (!options[i].disabled) {
                 selectElement.selectedIndex = i;
                 break;
             }
@@ -255,14 +255,14 @@
         selectElement.dispatchEvent(event);
     }
 
-    function ResutAllForm(){
+    function ResutAllForm() {
         RemoveAllTaksFromTable();
         //REST DAYS
         SelectFirstItem(document.getElementById('day'));
         //REST START HOUR END HOUR WILL RESU AUTOMATIC BY CHANGE EVENT FOR SATRT HOUR
         SelectFirstItem(document.getElementById('startHour'));
-        //rest date 
-        document.getElementById('date').value='';
+        //rest date
+        document.getElementById('date').value = '';
         //Rest Description
         document.getElementById('description').value = '';
         //rest meeting tasks checked
@@ -334,7 +334,7 @@
                     //redirect user to /Meetings/supervisorId?studentId
                     //window.location.href = "/Meeting/@supervisorId?studentId=@studentId";
                     // show success alert above form
-                    CreateAndAddAlert("Meeting Created Successfully", false);
+                    CreateAndAddAlert(`Meeting Created Successfully At ${new Date(data.data.date).toISOString().slice(0, 10)}`, false);
                     DisableLoading(submitButton);
                     ResutAllForm();
                     return;
@@ -374,7 +374,7 @@
     }
 
     // used to create alert and add it to the form
-    function CreateAndAddAlert(ErrorMessage, isError) {
+    function CreateAndAddAlert(message, isError) {
         const alert = document.createElement('div');
         let alertClass = "alert-success";
 
@@ -384,7 +384,7 @@
 
         alert.classList.add('alert', alertClass, 'alert-dismissible', 'fade', 'show');
         alert.setAttribute('role', 'alert');
-        alert.innerHTML = ErrorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>';
+        alert.innerHTML = message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>';
         meetingForm2.prepend(alert);
     }
 

@@ -3,11 +3,13 @@
 /*******************************---------REQUIRED FILEDS [isSupervisor,isStudent,isAdmin] as boolean ---------************************* */
 const endDateSearch = document.getElementById("endDateSearch");
 const startDateSearch = document.getElementById("startDateSearch");
+const createMeetingBtn = document.getElementById("createMeetingBtn")
 
 SetCurrentStartAndEndDate();
 
 if (isSupervisor) {
     SetCurrentSelect("studentId", "studentIdSearch");
+    SetCurrentSelect("studentId", "studentIdCreate");
 }
 if (isAdmin) {
     SetCurrentSelect("supervisionId", "supervisionsSearch");
@@ -24,6 +26,7 @@ searchBtn.addEventListener("click", (e) => {
         AdminSearch();
     }
 });
+
 /*Admins Search*/
 function AdminSearch() {
     let startDateValue;
@@ -91,6 +94,22 @@ function SearchMeetingForStudent() {
     StartSearchByParams(queryParams);
 
 }
+/*********************************************************---------CREATE MEETING----------*********************************/
+// to show create meeting modal
+createMeetingBtn.addEventListener("click", (e) => {
+    //get student id from select
+    const studentId = document.getElementById("studentIdCreate").value;
+    if (!studentId) {
+        //show message if student id is empty
+        CreateAndshowMessagesModal(["Student Is Required"]);
+        return;
+    }
+    let CreateMeetingUrl = `/Meeting/Create?studentId=${studentId}`;
+    //redirect to create meeting page
+    window.location.href = CreateMeetingUrl;
+
+});
+
 /***********************************************------------SHARED SEARCH FUNCTIONS-------------******************************/
 function StartSearchByParams(queryParams) {
     // get the current URL without the query string

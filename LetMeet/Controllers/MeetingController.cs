@@ -156,7 +156,7 @@ public class MeetingController : Controller
     //show create meeting form
     [HttpGet]
     [Authorize(Roles = "Supervisor")]
-    public async Task<IActionResult> Create(Guid id, Guid studentId, List<string> errors, List<string> messages)
+    public async Task<IActionResult> Create(Guid studentId, List<string> errors, List<string> messages)
     {
         InitAndAssginErrorsAndMessagesForView(ref errors, ref messages);
 
@@ -168,7 +168,7 @@ public class MeetingController : Controller
                                              , serviceMessages => null);
 
         //get all mutual free days for supervisor and student (Dictionary<int, DayHours>)
-        var mutalFreeDaysResult = await _supervisionService.GetMutualFreeDay(id, studentId, DateTime.Now);
+        var mutalFreeDaysResult = await _supervisionService.GetMutualFreeDay(GenricControllerHelper.GetUserInfoId(User), studentId, DateTime.Now);
         Dictionary<int, ISet<int>> daysFreeHours = new Dictionary<int, ISet<int>>();
 
         mutalFreeDaysResult.Switch(
@@ -186,9 +186,9 @@ public class MeetingController : Controller
 
         return View();
     }
-    [HttpPost("/[Controller]/api/Create/{id}")]
+    [HttpPost("/[Controller]/api/Create")]
     [Authorize(Roles = "Supervisor")]
-    public async Task<ActionResult<IAppApiResponse>> Create(Guid id)
+    public async Task<ActionResult<IAppApiResponse>> Create()
     {
         List<string> errors = new List<string>();
         List<string> messages = new List<string>();
@@ -200,7 +200,7 @@ public class MeetingController : Controller
         try
         {
             meetingDto = JsonConvert.DeserializeObject<MeetingDto>(requestBody);
-            var serviceResult = await _meetingService.Create(id, meetingDto);
+            var serviceResult = await _meetingService.Create(GenricControllerHelper.GetUserInfoId(User), meetingDto);
 
             Meeting resultMeeting = null;
             serviceResult.Switch(

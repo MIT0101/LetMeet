@@ -375,7 +375,7 @@ public partial class MeetingService : IMeetingService
         // if tart hour is greater or equal than end hour return validation error
         if (query.startDate.Date >= query.endDate.Date)
         {
-            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Hour", new string[] { nameof(query.startDate), nameof(query.endDate) }) };
+            return new List<ValidationResult> { new ValidationResult("Start Date Must Be Less Than End Date", new string[] { nameof(query.startDate), nameof(query.endDate) }) };
         }
         return null;
 

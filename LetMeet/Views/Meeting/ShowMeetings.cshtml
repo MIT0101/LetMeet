@@ -55,12 +55,79 @@
 
 </script>
 
-<button rel="tooltip" title="" data-original-title="Search In Meetings" type="button" class="btn btn-primary d-block ml-auto" data-toggle="modal" data-target="#meetingSearchModal">
-    <span class="material-icons ">
-        search
-    </span>
-</button>
+<div class="d-flex justify-content-end">
 
+    <button rel="tooltip" title="" data-original-title="Search In Meetings" type="button" class="btn btn-primary " data-toggle="modal" data-target="#meetingSearchModal">
+        <span class="material-icons ">
+            search
+        </span>
+    </button>
+    @if (isSupervisor)
+    {
+
+        <button rel="tooltip" title="" data-original-title="Create Meetings" type="button" class="btn btn-primary " data-toggle="modal" data-target="#createMeetingModal">
+            <span class="material-icons ">
+                add_circle
+            </span>
+        </button>
+
+
+    }
+
+
+</div>
+@if (isSupervisor) {
+    <!--Create Meeting Modal-->
+    <div class="modal fade" id="createMeetingModal" tabindex="-1" role="dialog" aria-labelledby="createMeetingLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createMeetingLabel">Search In Meetings</h5>
+
+                    <button id="modalCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+
+                </div>
+                <div class="modal-body pb-0">
+
+                    <!-- input with datetimepicker -->
+
+                    <table style="border-collapse: separate;border-spacing: 10px 5px;" class="text-start w-100">
+                        <tbody>
+
+                            @if (isSupervisor)
+                            {
+
+                                <tr>
+                                    <td>
+                                        <label class="label-control" for="studentIdSearch">Student Name</label>
+
+                                    </td>
+                                    <td>
+
+                                        <select id="studentIdCreate" data-val="true" data-val-required="Student Is Required" name="studentIdSearch" required class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round" asp-items="@studentsOptions"></select>
+
+                                    </td>
+
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="closeBtn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="createMeetingBtn" type="button" class="btn btn-primary">Go</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
 <!--Search Modal-->
 <div class="modal fade" id="meetingSearchModal" tabindex="-1" role="dialog" aria-labelledby="meetingSearchLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog " role="document">
@@ -121,7 +188,7 @@
                             </td>
 
                             <td>
-                                <input id="startDateSearch" class="w-100" data-val="true" data-val-required="Start Date Is Required" type="date" name="startDate" >
+                                <input id="startDateSearch" class="w-100" data-val="true" data-val-required="Start Date Is Required" type="date" name="startDate">
 
                             </td>
 
@@ -135,7 +202,7 @@
                             </td>
 
                             <td>
-                                <input id="endDateSearch" class="w-100" data-val="true" data-val-required="End Date Is Required" type="date" name="endDate" >
+                                <input id="endDateSearch" class="w-100" data-val="true" data-val-required="End Date Is Required" type="date" name="endDate">
 
                             </td>
 
@@ -161,7 +228,7 @@
         <p class="category">All Meetings From @currentQuery.startDate.Date.ToString("d") To @currentQuery.endDate.Date.ToString("d")</p>
     </div>
     <div class="card-body">
-       
+
 
         <div class="row ">
 
@@ -371,7 +438,7 @@
 
                                         <textarea rows="2" id="meetingDescription" name="meetingDescription" class="d-block form-control w-100 px-2 mb-2" type="text" placeholder="example date here…" readonly>                                         
 
-                                                                                                                                                                       </textarea>
+                                                                                                                                                                                       </textarea>
                                     </td>
                                 </tr>
 
