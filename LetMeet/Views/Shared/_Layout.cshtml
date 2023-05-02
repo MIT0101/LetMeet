@@ -1,5 +1,4 @@
-﻿
-@inject IHttpContextAccessor _contextAccessor
+﻿@inject IHttpContextAccessor _contextAccessor
 @inject AppTimeProvider _appTimeProvider;
 
 
@@ -66,7 +65,7 @@
 
 <body class="">
 
-  
+
 
     @*its loaded befor css to show load and then load css *@
     <partial name="Partials/MainLoadingPartial" />
@@ -92,7 +91,7 @@
                 <ul class="nav">
                     @*admin*@
 
-                    <li class="nav-item " >
+                    <li class="nav-item ">
                         <a class="nav-link" asp-controller="Account" asp-action="ManageUsers">
                             <i class="material-icons">people</i>
                             <p class="side-nav-title">Manage Users</p>
@@ -100,7 +99,7 @@
                     </li>
 
 
-                    <li class="nav-item " >
+                    <li class="nav-item ">
                         <a class="nav-link" href="#">
                             <i class="material-icons">dashboard</i>
                             <p class="side-nav-title">Dashboard</p>
@@ -108,20 +107,20 @@
                     </li>
 
 
-                    <li class="nav-item " >
+                    <li class="nav-item ">
                         <a class="nav-link" asp-controller="Profile" asp-action="Details" asp-route-id="@_contextAccessor.HttpContext?.User.FindFirstValue(ClaimsNameHelper.UserInfoId)">
                             <i class="material-icons">person</i>
                             <p class="side-nav-title">User Profile</p>
                         </a>
                     </li>
-                    <li class="nav-item " >
+                    <li class="nav-item ">
                         @{
-                            string meetingsUrl=  Url.Action("Student", "Meetings");
+                            string meetingsUrl = Url.Action("Student", "Meetings");
                             DateTime now = _appTimeProvider.Now;
                             //get this month start Date and end date
                             DateTime monthStart = new DateTime(now.Year, now.Month, 1);
                             DateTime monthEnd = monthStart.AddMonths(1).AddDays(-1);
-                            string dateFromat= "yyyy-MM-dd";
+                            string dateFromat = "yyyy-MM-dd";
 
                             if (_contextAccessor.HttpContext.User.IsInRole(UserRole.Student.ToString()))
                             {
@@ -130,7 +129,7 @@
                             if (_contextAccessor.HttpContext.User.IsInRole(UserRole.Supervisor.ToString()))
                             {
                                 meetingsUrl = "Supervisor";
-                            
+
                             }
                             if (_contextAccessor.HttpContext.User.IsInRole(UserRole.Admin.ToString()))
                             {
@@ -254,7 +253,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
                                     <a class="dropdown-item" href="#">Profile</a>
-                                    <a asp-controller="Profile" asp-action="EditProfile" asp-route-id="@Context.User?.FindFirstValue(ClaimsNameHelper.UserInfoId)" class="dropdown-item" >Settings</a>
+                                    <a asp-controller="Profile" asp-action="EditProfile" asp-route-id="@Context.User?.FindFirstValue(ClaimsNameHelper.UserInfoId)" class="dropdown-item">Settings</a>
                                     <div class="dropdown-divider"></div>
                                     <a asp-controller="Account" asp-action="logOut" class="dropdown-item">Log out</a>
                                 </div>

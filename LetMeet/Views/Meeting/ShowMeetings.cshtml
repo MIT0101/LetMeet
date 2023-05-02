@@ -36,10 +36,14 @@
     }
 }
 
+<partial name="Partials/ErrorsAndMessageNotificationPartial" />
+
+
 <script src="~/js/Meetings/ShowAndRunMeetings.js" defer></script>
 <script src="~/js/Meetings/MeetringsSearch.js" defer></script>
 
 <link rel="stylesheet" href="~/css/Meetings/ShowAndRunMeetings.css" />
+
 <script>
 
     let myMeetings = @Html.Raw(Json.Serialize(meetings));
@@ -117,7 +121,7 @@
                             </td>
 
                             <td>
-                                <input id="startDateSearch" class="w-100" data-val="true" data-val-required="Start Date Is Required" type="date" name="startDate" min="2023-05-01">
+                                <input id="startDateSearch" class="w-100" data-val="true" data-val-required="Start Date Is Required" type="date" name="startDate" >
 
                             </td>
 
@@ -131,7 +135,7 @@
                             </td>
 
                             <td>
-                                <input id="endDateSearch" class="w-100" data-val="true" data-val-required="End Date Is Required" type="date" name="endDate" min="2023-05-01">
+                                <input id="endDateSearch" class="w-100" data-val="true" data-val-required="End Date Is Required" type="date" name="endDate" >
 
                             </td>
 
@@ -149,10 +153,6 @@
         </div>
     </div>
 </div>
-
-
-
-
 
 
 <div class="card">
@@ -582,8 +582,6 @@
     </div>
 
 </div>
-
-<partial name="_ValidationScriptsPartial" />
 
 
 

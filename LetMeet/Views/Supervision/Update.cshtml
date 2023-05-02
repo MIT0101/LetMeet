@@ -169,7 +169,7 @@
                 @if (currentStudentsCount >= serviceOptions.Value.MaxStudentsPerSupervisor)
                 {
                     <div class="alert alert-danger" role="alert">
-                        @currentSupervisor?.FullName can not supervise more than @serviceOptions.Value.MaxStudentsPerSupervisor students
+                        @currentSupervisor?.FullName can not supervise more than @serviceOptions.Value.MaxStudentsPerSupervisor active students
                     </div>
                 }
                 else
