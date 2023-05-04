@@ -9,6 +9,7 @@ public interface IUserProfileDto
     string profileImage { get; set; }
     string fullName { get; set; }
     string email { get; set; }
+    string? phoneNumber { get; set; }
     UserRole role { get; set; }
     int totalMeetings { get; set; }
     int totalMissingMeetings { get; set; }

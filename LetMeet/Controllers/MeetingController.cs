@@ -230,7 +230,10 @@ public class MeetingController : Controller
         {
             InitalStartEndDateMeetingQuery(request, ref query);
             query.studentId = currentUserId;
+            var supervisor = await _supervisionService.GetStudentSupervisor(currentUserId);
+            if (supervisor is not null) { 
             query.supervisorId = (await _supervisionService.GetStudentSupervisor(currentUserId)).id;
+            }
             return query;
         }
         catch (Exception ex)

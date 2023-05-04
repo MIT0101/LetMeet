@@ -225,15 +225,24 @@
 
                                         <div class="d-flex flex-row justify-content-end">
 
-                                        @if(item.userRole == UserRole.Supervisor){
+                                            @if (item.userRole == UserRole.Supervisor)
+                                            {
                                                 <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-dark m-1" asp-controller="Supervision" asp-action="Update" asp-route-id="@item.id">
-                                                <i class="material-icons">settings_ethernet</i>
-                                            </a>
-                                        }
+                                                    <i class="material-icons">settings_ethernet</i>
+                                                </a>
+                                            }
 
-                                            <a rel="tooltip" title="" data-original-title="Show Profile" class="btn btn-info m-1" asp-controller="Profile" asp-action="Details" asp-route-id="@item.id">
-                                                <i class="material-icons">person</i>
-                                            </a>
+                                            @{
+                                                @if (item.userRole == UserRole.Supervisor || item.userRole == UserRole.Student)
+                                                {
+
+                                                    string profileRoute = item.userRole == UserRole.Supervisor ? "Supervisor" : "Student";
+
+                                                    <a rel="tooltip" title="" data-original-title="Show Profile" class="btn btn-info m-1" href="/Profile/@profileRoute/@item.id">
+                                                        <i class="material-icons">person</i>
+                                                    </a>
+                                                }
+                                            }
 
                                             <a class="btn btn-success m-1" rel="tooltip" title="" data-original-title="Edit User" asp-controller="Profile" asp-action="EditProfile" asp-route-id="@item.id">
                                                 <i class="material-icons">edit</i>

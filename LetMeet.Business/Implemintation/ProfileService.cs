@@ -6,12 +6,7 @@ using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
 using LetMeet.Repositories.Infrastructure;
 using OneOf;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LetMeet.Business.Implemintation
 {
@@ -71,13 +66,18 @@ namespace LetMeet.Business.Implemintation
                 return new List<ServiceMassage>() { new ServiceMassage("You don't have permission to see this profile") };
             }
             //If the current user is supervisor check if he is supervisor of the student
-            if (currentUserRole == UserRole.Supervisor)
+            if (currentUserRole == UserRole.Supervisor || currentUserRole == UserRole.Admin)
             {
                //get supervisor students and check if the student is one of them
                 var studentSupervisor = await _supervisionService.GetStudentSupervisor(currentUserId);
                 if (studentSupervisor is not null && studentSupervisor.id != currentUserId ) {
                     return new List<ServiceMassage>() { new ServiceMassage("You don't have permission to see this profile") };
                 }
+                if (studentSupervisor is null && currentUserRole != UserRole.Admin)
+                {
+                    return new List<ServiceMassage>() { new ServiceMassage("You don't have permission to see this profile") };
+                }
+
             }
 
             //get student profile from repository

@@ -220,7 +220,7 @@
                                             @Html.DisplayFor(modelItem => idStr)
                                         </td>
                                         <td>
-                                            <a asp-controller="Account" asp-action="Details" asp-route-id="@student.id">
+                                            <a href="/Profile/Student/@student.id">
                                                 @Html.DisplayFor(modelItem => student.FullName)
 
 

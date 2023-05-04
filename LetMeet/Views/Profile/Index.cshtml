@@ -1,34 +1,76 @@
-﻿@inject AppTimeProvider _appTimeProvider;
+﻿@using LetMeet.Data.Entites.Meetigs;
+@inject AppTimeProvider _appTimeProvider;
 @{
-   
+
 
     StudentProfileDto studentProfile = ViewData[ViewStringHelper.StudentProfile] as StudentProfileDto;
     SupervisorProfileDto supervisorProfile = ViewData[ViewStringHelper.SupervisorProfile] as SupervisorProfileDto;
-    ViewData["Title"] = "Profile - Mohammed Adel";
+    List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new();
+    List<string> messages = ViewData[ViewStringHelper.Messages] as List<string> ?? new();
     ViewBag.currentPage = "User Profile";
+    IUserProfileDto? userProfile = studentProfile as IUserProfileDto ?? supervisorProfile as IUserProfileDto;
+
+    ViewData["Title"] = $"Profile - {userProfile?.fullName}";
+
+}
+
+@foreach (var error in errors)
+{
+    <h5 class="alert alert-danger text-center">
+        @error
+    </h5>
+}
+
+@foreach (var message in messages)
+{
+    <h5 class="alert alert-info text-center">
+        @message
+    </h5>
+}
+
+@if (studentProfile is null && supervisorProfile is null)
+{
+    <div>
+        <h4 class="alert alert-danger text-center">Profile Not Found</h4>
+
+    </div>
+    return;
 }
 
 
-@*<div>
-    <h4 class="alert alert-danger text-center">Profile Not Found</h4>
-
-</div>*@
-
 <div class="row">
     <!--Left Profile Show-->
-    <div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="col-sm-12 col-md-7 col-lg-7">
         <div id="profileCard" class="card">
             <div class="card-header card-header-primary">
-                <h4 class="card-title">Profile Information Summary</h4>
+                <div class="card-title">
+                    <!--Role-->
+                    <div class="d-flex flex-row justify-content-between">
+                        <h4>Profile Information Summary</h4>
+
+                        <div class="d-flex flex-row">
+                            <label class="mr-2">
+                                <span class="material-icons">
+                                    workspace_premium
+                                </span>
+                            </label>
+                            <h5>@userProfile.role.ToString()</h5>
+                        </div>
+                    </div>
+                </div>
                 <p class="category">information shown in @_appTimeProvider.Now.ToString("d")</p>
             </div>
             <div class="card-body">
-                <div class="d-flex flex-wrap align-content-lg-stretch">
+                <div class="d-flex flex-column flex-sm-row align-content-lg-stretch">
                     <!--Profile Image-->
-                    <div class="mr-3 mt-0">
-                        <img style="width:180px;aspect-ratio:1" src="~/UsersImages/890d26bd4412467c00c908db41d6e04b_4.jpeg" />
+                    <div class="mr-3 mt-0 mb-2 d-flex flex-column ">
+                        @{
+                            string profileImage = userProfile?.profileImage ?? "profile_empty_img.png";
+                        }
+                        <img class="flex-sm-1 w-100" style="width:180px;height:180px;min-width:180px" src="~/UsersImages/@profileImage" />
+
                     </div>
-                    <!--Student Information-->
+                    <!--Profile Information-->
                     <div>
                         <!--Full Name-->
                         <div class="d-flex flex-row">
@@ -37,8 +79,9 @@
                                     person
                                 </span>
                             </label>
-                            <h5>Abdulrahman Alshammari</h5>
+                            <h5>@userProfile?.fullName</h5>
                         </div>
+
                         <!--Email-->
                         <div class="d-flex flex-row">
                             <label class="mr-2">
@@ -46,50 +89,99 @@
                                     email
                                 </span>
                             </label>
-                            <a class="d-block" href="mailto:alraqym050@gmail.com">alraqym050@gmail.com</a>
+                            <a class="d-block" href="mailto:@userProfile?.email">@userProfile?.email</a>
                         </div>
-                        <!--Supervisor Name-->
-                        <div class="d-flex flex-row">
-                            <label class="mr-2">
-                                <span class="material-icons">
-                                    supervisor_account
-                                </span>
-                            </label>
-                            <h5>Abbas abd Al Hssan </h5>
-                        </div>
-                        <!--Extend Times -->
-                        <div class="d-flex flex-row">
-                            <div class="d-flex flex-row mr-2">
+
+                        <!--Phone Number-->
+                        @if (userProfile.role == UserRole.Supervisor)
+                        {
+                            <div class="d-flex flex-row">
                                 <label class="mr-2">
                                     <span class="material-icons">
-                                        alarm
+                                        call
                                     </span>
                                 </label>
-                                <h5>2023-6-15</h5>
+                                @{
+                                    string phoneNumber = string.IsNullOrWhiteSpace(userProfile?.phoneNumber) ? "No Phone Number" : userProfile.phoneNumber;
+                                }
+                                <a class="d-block" href="tel:@phoneNumber">@phoneNumber</a>
                             </div>
+                        }
+                        @{
+                            <!--Supervisor Name-->
+                            if (userProfile.role == UserRole.Student)
+                            {
 
-                            <div class="d-flex flex-row ">
+                                StudentProfileDto? student = userProfile as StudentProfileDto;
+                                string supervisorName = string.IsNullOrWhiteSpace(student?.supervisorFullName) ? "No Supervisor" : student.supervisorFullName;
+
+                                <!--Stage -->
+                                <div class="d-flex flex-row">
+                                    <label class="mr-2">
+                                        <span class="material-icons">
+                                            approval
+                                        </span>
+                                    </label>
+
+                                    <h5>@student.Stage.ToString()</h5>
+                                </div>
+
+                                <!--Supervisor Name-->
+                                <div class="d-flex flex-row">
+                                    <label class="mr-2">
+                                        <span class="material-icons">
+                                            supervisor_account
+                                        </span>
+                                    </label>
+
+                                    <h5>@supervisorName</h5>
+                                </div>
+
+
+                                <!--Supervision Expire Date -->
+                                <div class="d-flex flex-row">
+                                    <div class="d-flex flex-row mr-2">
+                                        <label class="mr-2">
+                                            <span class="material-icons">
+                                                alarm
+                                            </span>
+                                        </label>
+                                        <h5>@student.supervsionExpireDate.ToString("d") </h5>
+                                    </div>
+                                    <!--Extend Times -->
+                                    <div class="d-flex flex-row ">
+                                        <label class="mr-2">
+                                            <span class="material-icons">
+                                                manage_history
+                                            </span>
+                                        </label>
+                                        <h5>@student.supervsionExtendTimes </h5>
+                                    </div>
+
+
+
+                                </div>
+                            }
+                        }
+
+
+                        @*If Supervisor Show Number of stuednts*@
+                        @if (userProfile.role == UserRole.Supervisor)
+
+                        {
+                            SupervisorProfileDto? supervisor = userProfile as SupervisorProfileDto;
+
+                            <div class="d-flex flex-row">
                                 <label class="mr-2">
                                     <span class="material-icons">
-                                        manage_history
+                                        supervisor_account
                                     </span>
                                 </label>
-                                <h5>1 </h5>
+
+                                <h5>@supervisor?.allStudents?.Count</h5>
                             </div>
 
-
-
-                        </div>
-
-                        <!--Role-->
-                        <div class="d-flex flex-row">
-                            <label class="mr-2">
-                                <span class="material-icons">
-                                    workspace_premium
-                                </span>
-                            </label>
-                            <h5>@UserRole.Student.ToString()</h5>
-                        </div>
+                        }
 
 
                     </div>
@@ -99,47 +191,146 @@
 
         </div>
     </div>
-    <!--Right Missing Tasks -->
-    <div class="col-sm-12 col-md-6 col-lg-6 ">
-        <div id="tasksCard" class="card">
-            <div class="card-header card-header-danger">
-                <h4 class="card-title">Missed Tasks</h4>
-                <p class="category">total missed tasks for previous meetings : 3 </p>
-            </div>
-            <div class="card-body" style="overflow-y:auto; overflow-y:scroll;">
+    <!--Right Missing Tasks Or Supervisor Students -->
+    <div class="col-sm-12 col-md-5 col-lg-5 ">
+        @{
+            @*Show Missing Tasks*@
+            if (userProfile.role == UserRole.Student)
+            {
+                StudentProfileDto student = userProfile as StudentProfileDto;
+                List<MeetingTask> missedTasks = student?.missingTasks ?? new();
+                <div id="specialItems" class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">Missed Tasks</h4>
+                        <p class="category">total missed tasks for previous meetings : @missedTasks.Count </p>
+                    </div>
+                    <div class="card-body" style="overflow-y:auto; overflow-y:scroll;">
+                        @if (missedTasks.Count < 1)
+                        {
+                            <h5 class="alert alert-success w-100 text-center">No Missing Tasks , Congradulations✨</h5>
+                        }
+                        else
+                        {
+                            <table class="table text-center ">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Completed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var task in missedTasks)
+                                    {
+                                        <tr>
+                                            <td>@task.title</td>
+                                            <td>@task.decription</td>
+                                            @{
+                                                string isCompleted = task.isCompleted ? "Yes" : "No";
+                                            }
+                                            <td>@isCompleted</td>
+                                        </tr>
+                                    }
 
-                <table class="table text-center ">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Completed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>task 1</td>
-                            <td>desc 1</td>
-                            <td>No</td>
-                        </tr>
-                        <tr>
-                            <td>task2</td>
-                            <td>desc2</td>
-                            <td>Yes</td>
-                        </tr>
-                        <tr>
-                            <td>task3</td>
-                            <td>desc3</td>
-                            <td>No</td>
-                        </tr>
+                                </tbody>
+                            </table>
+                        }
+
+                    </div>
+                </div>
+            }
+            @*Show Supervisor Students Tasks*@
+            if (userProfile.role == UserRole.Supervisor)
+            {
+                SupervisorProfileDto? supervisor = userProfile as SupervisorProfileDto;
+                List<StudentDatedSelectDto> supervisorStudents = supervisor?.allStudents ?? new();
+                <div id="specialItems" class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title">Supervisor Students</h4>
+                        <p class="category">Total students are @supervisorStudents.Count </p>
+                    </div>
+                    <div class="card-body" style="overflow-y:auto; overflow-y:scroll;">
+                        @if (supervisorStudents.Count < 1)
+                        {
+                            <h5 class="alert alert-warning w-100 text-center">No Students Yet </h5>
+                        }
+                        else
+                        {
+                            <div class="table-responsive table-hover text-center">
+                                <table class="table">
+                                    <thead class=" text-primary">
+                                        <tr>
+                                            <th>
+                                                Id
+                                            </th>
+                                            <th>
+                                                Full Name
+
+                                            </th>
+                                            <td>
+                                                State
+                                            </td>
+                                            <th>
+                                                Expire Date
+
+                                            </th>
 
 
-                    </tbody>
-                </table>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var student in supervisorStudents)
+                                        {
+
+                                            <tr>
+                                                <td>
+                                                    @{
+                                                        string idStr = student.id.ToString().Substring(0, 5);
+                                                    }
+                                                    @Html.DisplayFor(modelItem => idStr)
+                                                </td>
+                                                <td>
+                                                    <a href="/Profile/Student/@student.id">
+                                                        @Html.DisplayFor(modelItem => student.FullName)
+
+                                                    </a>
+                                                </td>
+
+                                                <td>
+                                                    @if (student.endDate > _appTimeProvider.Now)
+                                                    {
+                                                        <span class="badge badge-success">Active</span>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-danger">Inactive</span>
+
+                                                    }
+
+                                                </td>
+
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => student.endDate)
+                                                </td>
+
+                                            </tr>
 
 
-            </div>
-        </div>
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            }
+
+        }
 
     </div>
 </div>
@@ -148,36 +339,65 @@
     <div class="col-12">
         <div id="meetingsCard" class="card">
             <div class="card-header card-header-rose">
-                <h4 class="card-title">This Month Meetings from 1-5-2023</h4>
-                <p class="category">Total Meetings : 19 , Missed 3 </p>
+                @{
+                    List<MeetingSummaryDto> currentMounthMeetings = userProfile?.currentMounthMeetings ?? new();
+                    DateTime startMonth = new DateTime(_appTimeProvider.Now.Year, _appTimeProvider.Now.Month, 1);
+                    DateTime endMonth = startMonth.AddMonths(1).AddDays(-1);
+                }
+                <h4 class="card-title">This Month Meetings from @startMonth.ToString("d") to @endMonth.ToString("d")</h4>
+                <p class="category">Total Meetings : @currentMounthMeetings.Count  </p>
 
             </div>
             <div class="card-body">
 
-                <table class="table text-center ">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Date</th>
-                            <th>Start Hour</th>
-                            <th>End Hour</th>
-                            <th>Tasks</th>
+                @if (currentMounthMeetings.Count < 1)
+                {
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>3</td>
-                            <td>Sunday 16-3-2023</td>
-                            <td>2 </td>
-                            <td>4 </td>
-                            <td>7 </td>
+                    <h5 class="p-3 w-100 text-center">No Meetings this Month </h5>
 
-                        </tr>
+                }
+                else
+                {
 
-                    </tbody>
-                </table>
+                    <table class="table text-center ">
+                        <thead>
+                            <tr>
+                                <th>#</th>
 
+                                <th>Date</th>
+                                @if (userProfile?.role == UserRole.Supervisor)
+                                {
+                                    <th>With</th>
+
+                                }
+                                <th>Start Hour</th>
+                                <th>End Hour</th>
+                                <th>Tasks</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var meet in currentMounthMeetings)
+                            {
+                                <tr>
+
+                                    <td>@meet.id</td>
+                                    <td>@meet.startDate.ToString("D")</td>
+                                    @if (userProfile?.role == UserRole.Supervisor)
+                                    {
+                                        <td>@meet.studentName</td>
+
+                                    }
+                                    <td>@meet.startHour </td>
+                                    <td>@meet.endHour </td>
+                                    <td>@meet.tasksCount </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                }
 
             </div>
         </div>
@@ -189,8 +409,9 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const profileCard = document.getElementById("profileCard");
-        const tasksCard = document.getElementById("tasksCard");
+        const tasksCard = document.getElementById("specialItems");
         const profileCardHeight = profileCard.offsetHeight;
+        tasksCard.style.height = profileCardHeight + "px";
         tasksCard.style.maxHeight = profileCardHeight + "px";
     });
 </script>

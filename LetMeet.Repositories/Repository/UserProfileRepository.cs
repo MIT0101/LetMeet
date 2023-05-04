@@ -351,14 +351,17 @@ namespace LetMeet.Repositories.Repository
                         userInfoId = x.id,
                         email = x.emailAddress,
                         fullName = x.fullName,
+                        Stage= (Stage) x.stage,
+                        phoneNumber = x.phoneNumber,
                         profileImage = x.profileImage,
                         role = x.userRole,
                         totalMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.student.id == x.id),
                         totalMissingMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.student.id == x.id && m.date < _appTimeProvider.Now && !m.isStudentPresent),
                         missingTasks = _mainDb.Meetings.Where(m => m.SupervisionInfo.student.id == studentId && m.date < _appTimeProvider.Now).SelectMany(m => m.tasks.Where(t => !t.isCompleted)).ToList(),
-                        supervisorFullName = _mainDb.SupervisionInfo.Where(s=>s.student.id==studentId).Select(x=>x.supervisor.fullName).FirstOrDefault(),
-                        supervsionExpireDate= _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.endDate).FirstOrDefault(),
-                        currentMounthMeetings= _mainDb.Meetings.Where(m=>m.SupervisionInfo.student.id==studentId&&m.date >= startMonth&&m.date <=endMounth)
+                        supervisorFullName  =   _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x=>x.supervisor.fullName).FirstOrDefault(),
+                        supervsionExpireDate =  _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.endDate).FirstOrDefault(),
+                        supervsionExtendTimes = _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.extendTimes).FirstOrDefault(),
+                        currentMounthMeetings = _mainDb.Meetings.Where(m=>m.SupervisionInfo.student.id==studentId&&m.date >= startMonth&&m.date <=endMounth)
                         .Select(m=> new MeetingSummaryDto(m.id,m.description,m.SupervisionInfo.supervisor.id, studentId, m.date,m.startHour, m.endHour
                         , m.tasks.Count, m.SupervisionInfo.student.fullName, m.SupervisionInfo.supervisor.fullName)).ToList(),
                     }).FirstOrDefaultAsync();
@@ -390,6 +393,7 @@ namespace LetMeet.Repositories.Repository
                         userInfoId = x.id,
                         email = x.emailAddress,
                         fullName = x.fullName,
+                        phoneNumber = x.phoneNumber,
                         profileImage = x.profileImage,
                         role = x.userRole,
                         totalMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.supervisor.id == x.id),
