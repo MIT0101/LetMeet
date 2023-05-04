@@ -30,8 +30,6 @@ namespace LetMeet.Controllers
         private readonly ISupervisionService _supervionService;
         private readonly IProfileService _profileService;
 
-
-
         public ProfileController(IHttpContextAccessor contextAccessor, IErrorMessagesRepository errorMessages, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, IWebHostEnvironment env, ISupervisionService supervionService, IProfileService profileService)
         {
             _contextAccessor = contextAccessor;
@@ -42,6 +40,55 @@ namespace LetMeet.Controllers
             _supervionService = supervionService;
             _profileService = profileService;
         }
+        [HttpGet("/[Controller]/Supervisor/{id}")]
+        [Authorize(Roles = "Supervisor , Admin")]
+        public async Task<IActionResult> SupervisorProfile(Guid id)
+        {
+            return await Index(id, UserRole.Supervisor);
+        }
+        [HttpGet("/[Controller]/Student/{id}")]
+        [Authorize]
+        public async Task<IActionResult> StudentProfile(Guid id)
+        {
+            return await Index(id, UserRole.Student);
+        }
+
+
+        //show user profile
+        [HttpGet]
+        [Authorize]
+        private async Task<IActionResult> Index(Guid id, UserRole profileRole, List<string>? errors = null, List<string>? messages = null)
+        {
+            InitErrorsAndMessagesForView(ref errors, ref messages);
+            if (profileRole == UserRole.Student)
+            {
+                StudentProfileDto foundStudentProfile = null;
+                var serviceResult = await _profileService.GetStudentProfile(
+                    GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), id);
+                serviceResult.Switch(
+                    studentProfile => foundStudentProfile = studentProfile
+                   , validationErrors => errors.AddRange(validationErrors.Select(e => e.ErrorMessage))
+                   , serviceMessages => errors.AddRange(serviceMessages.Select(s => s.Message)));
+                ViewData[ViewStringHelper.StudentProfile] = foundStudentProfile;
+            }
+            if (profileRole == UserRole.Supervisor)
+            {
+                SupervisorProfileDto foundSupervisorProfile =null;
+                var serviceResult = await _profileService.GetSupervisorProfile(
+                    GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), id);
+                serviceResult.Switch(
+                    supervisorProfile => foundSupervisorProfile = supervisorProfile
+                   , validationErrors => errors.AddRange(validationErrors.Select(e => e.ErrorMessage))
+                   , serviceMessages => errors.AddRange(serviceMessages.Select(s => s.Message)));
+                ViewData[ViewStringHelper.SupervisorProfile] = foundSupervisorProfile;
+
+            }
+            ViewData[ViewStringHelper.Errors] = errors;
+            ViewData[ViewStringHelper.Messages] = messages;
+            return View("Index");
+        }
+
+
         //add free day 
         // remove free day
         [HttpPost]
@@ -56,10 +103,10 @@ namespace LetMeet.Controllers
                 errors.AddRange(ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
                 return RedirectToAction(actionName: nameof(ProfileController.EditProfile), new { id, errors, messages });
             }
-            var result=await _profileService.AddFreeDay(id, freeDayDto);
+            var result = await _profileService.AddFreeDay(id, freeDayDto);
             result.Switch(
              freeDay =>
-                messages.Add(((DayOfWeek)freeDay.day)+" Added as free Day")
+                messages.Add(((DayOfWeek)freeDay.day) + " Added as free Day")
              ,
 
              validationResults =>

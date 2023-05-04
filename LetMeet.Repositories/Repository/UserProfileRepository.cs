@@ -14,6 +14,8 @@ using System.IO;
 using LetMeet.Data.Dtos.User;
 using System.Collections.Generic;
 using LetMeet.Data.Dtos.Supervision;
+using LetMeet.Data.Dtos.MeetingsStaff;
+using LetMeet.Data.Entites.Identity;
 
 namespace LetMeet.Repositories.Repository
 {
@@ -25,12 +27,13 @@ namespace LetMeet.Repositories.Repository
         private readonly DbSet<UserInfo> _usersInfo;
         private readonly RepositoryDataSettings _settings;
         private readonly IGenericRepository<UserInfo, Guid> _genericUserRepository;
+        private readonly AppTimeProvider _appTimeProvider;
 
         private readonly int MAX_IMAGE_SIZE_IN_KB = 300;
 
         private Random _random;
 
-        public UserProfileRepository(MainDbContext mainDb, IOptions<RepositoryDataSettings> repoSettingsOptions, IGenericRepository<UserInfo, Guid> genericUserRepository, ILogger<UserProfileRepository> logger)
+        public UserProfileRepository(MainDbContext mainDb, IOptions<RepositoryDataSettings> repoSettingsOptions, IGenericRepository<UserInfo, Guid> genericUserRepository, ILogger<UserProfileRepository> logger, AppTimeProvider appTimeProvider)
         {
             _mainDb = mainDb;
             _usersInfo = mainDb.Set<UserInfo>();
@@ -38,6 +41,7 @@ namespace LetMeet.Repositories.Repository
             _genericUserRepository = genericUserRepository;
             this._logger = logger;
             _random = new Random();
+            _appTimeProvider = appTimeProvider;
         }
 
 
@@ -46,7 +50,7 @@ namespace LetMeet.Repositories.Repository
             try
             {
 
-                var user = await _usersInfo.Include(u=>u.freeDays).FirstOrDefaultAsync(u => u.id == userInfoId);
+                var user = await _usersInfo.Include(u => u.freeDays).FirstOrDefaultAsync(u => u.id == userInfoId);
                 if (user is null)
                 {
                     return RepositoryResult<UserInfo>.FailureResult(ResultState.NotFound, null, new List<string>()
@@ -59,19 +63,9 @@ namespace LetMeet.Repositories.Repository
             }
             catch (Exception ex)
             {
-                return RepositoryResult<UserInfo>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error"});
+                return RepositoryResult<UserInfo>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
             }
 
-        }
-
-        public Task<RepositoryResult<UserInfo>> GetUserIdAsync(Expression<Func<UserInfo, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<RepositoryResult<UserInfo>> GetUserWhereAsync(Expression<Func<UserInfo, bool>> filter)
-        {
-            throw new NotImplementedException();
         }
 
         public virtual Expression<Func<UserInfo, bool>> DefaultFilter()
@@ -151,7 +145,8 @@ namespace LetMeet.Repositories.Repository
                     // Compress image to maximum size of MAX_IMAGE_SIZE_IN_KB KB
                     //await CompressImageAndSave(imgMap, imageFileName);
                 }
-                else {
+                else
+                {
                     imgMap.Save(Path.Combine(folderPath, imageFileName), ImageFormat.Jpeg);
 
                 }
@@ -207,11 +202,6 @@ namespace LetMeet.Repositories.Repository
             imgMap.Save(savePath, jpegCodec, encoderParams);
         }
 
-        private ImageCodecInfo GetEncoder(ImageFormat jpeg)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary> 
         /// Returns the image codec with the given mime type 
         /// </summary> 
@@ -228,10 +218,6 @@ namespace LetMeet.Repositories.Repository
             return null;
         }
 
-        public Task<RepositoryResult<SupervisionInfo>> UpdateSupervison(UserInfo supervisor, UserInfo student)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<RepositoryResult<DayFree>> AddFreeDay(Guid userinfoId, AddFreeDayDto freeDayDto)
         {
@@ -251,15 +237,16 @@ namespace LetMeet.Repositories.Repository
 
                 var user = (await GetUserByIdAsync(userinfoId)).Result;
 
-                if (user is null) { 
-                return RepositoryResult<DayFree>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Add Free Day" });
+                if (user is null)
+                {
+                    return RepositoryResult<DayFree>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Add Free Day" });
                 }
                 //if the user has free day on this day
-                if (user.freeDays is not null&&user.freeDays.Any(f => f.day == freeDayDto.day))
+                if (user.freeDays is not null && user.freeDays.Any(f => f.day == freeDayDto.day))
                 {
-                    return RepositoryResult<DayFree>.FailureResult(ResultState.Error, null, new List<string>() { "User Already Has Free Day On "+((DayOfWeek)freeDayDto.day) });
+                    return RepositoryResult<DayFree>.FailureResult(ResultState.Error, null, new List<string>() { "User Already Has Free Day On " + ((DayOfWeek)freeDayDto.day) });
                 }
-                List<DayFree> freeDays= user.freeDays ?? new List<DayFree>();
+                List<DayFree> freeDays = user.freeDays ?? new List<DayFree>();
                 DayFree dayFree = new DayFree
                 {
                     day = freeDayDto.day,
@@ -275,13 +262,13 @@ namespace LetMeet.Repositories.Repository
 
                 await _mainDb.SaveChangesAsync();
 
-                return RepositoryResult<DayFree>.SuccessResult(ResultState.Seccess,dayFree);
-                
+                return RepositoryResult<DayFree>.SuccessResult(ResultState.Seccess, dayFree);
+
             }
             catch (Exception ex)
             {
 
-                return RepositoryResult<DayFree>.FailureResult(ResultState.DbError,null,new List<string> { "UnExpected Error" });
+                return RepositoryResult<DayFree>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
             }
         }
 
@@ -339,8 +326,9 @@ namespace LetMeet.Repositories.Repository
             try
             {
                 StudentSelectDto summary = await _mainDb.UserInfos.Where(x => x.id == userinfoId).Select(x => new StudentSelectDto(x.id, x.fullName)).FirstOrDefaultAsync();
-                if (summary is null) { 
-                return RepositoryResult<StudentSelectDto>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Get Summary" });
+                if (summary is null)
+                {
+                    return RepositoryResult<StudentSelectDto>.FailureResult(ResultState.NotFound, null, new List<string>() { "User Not Found To Get Summary" });
                 }
                 return RepositoryResult<StudentSelectDto>.SuccessResult(ResultState.Seccess, summary);
             }
@@ -351,6 +339,89 @@ namespace LetMeet.Repositories.Repository
             }
         }
 
+        public async Task<RepositoryResult<StudentProfileDto>> GetStudentProfile(Guid studentId)
+        {
+            try
+            {
+                DateTime startMonth,endMounth;
+                GetStartAndEndMounth(_appTimeProvider.Now, out startMonth, out endMounth);
+                var studentProfile = await _mainDb.UserInfos.Where(x => x.id == studentId&& x.userRole==UserRole.Student)
+                    .Select(x => new StudentProfileDto
+                    {
+                        userInfoId = x.id,
+                        email = x.emailAddress,
+                        fullName = x.fullName,
+                        profileImage = x.profileImage,
+                        role = x.userRole,
+                        totalMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.student.id == x.id),
+                        totalMissingMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.student.id == x.id && m.date < _appTimeProvider.Now && !m.isStudentPresent),
+                        missingTasks = _mainDb.Meetings.Where(m => m.SupervisionInfo.student.id == studentId && m.date < _appTimeProvider.Now).SelectMany(m => m.tasks.Where(t => !t.isCompleted)).ToList(),
+                        supervisorFullName = _mainDb.SupervisionInfo.Where(s=>s.student.id==studentId).Select(x=>x.supervisor.fullName).FirstOrDefault(),
+                        supervsionExpireDate= _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.endDate).FirstOrDefault(),
+                        currentMounthMeetings= _mainDb.Meetings.Where(m=>m.SupervisionInfo.student.id==studentId&&m.date >= startMonth&&m.date <=endMounth)
+                        .Select(m=> new MeetingSummaryDto(m.id,m.description,m.SupervisionInfo.supervisor.id, studentId, m.date,m.startHour, m.endHour
+                        , m.tasks.Count, m.SupervisionInfo.student.fullName, m.SupervisionInfo.supervisor.fullName)).ToList(),
+                    }).FirstOrDefaultAsync();
+
+                if (studentProfile == null)
+                {
+                    return RepositoryResult<StudentProfileDto>.FailureResult(ResultState.NotFound, null, null);
+                }
+                return RepositoryResult<StudentProfileDto>.SuccessResult(ResultState.Seccess, studentProfile);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<StudentProfileDto>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+
+            }
+        }
+
+        public async Task<RepositoryResult<SupervisorProfileDto>> GetSupervisorProfile(Guid supervisorId)
+        {
+
+            try
+            {
+                DateTime startMonth, endMounth;
+                GetStartAndEndMounth(_appTimeProvider.Now, out startMonth, out endMounth);
+                var studentProfile = await _mainDb.UserInfos.Where(x => x.id == supervisorId&&x.userRole==UserRole.Supervisor)
+                    .Select(x => new SupervisorProfileDto
+                    {
+                        userInfoId = x.id,
+                        email = x.emailAddress,
+                        fullName = x.fullName,
+                        profileImage = x.profileImage,
+                        role = x.userRole,
+                        totalMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.supervisor.id == x.id),
+                        totalMissingMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.supervisor.id == x.id && m.date < _appTimeProvider.Now && !m.isStudentPresent),
+                        currentMounthMeetings = _mainDb.Meetings.Where(m => m.SupervisionInfo.supervisor.id == supervisorId && m.date >= startMonth && m.date <= endMounth)
+                        .Select(m => new MeetingSummaryDto(m.id,m.description, m.SupervisionInfo.supervisor.id, m.SupervisionInfo.student.id, m.date, m.startHour, m.endHour
+                        , m.tasks.Count, m.SupervisionInfo.student.fullName, m.SupervisionInfo.supervisor.fullName)).ToList(),
+                        allStudents= _mainDb.SupervisionInfo.Where(s=>s.supervisor.id==supervisorId).Select(s=>new StudentDatedSelectDto(s.student.id,s.student.fullName,s.endDate)).ToList(),
+                        
+                    }).FirstOrDefaultAsync();
+
+                if (studentProfile == null)
+                {
+                    return RepositoryResult<SupervisorProfileDto>.FailureResult(ResultState.NotFound, null, null);
+                }
+                return RepositoryResult<SupervisorProfileDto>.SuccessResult(ResultState.Seccess, studentProfile);
+
+            }
+            catch (Exception ex)
+            {
+                return RepositoryResult<SupervisorProfileDto>.FailureResult(ResultState.DbError, null, new List<string> { "UnExpected Error" });
+
+            }
+
+        }
+
+        private void GetStartAndEndMounth(DateTime now, out DateTime startMounth, out DateTime endMounth)
+        {
+
+            startMounth = new DateTime(now.Year, now.Month, 1);
+            endMounth = startMounth.AddMonths(1).AddDays(-1);
+        }
     }
 }
 

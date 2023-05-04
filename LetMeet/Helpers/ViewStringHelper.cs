@@ -34,6 +34,9 @@
 
         public static string SupervsionSummary= "supervsionSummary";
 
+        public static string StudentProfile = "studentProfile";
+        public static string SupervisorProfile = "supervisorProfile";
+
 
     }
 }

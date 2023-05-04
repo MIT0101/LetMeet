@@ -25,8 +25,8 @@ namespace LetMeet.Repositories.Repository
             _mailSettings = mailSettings.Value;
         }
 
-        //return secsess 
-        //ffail returns Error
+        //return success 
+        //fail returns Error
         public async Task<(ResultState state, bool isSended)> SendEmail(string recipientEmail, string subject, string body)
         {
             try
@@ -53,9 +53,6 @@ namespace LetMeet.Repositories.Repository
                 return (ResultState.Error, false);
 
             }
-            
-
-
         }
     }
 }

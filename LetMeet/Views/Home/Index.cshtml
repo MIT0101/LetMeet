@@ -11,6 +11,7 @@
 
 
 @inject IHttpContextAccessor _httpContextAccessor
+@inject AppTimeProvider _appTimeProvider;
 
 @{
 
@@ -21,132 +22,201 @@
         string userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "01";
         var roles = _httpContextAccessor.HttpContext.User.FindAll(ClaimTypes.Role);
 
-        foreach (var item in roles)
-        {
-            <h4>@item.Value</h4>
-        }
+        //foreach (var item in roles)
+        //{
+        //    <h4>@item.Value</h4>
+        //}
 
-        <h3>@userName</h3>
-        <h3>@userId</h3>
+        //<h3>@userName</h3>
+        //<h3>@userId</h3>
     }
 }
-@{
-    string studentName = "Mohammed Al Mustafa Adel";
-    string studentId = "201700000";
-    string meetingDate = "2019-12-12";
-    string meetingHumanDate = "Today";
-    string meetingDescription = "he place is close to Barceloneta Beach and bus stop just 2 min by walk and near to  where you can enjoy the main night life in Barcelona ";
 
-    string numberOfTasks = "7";
-    string numberOfTasksDone = "3";
-    string numberOfTasksNotDone = "4";
-    int meetingId = 1;
+<div>
+    <h4 class="alert alert-danger text-center">Profile Not Found</h4>
 
-}
-@*Meeting Card*@
+</div>
 
-<div class="row ">
-
-    <div class="col-lg-4 col-xl-6 col-md-6 col-sm-12">
-        <div class="card equal-height-card meeting-card">
+<div class="row">
+    <!--Left Profile Show-->
+    <div class="col-sm-12 col-md-6 col-lg-6">
+        <div id="profileCard" class="card">
             <div class="card-header card-header-primary">
-                <h4 class="card-title">With @studentName</h4>
-                <p class="category d-flex justify-content-between">
-                    <span>@meetingDate</span>
-                    <span class="badge-success rounded p-2">@meetingHumanDate </span>
-                </p>
+                <h4 class="card-title">Profile Information Summary</h4>
+                <p class="category">information shown in @_appTimeProvider.Now.ToString("d")</p>
             </div>
-            <div class="card-body position-relative ">
-
-                <p>@meetingDescription</p>
-                <div class="d-flex justify-content-between flex-wrap tasks-container">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-content-lg-stretch">
+                    <!--Profile Image-->
+                    <div class="mr-3 mt-0">
+                        <img style="width:180px;aspect-ratio:1" src="~/UsersImages/890d26bd4412467c00c908db41d6e04b_4.jpeg" />
+                    </div>
+                    <!--Student Information-->
                     <div>
-                        Tasks: @numberOfTasks
+                        <!--Full Name-->
+                        <div class="d-flex flex-row">
+                            <label class="mr-2">
+                                <span class="material-icons">
+                                    person
+                                </span>
+                            </label>
+                            <h5>Abdulrahman Alshammari</h5>
+                        </div>
+                        <!--Email-->
+                        <div class="d-flex flex-row">
+                            <label class="mr-2">
+                                <span class="material-icons">
+                                    email
+                                </span>
+                            </label>
+                            <a class="d-block" href="mailto:alraqym050@gmail.com">alraqym050@gmail.com</a>
+                        </div>
+                        <!--Supervisor Name-->
+                        <div class="d-flex flex-row">
+                            <label class="mr-2">
+                                <span class="material-icons">
+                                    supervisor_account
+                                </span>
+                            </label>
+                            <h5>Abbas abd Al Hssan </h5>
+                        </div>
+                        <!--Extend Times -->
+                        <div class="d-flex flex-row">
+                            <div class="d-flex flex-row mr-2">
+                                <label class="mr-2">
+                                    <span class="material-icons">
+                                        alarm
+                                    </span>
+                                </label>
+                                <h5>2023-6-15</h5>
+                            </div>
+
+                            <div class="d-flex flex-row ">
+                                <label class="mr-2">
+                                    <span class="material-icons">
+                                        manage_history
+                                    </span>
+                                </label>
+                                <h5>1 </h5>
+                            </div>
+
+
+
+                        </div>
+
+                        <!--Role-->
+                        <div class="d-flex flex-row">
+                            <label class="mr-2">
+                                <span class="material-icons">
+                                    workspace_premium
+                                </span>
+                            </label>
+                            <h5>@UserRole.Student.ToString()</h5>
+                        </div>
+
+
                     </div>
 
-                    <div>Done: @numberOfTasksDone / @numberOfTasks</div>
-                    <div>Not Done: @numberOfTasksNotDone / @numberOfTasks</div>
-                </div>
-
-                <div class="d-flex justify-content-center align-items-center meet-overlay">
-
-                    <button class="btn btn-success m-1" rel="tooltip" title="" data-original-title="Run Meeting">
-                        <i class="material-icons">not_started</i>
-                    </button>
-
-                    <button rel="tooltip" title="" data-original-title="Show Meeting" class="btn btn-info m-1">
-                        <i class="material-icons">visibility</i>
-                    </button>
-
-                    <!--delete meeting form must contains meet id and current userId-->
-                    <form>
-                        <input type="hidden" name="userId" value="@_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)" />
-                        <input type="hidden" name="meetingId" value="@meetingId" />
-
-                        <button rel="tooltip" title="" data-original-title="Delete Meeting" type="submit" onclick="return confirm('Are you sure you want to delete this meeting ?');" class="btn btn-danger">
-                            <i class="material-icons">delete</i>
-                        </button>
-
-                    </form>
-
-
                 </div>
             </div>
 
+        </div>
+    </div>
+    <!--Right Missing Tasks -->
+    <div class="col-sm-12 col-md-6 col-lg-6 ">
+        <div id="tasksCard" class="card">
+            <div class="card-header card-header-danger">
+                <h4 class="card-title">Missed Tasks</h4>
+                <p class="category">total missed tasks for previous meetings : 3 </p>
+            </div>
+            <div class="card-body" style="overflow-y:auto; overflow-y:scroll;">
+
+                <table class="table text-center " >
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>task 1</td>
+                            <td>desc 1</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td>task2</td>
+                            <td>desc2</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>task3</td>
+                            <td>desc3</td>
+                            <td>No</td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--This Mount Meetings-->
+<div class="row">
+    <div class="col-12">
+        <div id="meetingsCard" class="card">
+            <div class="card-header card-header-rose">
+                <h4 class="card-title">This Month Meetings from 1-5-2023</h4>
+                <p class="category">Total Meetings : 19 , Missed 3 </p>
+
+            </div>
+            <div class="card-body" >
+
+                <table class="table text-center ">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Start Hour</th>
+                            <th>End Hour</th>
+                            <th>Tasks</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3</td>
+                            <td>Sunday 16-3-2023</td>
+                            <td>2 </td>
+                            <td>4 </td>
+                            <td>7 </td>
+
+                        </tr>
+            
+                    </tbody>
+                </table>
+
+
+            </div>
         </div>
 
     </div>
 
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const profileCard = document.getElementById("profileCard");
+        const tasksCard = document.getElementById("tasksCard");
+        const profileCardHeight = profileCard.offsetHeight;
+        tasksCard.style.maxHeight = profileCardHeight + "px";
+    });
+</script>
 
-<style>
-    .equal-height-card {
-        display: flex;
-        flex-direction: column;
-        height: 80%;
-    }
 
-    .equal-height-card .card-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
 
-    .tasks-container {
-        margin-top: auto;
-    }
-
-    /*meeting description truncted */
-    .meeting-card p {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-    }
-
-    /*meeting overlay for delete and other buttons*/
-    .meet-overlay {
-        position: absolute;
-        /*width: fit-content;*/
-        width: 100%;
-        height: 0%;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: gray;
-        overflow: hidden;
-        transition: .3s ease;
-        z-index: 100;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-        /*margin:  0 auto;*/
-        padding: 0 5px;
-    }
-
-    .meeting-card:hover .meet-overlay {
-        height: 40%;
-    }
-</style>
