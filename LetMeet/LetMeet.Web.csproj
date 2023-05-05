@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Report\StudentReport.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
 
 	  <PackageReference Include="EntityFrameworkCore.NCache" Version="5.3.0" />
 
@@ -50,6 +54,18 @@
     <None Update="tls.ncconf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Report\StudentReport.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Report\StudentReport.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Report\StudentReport.cshtml" />
   </ItemGroup>
 
 </Project>

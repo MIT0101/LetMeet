@@ -1,27 +1,375 @@
-﻿
-@{
+﻿@{
+    ViewBag.currentPage = "Reports";
 }
+@*Show Single (Student(all previous meetings and there presence , total previous tasks and their complement ) || Supervisor (all active students and the meetings and there presence , tasks count )) Report *@
 
-<h1>Report</h1>
+<div class="d-flex justify-content-end w-100">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="advanceReportBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Advance
+    </button>
+    <div class="dropdown-menu" aria-labelledby="advanceReportBtn">
+        <button style="cursor:pointer;" data-toggle="modal" data-target="#choseSupervisorModal" class=" dropdown-item">Supervisor Report</button>
+        <button style="cursor:pointer;" data-toggle="modal" data-target="#choseStudentModal" class=" dropdown-item">Student Report</button>
+    </div>
+</div>
 
+@*Chose Student Modal*@
+<div id="choseStudentModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chose Student</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label" for="studentSelect">Student</label>
+                <select id="studentSelect" data-val="true" data-val-required="Student Is Required" name="studentSelect" required="" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round">
+                    <option value="1">Abass Ahmed -- Ali Adel</option>
+                    <option value="5">Abass Ahmed -- Rami Khalid</option>
+                    
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="showStudentReportBtn" type="button" class="btn btn-primary">Show</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*Chose Supervisor Modal*@
+<div id="choseSupervisorModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chose Student</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               
+                <label class="form-label" for="supervisorSelect">Supervisor</label>
+                <select id="supervisorSelect" data-val="true" data-val-required="Student Is Required" name="supervisorSelect" required="" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round">
+                    <option value="1">Abass Ahmed </option>
+
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="showSupervisorReportBtn" type="button" class="btn btn-primary">Show</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const supervisorSelect = document.querySelector('#supervisorSelect');
+        const studentSelect = document.querySelector('#studentSelect');
+
+        const showStudentBtn = document.querySelector('#showStudentReportBtn');
+        const showSupervisorReportBtn = document.querySelector('#showSupervisorReportBtn');
+
+
+        showStudentBtn.addEventListener('click', function () {
+            const selectedStudentValue = studentSelect.value;
+
+            if (selectedStudentValue) {
+                const reportUrl = `/Report/Student/${selectedStudentValue}`;
+                window.open(reportUrl, '_blank');
+            } else {
+                alert('No name found');
+            }
+        });
+
+        showSupervisorReportBtn.addEventListener('click', function () {
+            const selectedSupervisorValue = supervisorSelect.value;
+
+            if (selectedSupervisorValue) {
+                const reportUrl = `/Report/Supervisor/${selectedSupervisorValue}`;
+                window.open(reportUrl, '_blank');
+            } else {
+                alert('No name found');
+            }
+        });
+
+
+    });
+</script>
+@*
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const showButton = document.querySelector('#showStudentReportBtn');
+        const studentNameInput = document.querySelector('#studentName');
+        const studentsList = document.querySelector('#studentsList');
+
+        showButton.addEventListener('click', function () {
+            const selectedStudentName = studentNameInput.value;
+            const selectedOption = [...studentsList.options].find(option => option.value === selectedStudentName);
+
+            if (selectedOption) {
+                const userId = selectedOption.getAttribute('data-userId');
+                const reportUrl = `/Report/Student/${userId}`;
+                window.open(reportUrl, '_blank');
+            } else {
+                alert('No name found');
+            }
+        });
+    });
+</script>*@
 
 <div class="row">
 
     @*Most Students Absence*@
+    <div class="col-12">
+        <div id="mostStudentsAbsence" class="card">
+            <div class="card-header card-header-danger">
+                <h4 class="card-title">Most Absence Students </h4>
+                <p class="category">Total students are : 4</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Stage</th>
+                                <th>Supervisor</th>
+                                <th>Absence Times</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>7bav8</td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>Fourth </td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>Fourth </td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>Fourth </td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>Fourth </td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>6</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     @*Most Supervisor Absence*@
+    <div class="col-12">
+        <div id="mostSupervisorsAbsence" class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Most Absence Supervisors </h4>
+                <p class="category">Total supervisors are : 3</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>With Student</th>
+                                <th>Absence Times</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+
+                                <td>2</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     @*Supervisors have Achieved Max active Students*@
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <div id="fullSupervisors" class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Full Supervisors</h4>
+                <p class="category">Supervisors have archived max number of students</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Current Active Students</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>6</td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 
     @*Supervisors don't have any active Students*@
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <div id="fullSupervisors" class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Idle Supervisors</h4>
+                <p class="category">Supervisors don't have active students</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>
+                                    <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-outline-info p-2" href="/Supervision/Update/367fe9f4-5125-4a04-763c-08db49b1d84e">
+                                        <i class="material-icons">settings_ethernet</i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>7bav8</td>
+                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
+                                <td>
+                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
+                                </td>
+                                <td>
+                                    <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-outline-info p-2" href="/Supervision/Update/367fe9f4-5125-4a04-763c-08db49b1d84e">
+                                        <i class="material-icons">settings_ethernet</i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                         
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 
     @*Top 10 Supervisors With Total Meetings *@
-
-    @*Show Single (Student(all previous meetings and there presence , total previous tasks and their complement ) || Supervisor (all active students and the meetings and there presence , tasks count )) Report *@
-
-
-
-
 
 
 
