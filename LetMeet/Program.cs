@@ -4,66 +4,91 @@ global using LetMeet.Data.Entites.UsersInfo;
 global using LetMeet.Repositories;
 global using LetMeet.Repositories.Infrastructure;
 global using LetMeet.Repositories.Repository;
-using Alachisoft.NCache.EntityFrameworkCore;
 using LetMeet.Configure;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-//RegisterServices
-builder.Services.RegisterServices();
-//Register Identity And Roles
-builder.Services.RegisterIdentityWithRoles(builder.Configuration);
-//Register Options
-builder.Services.RegisterOptions(builder.Configuration);
-//register dbcontexts
-builder.Services.RegisterDbContexts(builder.Configuration);
-// register repositories
-builder.Services.RegisterRepositories(builder.Configuration);
-
-
-//configure the login path
-builder.Services.ConfigureApplicationCookie(options => {
-
-    options.LoginPath = "/Account/SignIn";
-});
-
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+Log.Information("Starting up");
+try
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    // <snip>
+    var builder = WebApplication.CreateBuilder(args);
+
+    //serilog
+    builder.Host.UseSerilog((ctx, lc) => lc
+       .WriteTo.Console()
+       //.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day)
+       .WriteTo.Seq("http://localhost:5341")
+       .ReadFrom.Configuration(ctx.Configuration));
+
+    // Add services to the container.
+    builder.Services.AddControllersWithViews();
+
+    //RegisterServices
+    builder.Services.RegisterServices();
+    //Register Identity And Roles
+    builder.Services.RegisterIdentityWithRoles(builder.Configuration);
+    //Register Options
+    builder.Services.RegisterOptions(builder.Configuration);
+    //register dbcontexts
+    builder.Services.RegisterDbContexts(builder.Configuration);
+    // register repositories
+    builder.Services.RegisterRepositories(builder.Configuration);
+
+
+    //configure the login path
+    builder.Services.ConfigureApplicationCookie(options => {
+
+        options.LoginPath = "/Account/SignIn";
+    });
+
+
+    var app = builder.Build();
+    //for logging
+    app.UseSerilogRequestLogging();
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+
+    //create user profile direcorty
+
+    string ProfileImgaesDir = Path.Combine(app.Environment.WebRootPath, "UsersImages");
+
+    if (!Directory.Exists(ProfileImgaesDir))
+    {
+        Directory.CreateDirectory(ProfileImgaesDir);
+    }
+
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+    app.Run();
+
 }
-
-//create user profile direcorty
-
-string ProfileImgaesDir= Path.Combine(app.Environment.WebRootPath, "UsersImages");
-
-if (!Directory.Exists(ProfileImgaesDir))
+catch (Exception ex)
 {
-    Directory.CreateDirectory(ProfileImgaesDir);
+    Log.Fatal(ex, "Unhandled exception");
 }
-
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

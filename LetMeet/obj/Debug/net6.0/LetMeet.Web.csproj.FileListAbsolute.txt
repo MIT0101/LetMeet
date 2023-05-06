@@ -366,3 +366,16 @@ C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\refint\LetMeet.We
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\LetMeet.Web.pdb
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\LetMeet.Web.genruntimeconfig.cache
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\obj\Debug\net6.0\ref\LetMeet.Web.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.AspNetCore.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Expressions.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Extensions.Hosting.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Extensions.Logging.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Formatting.Compact.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Settings.Configuration.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.Console.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.Debug.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.File.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.PeriodicBatching.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.Seq.dll
