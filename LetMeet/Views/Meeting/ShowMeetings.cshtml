@@ -23,7 +23,7 @@
     {
         supervisorStudents = ViewData[ViewStringHelper.SupervisorStudents] as List<StudentDatedSelectDto> ?? new List<StudentDatedSelectDto>();
 
-        studentsOptions = supervisorStudents.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
+        studentsOptions = supervisorStudents.Select(s => new SelectListItem { Text = s.FullName, Value = s.studentId.ToString() }).ToList();
     }
     List<SupervsionSummary> supervsions;
     List<SelectListItem> supervsionsOptions = new();

@@ -1,5 +1,19 @@
-﻿@{
+﻿@using LetMeet.Data.Dtos.Reports;
+@{
     ViewBag.currentPage = "Reports";
+    var allSupervisors = ViewData[ViewStringHelper.AllSupervisors] as List<SupervisorOrStudentSelectDto> ?? new();
+    var allStudents = ViewData[ViewStringHelper.AllStudents] as List<SupervisorOrStudentSelectDto> ?? new();
+
+    var topStudentsAbsence = ViewData[ViewStringHelper.TopStudentAbsence] as List<TopStudentAbsence> ?? new();
+    var topSupervisorsAbsence = ViewData[ViewStringHelper.TopSupervisorAbsence] as List<TopSupervisorAbsence> ?? new();
+
+    var fullSupervisors = ViewData[ViewStringHelper.FullSupervisors] as List<FullSupervisor> ?? new();
+    var idleSupervisors = ViewData[ViewStringHelper.IdelSupervisors] as List<IdelSupervisor> ?? new();
+
+    List<SelectListItem> studentsOptions = allStudents.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
+    List<SelectListItem> supervisorsOptions = allSupervisors.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
+
+
 }
 @*Show Single (Student(all previous meetings and there presence , total previous tasks and their complement ) || Supervisor (all active students and the meetings and there presence , tasks count )) Report *@
 
@@ -25,11 +39,15 @@
             </div>
             <div class="modal-body">
                 <label class="form-label" for="studentSelect">Student</label>
-                <select id="studentSelect" data-val="true" data-val-required="Student Is Required" name="studentSelect" required="" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round">
-                    <option value="1">Abass Ahmed -- Ali Adel</option>
-                    <option value="5">Abass Ahmed -- Rami Khalid</option>
-                    
-                </select>
+
+                <select id="studentSelect" data-val="true" data-val-required="Student Is Required" name="studentSelect" required class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round" asp-items="@studentsOptions"></select>
+
+
+                @*<select id="studentSelect" data-val="true" data-val-required="Student Is Required" name="studentSelect" required="" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round">
+                <option value="1">Abass Ahmed -- Ali Adel</option>
+                <option value="5">Abass Ahmed -- Rami Khalid</option>
+
+                </select>*@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -49,12 +67,15 @@
                 </button>
             </div>
             <div class="modal-body">
-               
-                <label class="form-label" for="supervisorSelect">Supervisor</label>
-                <select id="supervisorSelect" data-val="true" data-val-required="Student Is Required" name="supervisorSelect" required="" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round">
-                    <option value="1">Abass Ahmed </option>
 
-                </select>
+                <label class="form-label" for="supervisorSelect">Supervisor</label>
+                <select id="supervisorSelect" data-val="true" data-val-required="Supervisor Is Required" name="supervisorSelect" required class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round" asp-items="@supervisorsOptions"></select>
+
+
+                @*<select id="supervisorSelect" data-val="true" data-val-required="Supervisor Is Required" name="supervisorSelect" required="" class="selectpicker btn btn-outline-rose btn-dark w-100" data-style="btn btn-rose btn-round">
+                <option value="1">Abass Ahmed </option>
+
+                </select>*@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -64,7 +85,7 @@
     </div>
 </div>
 
-<script>
+<script defer>
     document.addEventListener('DOMContentLoaded', function () {
         const supervisorSelect = document.querySelector('#supervisorSelect');
         const studentSelect = document.querySelector('#studentSelect');
@@ -98,27 +119,6 @@
 
     });
 </script>
-@*
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const showButton = document.querySelector('#showStudentReportBtn');
-        const studentNameInput = document.querySelector('#studentName');
-        const studentsList = document.querySelector('#studentsList');
-
-        showButton.addEventListener('click', function () {
-            const selectedStudentName = studentNameInput.value;
-            const selectedOption = [...studentsList.options].find(option => option.value === selectedStudentName);
-
-            if (selectedOption) {
-                const userId = selectedOption.getAttribute('data-userId');
-                const reportUrl = `/Report/Student/${userId}`;
-                window.open(reportUrl, '_blank');
-            } else {
-                alert('No name found');
-            }
-        });
-    });
-</script>*@
 
 <div class="row">
 
@@ -127,67 +127,56 @@
         <div id="mostStudentsAbsence" class="card">
             <div class="card-header card-header-danger">
                 <h4 class="card-title">Most Absence Students </h4>
-                <p class="category">Total students are : 4</p>
+                <p class="category">Total students are : @topStudentsAbsence.Count</p>
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
-                    <table class="table text-center">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Stage</th>
-                                <th>Supervisor</th>
-                                <th>Absence Times</th>
+                    @{
+                        if (topStudentsAbsence.Count < 1)
+                        {
+                            <h5 class="alert alert-success w-100 text-center">No Absence Students , Congradulations✨</h5>
 
-                            </tr>
-                        </thead>
-                        <tbody>
+                        }
+                        else
+                        {
 
-                            <tr>
-                                <td>7bav8</td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>Fourth </td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>Fourth </td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>Fourth </td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>Fourth </td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>6</td>
-                            </tr>
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Stage</th>
+                                        <th>Supervisor</th>
+                                        <th>Absence Times</th>
 
-                        </tbody>
-                    </table>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    @foreach (var student in topStudentsAbsence)
+                                    {
+                                        <tr>
+                                            <td>@student.id.ToString("N").Substring(0,4)</td>
+                                            <td><a href="/Profile/Student/@student.id">@student.fullName</a></td>
+                                            <td>
+                                                <a class="d-block" href="mailto:@student.email">@student.email</a>
+                                            </td>
+                                            <td>@student.stage </td>
+                                            <td> <a href="/Profile/Supervisor/@student.supervisorId">@student.supervisorName</a> </td>
+                                            <td>@student.absneceTimes</td>
+                                        </tr>
+                                    }
+
+
+
+
+                                </tbody>
+                            </table>
+                        }
+                    }
+
                 </div>
             </div>
         </div>
@@ -199,55 +188,48 @@
         <div id="mostSupervisorsAbsence" class="card">
             <div class="card-header card-header-warning">
                 <h4 class="card-title">Most Absence Supervisors </h4>
-                <p class="category">Total supervisors are : 3</p>
+                <p class="category">Total supervisors are : @topSupervisorsAbsence.Count</p>
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
-                    <table class="table text-center">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>With Student</th>
-                                <th>Absence Times</th>
+                    @{
+                        if (topSupervisorsAbsence.Count < 1)
+                        {
+                            <h5 class="alert alert-success w-100 text-center">No Absence Supervisors , Congradulations✨</h5>
 
-                            </tr>
-                        </thead>
-                        <tbody>
+                        }
+                        else
+                        {
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>With Student</th>
+                                        <th>Absence Times</th>
 
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td><a href="/Profile/Student/f6ba42ef-9cff-4bb5-763b-08db49b1d84e">Student Here</a></td>
+                                    @foreach (var supervisor in topSupervisorsAbsence)
+                                    {
+                                        <tr>
+                                            <td>@supervisor.id.ToString("N").Substring(0,4)</td>
+                                            <td> <a href="/Profile/Supervisor/@supervisor.id">@supervisor.fullName</a> </td>
+                                            <td>
+                                                <a class="d-block" href="mailto:@supervisor.email">@supervisor.email</a>
+                                            </td>
+                                            <td><a href="/Profile/Student/@supervisor.studentId">@supervisor.studentName</a></td>
+                                            <td>@supervisor.absenceTimes</td>
+                                        </tr>
+                                    }
 
-                                <td>2</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
+                                </tbody>
+                            </table>
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -263,46 +245,45 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
-                    <table class="table text-center">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Current Active Students</th>
+                    @{
+                        if (fullSupervisors.Count < 1)
+                        {
+                            <h5 class="alert alert-secondary w-100 text-center">No Full Supervisors</h5>
 
-                            </tr>
-                        </thead>
-                        <tbody>
+                        }
+                        else
+                        {
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Current Active Students</th>
 
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>6</td>
-                            </tr>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var fullSupervisor in fullSupervisors)
+                                    {
+                                        <tr>
+                                            <td>@fullSupervisor.id.ToString("N").Substring(0,4)</td>
+                                            <td> <a href="/Profile/Supervisor/@fullSupervisor.id">@fullSupervisor.fullName</a> </td>
+                                            <td>
+                                                <a class="d-block" href="mailto:@fullSupervisor.email">@fullSupervisor.email</a>
+                                            </td>
+                                            <td>@fullSupervisor.currentActiveStudentsCount</td>
+                                        </tr>
+                                    }
 
 
-                        </tbody>
-                    </table>
+                                </tbody>
+
+                            </table>
+
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -319,58 +300,53 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
-                    <table class="table text-center">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Action</th>
+                    @{
+                        if (idleSupervisors.Count < 1)
+                        {
+                            <h5 class="alert alert-secondary w-100 text-center">No Idle Supervisors</h5>
 
-                            </tr>
-                        </thead>
-                        <tbody>
+                        }
+                        else
+                        {
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Action</th>
 
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>
-                                    <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-outline-info p-2" href="/Supervision/Update/367fe9f4-5125-4a04-763c-08db49b1d84e">
-                                        <i class="material-icons">settings_ethernet</i>
-                                    </a>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var idleSupervisor in idleSupervisors)
+                                    {
+                                        <tr>
+                                            <td>@idleSupervisor.id.ToString("N").Substring(0,4)</td>
+                                            <td> <a href="/Profile/Supervisor/@idleSupervisor.id">@idleSupervisor.fullName</a> </td>
+                                            <td>
+                                                <a class="d-block" href="mailto:@idleSupervisor.email">@idleSupervisor.email</a>
+                                            </td>
+                                            <td>
+                                                <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-outline-info p-2" href="/Supervision/Update/@idleSupervisor.id">
+                                                    <i class="material-icons">settings_ethernet</i>
+                                                </a>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7bav8</td>
-                                <td> <a href="/Profile/Supervisor/367fe9f4-5125-4a04-763c-08db49b1d84e">Supervisor Here</a> </td>
-                                <td>
-                                    <a class="d-block" href="mailto:mail@MailKit.com">email@MailKit.com</a>
-                                </td>
-                                <td>
-                                    <a rel="tooltip" title="" data-original-title="Manage Supervision" class="btn btn-outline-info p-2" href="/Supervision/Update/367fe9f4-5125-4a04-763c-08db49b1d84e">
-                                        <i class="material-icons">settings_ethernet</i>
-                                    </a>
-
-                                </td>
-                            </tr>
-                         
+                                            </td>
+                                        </tr>
+                                    }
 
 
-                        </tbody>
-                    </table>
+
+                                </tbody>
+                            </table>
+                        }
+                    }
                 </div>
             </div>
         </div>
 
     </div>
-
-
-    @*Top 10 Supervisors With Total Meetings *@
-
 
 
 </div>

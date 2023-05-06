@@ -41,6 +41,7 @@ namespace LetMeet.Configure
             services.AddScoped<ISupervisonRepository, SupervisonRepository>();
             services.AddScoped<IMeetingRepository, MeetingRepository>();
             services.AddScoped<IMeetingTaskRepository, MeetingTaskRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
 
             string validPasswordChars = configuration.GetValue<string>("ValidPasswordChars") ?? PasswordGenrationRepository.DefaultValidChars;
             //password generation repository
@@ -116,6 +117,7 @@ namespace LetMeet.Configure
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IMeetingService, MeetingService>();
             services.AddScoped<IStudentsService, StudentsService>();
+            services.AddScoped<IReportService, ReportService>();
 
         }
 

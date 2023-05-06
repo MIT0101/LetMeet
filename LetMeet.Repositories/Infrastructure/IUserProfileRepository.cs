@@ -31,6 +31,10 @@ namespace LetMeet.Repositories.Infrastructure
 
         Task<RepositoryResult<SupervisorProfileDto>> GetSupervisorProfile(Guid supervisorId);
 
+        Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAllStudents();
+
+        Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAllSupervisors();
+
 
 
 

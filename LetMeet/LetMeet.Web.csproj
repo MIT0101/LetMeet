@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Report\StudentReport.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
 
 	  <PackageReference Include="EntityFrameworkCore.NCache" Version="5.3.0" />
 
@@ -30,6 +26,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.12" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,18 +53,6 @@
     <None Update="tls.ncconf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Report\StudentReport.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Report\StudentReport.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Report\StudentReport.cshtml" />
   </ItemGroup>
 
 </Project>

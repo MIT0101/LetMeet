@@ -37,6 +37,19 @@
         public static string StudentProfile = "studentProfile";
         public static string SupervisorProfile = "supervisorProfile";
 
+        public static string AllStudents = "allStudents";
+        public static string AllSupervisors = "allSupervisors";
+
+        public static string TopStudentAbsence= "topStudentAbsence";
+        public static string TopSupervisorAbsence = "topSupervisorAbsence"; 
+
+        public static string FullSupervisors = "fullSupervisors";
+        public static string IdelSupervisors= "idelSupervisors";
+
+        public static string StudentReport = "studentReport";
+        public static string SupervisorReport = "supervisorReport";
+
+
 
     }
 }

@@ -264,7 +264,7 @@ public class MeetingController : Controller
                     var allStudents = await _supervisionService.GetAllSupervisorStudents(currentUserId);
                     if (allStudents.Any())
                     {
-                        query.studentId = allStudents.FirstOrDefault().id;
+                        query.studentId = allStudents.FirstOrDefault().studentId;
                     }
                 }
             }

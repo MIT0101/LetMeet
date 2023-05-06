@@ -1,4 +1,5 @@
 ﻿using LetMeet.Business.Results;
+using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Data.Dtos.User;
 using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Entites.UsersInfo;
@@ -19,6 +20,9 @@ namespace LetMeet.Business.Interfaces
         Task<OneOf<DayFree, List<ValidationResult>, List<ServiceMassage>>> RemoveFreeDay(Guid userId, int freeDayId);
         Task<OneOf<StudentProfileDto, List<ValidationResult>, List<ServiceMassage>>> GetStudentProfile(Guid currentUserId,UserRole currentUserRole,Guid studentId);
         Task<OneOf<SupervisorProfileDto, List<ValidationResult>, List<ServiceMassage>>> GetSupervisorProfile(Guid currentUserId, UserRole currentUserRole,Guid supervisorId);
+        Task<List<SupervisorOrStudentSelectDto>> GetAllStudents(Guid currentUserId,UserRole currentUserRole);
+        Task<List<SupervisorOrStudentSelectDto>> GetAllSupervisors(Guid currentUserId,UserRole currentUserRole);
+
 
     }
 }

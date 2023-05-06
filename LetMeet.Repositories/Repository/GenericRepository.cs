@@ -202,9 +202,13 @@ namespace LetMeet.Repositories.Repository
 
                 }
 
+                //List<TEntity> entities = await _entities.Where(filter).
+                //    Skip((pageIndex - 1) * MaxResponsesPerTime).Take(MaxResponsesPerTime).ToListAsync();
+                 
+                //get entities with paging and order by there key
                 List<TEntity> entities = await _entities.Where(filter).
-                    Skip((pageIndex - 1) * MaxResponsesPerTime).Take(MaxResponsesPerTime).ToListAsync();
-
+                    OrderBy(GetKeySelector()).Skip((pageIndex - 1) * MaxResponsesPerTime).Take(MaxResponsesPerTime).ToListAsync();
+ 
                 return RepositoryResult<List<TEntity>>.SuccessResult(state: ResultState.Seccess, entities);
 
             }
@@ -213,6 +217,14 @@ namespace LetMeet.Repositories.Repository
                 return RepositoryResult<List<TEntity>>.FailureResult(ResultState.DbError, null, new List<string> { ex.Message });
 
             }
+        }
+        //method to get key selector for order by
+        private Expression<Func<TEntity, TKey>> GetKeySelector()
+        {
+            var parameter = Expression.Parameter(typeof(TEntity), "x");
+            var property = Expression.Property(parameter, typeof(TEntity).GetProperty("id"));
+            var lambda = Expression.Lambda<Func<TEntity, TKey>>(property, parameter);
+            return lambda;
         }
 
 

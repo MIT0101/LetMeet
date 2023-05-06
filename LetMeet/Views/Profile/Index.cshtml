@@ -14,6 +14,8 @@
 
 }
 
+<h1 class="text-center">Reports At @_appTimeProvider.Now.ToString("f")</h1>
+
 @foreach (var error in errors)
 {
     <h5 class="alert alert-danger text-center">
@@ -286,12 +288,12 @@
                                             <tr>
                                                 <td>
                                                     @{
-                                                        string idStr = student.id.ToString().Substring(0, 5);
+                                                        string idStr = student.studentId.ToString().Substring(0, 5);
                                                     }
                                                     @Html.DisplayFor(modelItem => idStr)
                                                 </td>
                                                 <td>
-                                                    <a href="/Profile/Student/@student.id">
+                                                    <a href="/Profile/Student/@student.studentId">
                                                         @Html.DisplayFor(modelItem => student.FullName)
 
                                                     </a>

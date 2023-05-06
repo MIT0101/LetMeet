@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Data.Entites.Identity;
+using LetMeet.Data.Dtos.Reports;
 
 namespace LetMeet.Repositories.Repository
 {
@@ -425,6 +426,50 @@ namespace LetMeet.Repositories.Repository
 
             startMounth = new DateTime(now.Year, now.Month, 1);
             endMounth = startMounth.AddMonths(1).AddDays(-1);
+        }
+
+        public async Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAllStudents()
+        {
+            try
+            {
+                var allStudents= await _mainDb.UserInfos.Where(x=>x.userRole==UserRole.Student).
+                    Select(x=>new SupervisorOrStudentSelectDto(x.id,x.fullName)).ToListAsync();
+                if(allStudents is null)
+                {
+                    return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.NotFound, null, new List<string> { "No Students Found" });
+                }
+
+                return RepositoryResult<List<SupervisorOrStudentSelectDto>>.SuccessResult(ResultState.Seccess, allStudents);
+            }
+            catch (Exception ex)
+            {
+
+
+                _logger.LogError("Db Error , {0}", ex);
+                return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { RepositoryErrors.DbError });
+            }
+        }
+
+        public async Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAllSupervisors()
+        {
+            try
+            {
+                var allSupervisors = await _mainDb.UserInfos.Where(x => x.userRole == UserRole.Supervisor).
+                    Select(x => new SupervisorOrStudentSelectDto(x.id, x.fullName)).ToListAsync();
+                if (allSupervisors is null)
+                {
+                    return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.NotFound, null, new List<string> { "No Supervisors Found" });
+                }
+
+                return RepositoryResult<List<SupervisorOrStudentSelectDto>>.SuccessResult(ResultState.Seccess, allSupervisors);
+            }
+            catch (Exception ex)
+            {
+
+
+                _logger.LogError("Db Error , {0}", ex);
+                return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { RepositoryErrors.DbError });
+            }
         }
     }
 }

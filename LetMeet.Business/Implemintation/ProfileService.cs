@@ -1,10 +1,12 @@
 ﻿using LetMeet.Business.Interfaces;
 using LetMeet.Business.Results;
+using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Data.Dtos.User;
 using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Entites.UsersInfo;
 using LetMeet.Repositories;
 using LetMeet.Repositories.Infrastructure;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,11 +16,13 @@ namespace LetMeet.Business.Implemintation
     {
         private readonly IUserProfileRepository _profileRepository;
         private readonly ISupervisionService _supervisionService;
+        private readonly ILogger<ProfileService> _logger;
 
-        public ProfileService(IUserProfileRepository profileRepository, ISupervisionService supervisionService)
+        public ProfileService(IUserProfileRepository profileRepository, ISupervisionService supervisionService, ILogger<ProfileService> logger)
         {
             _profileRepository = profileRepository;
             _supervisionService = supervisionService;
+            _logger = logger;
         }
 
         public async Task<OneOf<DayFree, List<ValidationResult>, List<ServiceMassage>>> AddFreeDay(Guid userId, AddFreeDayDto addFreeDayDto)
@@ -50,6 +54,26 @@ namespace LetMeet.Business.Implemintation
 
             return reposResult.Result;
 
+        }
+
+        public async Task<List<SupervisorOrStudentSelectDto>> GetAllStudents(Guid currentUserId,UserRole currentUserRole)
+        {
+            if (currentUserRole != UserRole.Admin)
+            {
+                _logger.LogWarning("UnAurhize Request For all Students by user with id: {0} role : {1}", currentUserId, currentUserRole.ToString());
+                return new List<SupervisorOrStudentSelectDto>();
+            }
+            return (await _profileRepository.GetAllStudents()).Result ?? new();
+        }
+
+        public async Task<List<SupervisorOrStudentSelectDto>> GetAllSupervisors(Guid currentUserId, UserRole currentUserRole)
+        {
+            if (currentUserRole != UserRole.Admin)
+            {
+                _logger.LogWarning("UnAurhize Request For all Supervisors by user with id: {0} role : {1}", currentUserId, currentUserRole.ToString());
+                return new List<SupervisorOrStudentSelectDto>();
+            }
+            return (await _profileRepository.GetAllSupervisors()).Result ?? new();
         }
 
         public async Task<OneOf<StudentProfileDto, List<ValidationResult>, List<ServiceMassage>>> GetStudentProfile(Guid currentUserId, UserRole currentUserRole, Guid studentId)

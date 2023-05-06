@@ -1,0 +1,167 @@
+﻿@inject AppTimeProvider _appTimeProvider;
+@{
+    List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new();
+    List<string> messages = ViewData[ViewStringHelper.Messages] as List<string> ?? new();
+
+    SupervisorReport? supervisorReport = ViewData[ViewStringHelper.SupervisorReport] as SupervisorReport;
+
+    ViewBag.currentPage = "Reports";
+
+    ViewData["Title"] = $"Supervisor Report - {supervisorReport?.fullName}";
+}
+<h2 class="text-center">Supervisor Report</h2>
+
+@if (supervisorReport is null)
+{
+
+    @foreach (var error in errors)
+    {
+        <h4 class="alert alert-danger text-center">@error</h4>
+
+    }
+
+    return;
+}
+
+<div class="alert alert-primary text-center">
+    <h3>
+        @supervisorReport.fullName as Supervisor
+    </h3>
+    <h4>
+        <a class="d-block" href="mailto:@supervisorReport.email">@supervisorReport.email</a>
+    </h4>
+    @{
+        int activeStudentCount = supervisorReport.students.Where(x => x.endDate > _appTimeProvider.Now).Count();
+    }
+    <h4>Total Student : @supervisorReport.students?.Count()</h4>
+    <h4>Active Student : @activeStudentCount </h4>
+
+</div>
+
+<div class="row">
+    @*Supervisor Students*@
+    <div class="col-12">
+        <div id="totalMeetings" class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Supervisor Students </h4>
+                <p class="category">Total students are : @activeStudentCount</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    @{
+
+                        @if (supervisorReport.students is null || supervisorReport.students?.Count < 1)
+                        {
+                            <h5 class="alert alert-secondary w-100 text-center">No Student Yet</h5>
+
+                        }
+                        else
+                        {
+
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Student Name</th>
+                                        <th>Supervision End Date</th>
+                                        <th>Supervision State</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in supervisorReport.students)
+                                    {
+                                        <tr>
+                                            <td>@student.studentId.ToString("N").Substring(0,4)</td>
+                                            <td><a target="_blank" href="/Profile/Student/@student.studentId">@student.FullName</a></td>
+                                            <td>@student.endDate.ToString("D")</td>
+                                            <td>
+
+                                                @if (student.endDate > _appTimeProvider.Now)
+                                                {
+                                                    <span class="badge badge-success">Active</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Inactive</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @*All Meeting With current Active Students*@
+    <div class="col-12">
+        <div id="totalMeetings" class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Supervisor Meetings </h4>
+                @{
+                    int totalMeetingsPresent = supervisorReport.EndedMeetings.Where(x => x.isSupervisorPresent).Count();
+                }
+                <p class="category">Total meetings are : @supervisorReport.EndedMeetings.Count() , Present : @totalMeetingsPresent / @supervisorReport.EndedMeetings.Count()</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+
+                    @{
+
+                        @if (supervisorReport.EndedMeetings is null || supervisorReport.EndedMeetings?.Count < 1)
+                        {
+                            <h5 class="alert alert-secondary w-100 text-center">No Meetings Yet</h5>
+
+                        }
+                        else
+                        {
+
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Total Hours</th>
+                                        <th>Student Name</th>
+                                        <th>Total Tasks</th>
+                                        <th>Student Presence</th>
+                                        <th>Supervisor Presence</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var meeting in supervisorReport?.EndedMeetings)
+                                    {
+                                        int totalHours = meeting.endHour - meeting.startHour;
+                                        string isStudentPresent = meeting.isStudentPresent ? "Yes" : "No";
+                                        string isSupervisorPresent = meeting.isSupervisorPresent ? "Yes" : "No";
+
+                                        <tr>
+                                            <td>@meeting.id</td>
+                                            <td>@meeting.startDate.ToString("D")</td>
+                                            <td>@totalHours</td>
+                                            <td> <a target="_blank" href="/Profile/Student/@meeting.studentId">@meeting.studentName</a> </td>
+                                            <td>@meeting.tasksCount </td>
+                                            <td>@isStudentPresent </td>
+                                            <td>@isSupervisorPresent </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

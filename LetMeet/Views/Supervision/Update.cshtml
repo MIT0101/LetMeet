@@ -7,7 +7,7 @@
 
 
     List<StudentSelectDto> unsupervisedStudents = ViewData[ViewStringHelper.UnSupervisedStudents] as List<StudentSelectDto> ?? new List<StudentSelectDto>();
-    List<SelectListItem> studentsOptions = unsupervisedStudents.Select(s => new SelectListItem { Text = s.FullName, Value = s.id.ToString() }).ToList();
+    List<SelectListItem> studentsOptions = unsupervisedStudents.Select(s => new SelectListItem { Text = s.FullName, Value = s.studentId.ToString() }).ToList();
 
 
     List<StudentDatedSelectDto> supervisorStudents = ViewData[ViewStringHelper.SupervisorStudents] as List<StudentDatedSelectDto> ?? new List<StudentDatedSelectDto>();
@@ -215,12 +215,12 @@
                                     <tr>
                                         <td>
                                             @{
-                                                string idStr = student.id.ToString().Substring(0, 5);
+                                                string idStr = student.studentId.ToString().Substring(0, 5);
                                             }
                                             @Html.DisplayFor(modelItem => idStr)
                                         </td>
                                         <td>
-                                            <a href="/Profile/Student/@student.id">
+                                            <a href="/Profile/Student/@student.studentId">
                                                 @Html.DisplayFor(modelItem => student.FullName)
 
 
@@ -252,7 +252,7 @@
                                             <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="ExtendStudnetSupervisorTime" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
                                                 @Html.AntiForgeryToken()
 
-                                                <input name="studentId" hidden value="@student.id">
+                                                <input name="studentId" hidden value="@student.studentId">
 
 
                                                 <button rel="tooltip" title="" data-original-title="Extend Supervision" type="submit" onclick="return confirm('Are you sure you want to Extend @student.FullName Supervision with @serviceOptions.Value.NumberOfMonthsPerExtend Mouths ?');" class="btn btn-outline-info p-2">
@@ -264,7 +264,7 @@
                                                 <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="RemoveStudnetFromSupervisor" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
                                                     @Html.AntiForgeryToken()
 
-                                                    <input name="studentId" hidden value="@student.id">
+                                                    <input name="studentId" hidden value="@student.studentId">
                                                     <input name="supervisorId" hidden value="@currentSupervisor?.id">
 
                                                     <button rel="tooltip" title="" data-original-title="Unsupervis" type="submit" onclick="return confirm('Are you sure you want to Unsupervis @student.FullName?');" class="btn btn-outline-danger p-2">

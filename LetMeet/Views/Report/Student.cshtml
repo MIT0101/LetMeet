@@ -1,0 +1,158 @@
+﻿@using LetMeet.Data.Entites.Meetigs;
+@{
+    List<string> errors = ViewData[ViewStringHelper.Errors] as List<string> ?? new();
+    List<string> messages = ViewData[ViewStringHelper.Messages] as List<string> ?? new();
+
+    StudentReport? studentReport = ViewData[ViewStringHelper.StudentReport] as StudentReport;
+
+    ViewBag.currentPage = "Reports";
+
+    ViewData["Title"] = $"Student Report - {studentReport?.studentName}";
+    
+}
+<h2 class="text-center">Student Report</h2>
+
+@if (studentReport is null)
+{
+
+    @foreach (var error in errors)
+    {
+        <h4 class="alert alert-danger text-center">@error</h4>
+
+    }
+
+    return;
+}
+
+
+
+<div class="alert alert-primary text-center">
+    <h3>
+        @studentReport.studentName
+    </h3>
+    <h4>@studentReport.stage</h4>
+    <h4>@studentReport.supervisorName as  Supervisor</h4>
+    <h5>Supervision End at @studentReport.supervsionEndDate.ToString("D")</h5>
+</div>
+
+<div class="row">
+    @*Student Meetings *@
+    <div class="col-12">
+        <div id="totalMeetings" class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Student Meetings </h4>
+                <p class="category">Total meetings are : @studentReport?.EndedMeetings?.Count , Present @studentReport?.EndedMeetings?.Where(x=>x.isStudentPresent).Count() / @studentReport?.EndedMeetings?.Count</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    @{
+                        if (studentReport.EndedMeetings is null || studentReport?.EndedMeetings.Count < 1)
+                        {
+
+                            <h5 class="alert alert-secondary w-100 text-center">No Meeting for Students </h5>
+
+                        }
+                        else
+                        {
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Total Hours</th>
+                                        <th>Supervisor Name</th>
+                                        <th>Total Tasks</th>
+                                        <th>Student Presence</th>
+                                        <th>Supervisor Presence</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var meeting in studentReport.EndedMeetings)
+                                    {
+                                        <tr>
+                                            <td>@meeting.id</td>
+                                            <td>@meeting.startDate.ToString("D")</td>
+                                            @{
+                                                int totalHours = meeting.endHour - meeting.startHour;
+                                                string isStudentPresent = meeting.isStudentPresent ? "Yes" : "No";
+                                                string isSupervisorPresent = meeting.isSupervisorPresent ? "Yes" : "No";
+
+                                            }
+                                            <td> @totalHours</td>
+                                            <td> <a href="/Profile/Supervisor/@meeting.supervisorId">@meeting.supervisorName</a> </td>
+                                            <td>@meeting.tasksCount </td>
+                                            <td>@isStudentPresent </td>
+                                            <td>@isSupervisorPresent </td>
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @*Student Meetings Tasks *@
+    @{
+        List<MeetingTask?>? endedTaks = studentReport?.EndedMeetings?.SelectMany(x => x.EndedMeetingsTasks).ToList();
+
+    }
+    <div class="col-12">
+        <div id="totalTasks" class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Student Tasks </h4>
+                <p class="category">Total tasks are : @endedTaks?.Count , Complerted : @endedTaks.Where(x=>x.isCompleted).Count() /@endedTaks?.Count</p>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    @{
+                        if (endedTaks is null || endedTaks.Count < 1)
+                        {
+
+                            <h5 class="alert alert-secondary w-100 text-center">No Tasks for Students </h5>
+
+                        }
+                        else
+                        {
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Completed</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var task in endedTaks)
+                                    {
+                                        <tr>
+                                            <td>@task?.id </td>
+                                            <td>@task?.title</td>
+                                            <td>@task?.decription </td>
+                                            @{
+                                                string isCompleted = task.isCompleted ? "Yes" : "No";
+                                            }
+                                            <td>@isCompleted </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

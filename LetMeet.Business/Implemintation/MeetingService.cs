@@ -260,7 +260,7 @@ public partial class MeetingService : IMeetingService
             return new List<ServiceMassage> { new ServiceMassage("You Haven't Students Yet") };
         }
         //check if the student is supervised by the same supervisor
-        if (!supervisorStudents.Result.Any(s => s.id == meetingDto.studentId))
+        if (!supervisorStudents.Result.Any(s => s.studentId == meetingDto.studentId))
         {
             return new List<ServiceMassage> { new ServiceMassage("You Can Not Complete Meetings For Other Users") };
         }
