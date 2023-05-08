@@ -3,13 +3,13 @@ using LetMeet.Helpers;
 using LetMeet.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
-
+using Serilog;
+using SerilogTimings;
 namespace LetMeet.Controllers
 {
     [Authorize]
@@ -18,8 +18,8 @@ namespace LetMeet.Controllers
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly RoleManager<AppIdentityRole> _roleManager;
         private readonly SignInManager<AppIdentityUser> _signInManager;
+        private readonly MainIdentityDbContext _mainIdentityDb;
 
-        //db repos
         private readonly IGenericRepository<UserInfo, Guid> _userRepo;
         private readonly IUserProfileRepository _userProfileRepo;
 
@@ -37,7 +37,7 @@ namespace LetMeet.Controllers
         private readonly IWebHostEnvironment _env;
 
 
-        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository)
+        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, MainIdentityDbContext mainIdentityDb)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
@@ -51,10 +51,12 @@ namespace LetMeet.Controllers
             _logger = logger;
             _selectionRepository = selectionRepository;
             _userProfileRepo = userProfileRepository;
+            _mainIdentityDb = mainIdentityDb;
         }
         //AccessDenied endpoint
         [AllowAnonymous]
-        public async Task<IActionResult> AccessDenied(string ReturnUrl="") {
+        public async Task<IActionResult> AccessDenied(string ReturnUrl = "")
+        {
             ViewData[ViewStringHelper.ReturnUrl] = ReturnUrl;
             return View();
         }
@@ -64,13 +66,14 @@ namespace LetMeet.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
-        public async Task<RedirectToActionResult> UpdateProfileImage(Guid id,IFormFile? picInput, CancellationToken cancellationToken,
+        public async Task<RedirectToActionResult> UpdateProfileImage(Guid id, IFormFile? picInput, CancellationToken cancellationToken,
             List<string> errors = null, List<string> messages = null)
         {
 
             InitErrorsAndMessagesForView(ref errors, ref messages);
 
-            if (picInput is null) {
+            if (picInput is null)
+            {
                 errors.Add("No Image To Update");
 
                 return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
@@ -78,9 +81,9 @@ namespace LetMeet.Controllers
             }
 
             var imageStream = new MemoryStream();
-            
-            await picInput.CopyToAsync(imageStream,cancellationToken);
-           
+
+            await picInput.CopyToAsync(imageStream, cancellationToken);
+
 
             string saveDir = Path.Combine(_env.WebRootPath, "UsersImages");
 
@@ -243,14 +246,74 @@ namespace LetMeet.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction(actionName: nameof(SignIn));
         }
-        public IActionResult Delete(Guid? id)
+
+        /******************************************----------- DELETE ACCOUNT ----------------*****************************************/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            throw new NotImplementedException();
-            if (id is null)
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+            var adminId = GenricControllerHelper.GetUserInfoId(User);
+            _logger.LogInformation("Try To Remove User With id : {id} ,by admin with id : {adminId} ", id, adminId);
+            //get identity id and delete it from identity 
+            var userIdentityId = (await _userProfileRepo.GetIdentityIdAsync(id)).value;
+            if (userIdentityId is null || userIdentityId == Guid.Empty)
             {
-                return BadRequest("id Is Required For Delete");
+                _logger.LogError("Cant Get UserIdentity Id To Remove user id : {id}", id);
+                errors.Add("Can not Find User To Remove ");
+                return RedirectToAction(nameof(ManageUsers), new { errors });
             }
-            return Json(new { id });
+            var identityUser = await _userManager.FindByIdAsync(userIdentityId.ToString());
+            //check if user is admin if andmin check if there are another admins
+            if (identityUser is not null && await _userManager.IsInRoleAsync(identityUser, UserRole.Admin.ToString()))
+            {
+
+                int adminsCount = (await _userManager.GetUsersInRoleAsync(UserRole.Admin.ToString())).Count;
+
+                if (adminsCount <= 2)
+                {
+                    _logger.LogWarning("System Has Only 2 Admins and try to remove admin !");
+                    errors.Add("Cant' Remove this Admin ,System must at least have 2 Admins ! ");
+                    return RedirectToAction(nameof(ManageUsers), new { errors });
+                }
+
+
+            }
+
+            if (identityUser is null)
+            {
+                _logger.LogError("Cant' Find Identity User From User Manager Remove user id : {id}", id);
+                errors.Add("Can not Get User To Remove ");
+                return RedirectToAction(nameof(ManageUsers), new { errors });
+
+            }
+            using var transction = await _mainIdentityDb.Database.BeginTransactionAsync();
+            var identityRemoveResult = await _userManager.DeleteAsync(identityUser);
+            if (!identityRemoveResult.Succeeded)
+            {
+                _logger.LogError("Can't Remove User From User Manager user id : {id}", id);
+                errors.Add("Can not Remove User Some thing wrong happen");
+                await transction.RollbackAsync();
+                return RedirectToAction(nameof(ManageUsers), new { errors });
+            }
+            //delete it from user info and all relative meetings ,and delete all relative tasks
+            var deleteRepoResult = await _userProfileRepo.RemoveEntireUser(id);
+
+            if (!deleteRepoResult.Success)
+            {
+                _logger.LogError("Can't Remove User From User Profile Repository user id : {id}", id);
+                errors.Add("Can Not Remove User From Our System");
+                await transction.RollbackAsync();
+                return RedirectToAction(nameof(ManageUsers), new { errors });
+
+            }
+            _logger.LogWarning("User Removed With Id : {id} by admin with id {adminId}", id, adminId);
+            messages.Add("User Removed Successfully");
+            await transction.CommitAsync();
+            return RedirectToAction(nameof(ManageUsers), new { errors });
+
         }
         [AllowAnonymous]
         [HttpPost]
@@ -321,9 +384,8 @@ namespace LetMeet.Controllers
 
             return await Task.FromResult(View());
         }
-        //temprory must removed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        [AllowAnonymous]
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ViewResult> ManageUsers(int pageIndex = 1, List<string> errors = null, List<string> messages = null)
         {
             ViewData[ViewStringHelper.Errors] = errors ?? new List<string>();
@@ -362,15 +424,14 @@ namespace LetMeet.Controllers
             return View();
         }
 
-        //temprory must removed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        [AllowAnonymous]
-        //[Authorize(Roles = "Admin" )]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterUser(RegisterUserDto userToRegister)
         {
             var errors = new List<string>();
             var messages = new List<string>();
+            InitErrorsAndMessagesForView(ref errors, ref messages);
             if (!ModelState.IsValid)
             {
                 errors = RepositoryValidationResult.DataAnnotationsValidation(userToRegister).ValidationErrors
@@ -392,6 +453,7 @@ namespace LetMeet.Controllers
                 PhoneNumber = userToRegister.phoneNumber,
             };
             string password = await _passwordGenrator.GenerateRandomPassword();
+            using var transction = await _mainIdentityDb.Database.BeginTransactionAsync();
             IdentityResult identityResult = await _userManager.CreateAsync(identityUser, password);
 
             if (!identityResult.Succeeded)
@@ -434,28 +496,33 @@ namespace LetMeet.Controllers
 
             if (repoResult.State == ResultState.ItemAlreadyExsist)
             {
+                await transction.RollbackAsync();
                 errors.Add("User is Already Exsist.");
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
 
             if (repoResult.State == ResultState.ValidationError)
             {
+                await transction.RollbackAsync();
                 errors.AddRange(repoResult.ValidationErrors.Select(e => e.ErrorMessage));
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
             if (repoResult.State == ResultState.Seccess)
             {
-
-
-                var emailResult =  _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject: "Acount Created",
-                     body: $"You Account Cridantional is:<br>" +
-                     $"Email : {userToRegister.emailAddress} <br>" +
-                     $"Password :{password} <br>" +
-                     $"Please Change Your Password .");
-
-                if (emailResult.Result.state != ResultState.Seccess)
+                using (Operation.Time("Sending Account Cridantionals for {Email}", identityUser.Email))
                 {
-                    //save to file or some ware
+
+                    var emailResult = await _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject: "Acount Created",
+                         body: $"You Account Cridantionals are:<br>" +
+                         $"Email : {userToRegister.emailAddress} <br>" +
+                         $"Password :{password} <br>" +
+                         $"Please Change Your Password .");
+
+
+                    if (emailResult.state != ResultState.Seccess)
+                    {
+                        //save to file or some ware
+                    }
                 }
                 if (_env.IsDevelopment())
                 {
@@ -470,7 +537,7 @@ namespace LetMeet.Controllers
 
                 await _userManager.AddClaimsAsync(identityUser, claims);
 
-
+                await transction.CommitAsync();
                 messages.Add("User Created Successfully");
                 return RedirectToAction(nameof(ManageUsers), new { errors, messages });
             }

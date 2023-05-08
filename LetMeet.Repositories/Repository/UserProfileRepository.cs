@@ -17,6 +17,9 @@ using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Data.Dtos.MeetingsStaff;
 using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Dtos.Reports;
+using System.Linq;
+using LetMeet.Data.Entites.Meetigs;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LetMeet.Repositories.Repository
 {
@@ -344,26 +347,26 @@ namespace LetMeet.Repositories.Repository
         {
             try
             {
-                DateTime startMonth,endMounth;
+                DateTime startMonth, endMounth;
                 GetStartAndEndMounth(_appTimeProvider.Now, out startMonth, out endMounth);
-                var studentProfile = await _mainDb.UserInfos.Where(x => x.id == studentId&& x.userRole==UserRole.Student)
+                var studentProfile = await _mainDb.UserInfos.Where(x => x.id == studentId && x.userRole == UserRole.Student)
                     .Select(x => new StudentProfileDto
                     {
                         userInfoId = x.id,
                         email = x.emailAddress,
                         fullName = x.fullName,
-                        Stage= (Stage) x.stage,
+                        Stage = (Stage)x.stage,
                         phoneNumber = x.phoneNumber,
                         profileImage = x.profileImage,
                         role = x.userRole,
                         totalMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.student.id == x.id),
                         totalMissingMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.student.id == x.id && m.date < _appTimeProvider.Now && !m.isStudentPresent),
                         missingTasks = _mainDb.Meetings.Where(m => m.SupervisionInfo.student.id == studentId && m.date < _appTimeProvider.Now).SelectMany(m => m.tasks.Where(t => !t.isCompleted)).ToList(),
-                        supervisorFullName  =   _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x=>x.supervisor.fullName).FirstOrDefault(),
-                        supervsionExpireDate =  _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.endDate).FirstOrDefault(),
+                        supervisorFullName = _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.supervisor.fullName).FirstOrDefault(),
+                        supervsionExpireDate = _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.endDate).FirstOrDefault(),
                         supervsionExtendTimes = _mainDb.SupervisionInfo.Where(s => s.student.id == studentId).Select(x => x.extendTimes).FirstOrDefault(),
-                        currentMounthMeetings = _mainDb.Meetings.Where(m=>m.SupervisionInfo.student.id==studentId&&m.date >= startMonth&&m.date <=endMounth)
-                        .Select(m=> new MeetingSummaryDto(m.id,m.description,m.SupervisionInfo.supervisor.id, studentId, m.date,m.startHour, m.endHour
+                        currentMounthMeetings = _mainDb.Meetings.Where(m => m.SupervisionInfo.student.id == studentId && m.date >= startMonth && m.date <= endMounth)
+                        .Select(m => new MeetingSummaryDto(m.id, m.description, m.SupervisionInfo.supervisor.id, studentId, m.date, m.startHour, m.endHour
                         , m.tasks.Count, m.SupervisionInfo.student.fullName, m.SupervisionInfo.supervisor.fullName)).ToList(),
                     }).FirstOrDefaultAsync();
 
@@ -388,7 +391,7 @@ namespace LetMeet.Repositories.Repository
             {
                 DateTime startMonth, endMounth;
                 GetStartAndEndMounth(_appTimeProvider.Now, out startMonth, out endMounth);
-                var studentProfile = await _mainDb.UserInfos.Where(x => x.id == supervisorId&&x.userRole==UserRole.Supervisor)
+                var studentProfile = await _mainDb.UserInfos.Where(x => x.id == supervisorId && x.userRole == UserRole.Supervisor)
                     .Select(x => new SupervisorProfileDto
                     {
                         userInfoId = x.id,
@@ -400,10 +403,10 @@ namespace LetMeet.Repositories.Repository
                         totalMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.supervisor.id == x.id),
                         totalMissingMeetings = _mainDb.Meetings.Count(m => m.SupervisionInfo.supervisor.id == x.id && m.date < _appTimeProvider.Now && !m.isStudentPresent),
                         currentMounthMeetings = _mainDb.Meetings.Where(m => m.SupervisionInfo.supervisor.id == supervisorId && m.date >= startMonth && m.date <= endMounth)
-                        .Select(m => new MeetingSummaryDto(m.id,m.description, m.SupervisionInfo.supervisor.id, m.SupervisionInfo.student.id, m.date, m.startHour, m.endHour
+                        .Select(m => new MeetingSummaryDto(m.id, m.description, m.SupervisionInfo.supervisor.id, m.SupervisionInfo.student.id, m.date, m.startHour, m.endHour
                         , m.tasks.Count, m.SupervisionInfo.student.fullName, m.SupervisionInfo.supervisor.fullName)).ToList(),
-                        allStudents= _mainDb.SupervisionInfo.Where(s=>s.supervisor.id==supervisorId).Select(s=>new StudentDatedSelectDto(s.student.id,s.student.fullName,s.endDate)).ToList(),
-                        
+                        allStudents = _mainDb.SupervisionInfo.Where(s => s.supervisor.id == supervisorId).Select(s => new StudentDatedSelectDto(s.student.id, s.student.fullName, s.endDate)).ToList(),
+
                     }).FirstOrDefaultAsync();
 
                 if (studentProfile == null)
@@ -432,9 +435,9 @@ namespace LetMeet.Repositories.Repository
         {
             try
             {
-                var allStudents= await _mainDb.UserInfos.Where(x=>x.userRole==UserRole.Student).
-                    Select(x=>new SupervisorOrStudentSelectDto(x.id,x.fullName)).ToListAsync();
-                if(allStudents is null)
+                var allStudents = await _mainDb.UserInfos.Where(x => x.userRole == UserRole.Student).
+                    Select(x => new SupervisorOrStudentSelectDto(x.id, x.fullName)).ToListAsync();
+                if (allStudents is null)
                 {
                     return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.NotFound, null, new List<string> { "No Students Found" });
                 }
@@ -469,6 +472,80 @@ namespace LetMeet.Repositories.Repository
 
                 _logger.LogError("Db Error , {0}", ex);
                 return RepositoryResult<List<SupervisorOrStudentSelectDto>>.FailureResult(ResultState.DbError, null, new List<string> { RepositoryErrors.DbError });
+            }
+        }
+
+        public async Task<RepositoryResult<UserInfo>> RemoveEntireUser(Guid userId)
+        {
+            IDbContextTransaction transction = null;
+            try
+            {
+                transction = await _mainDb.Database.BeginTransactionAsync();
+                //get entire user and his free days
+                UserInfo userToRemove = await _mainDb.UserInfos.Include(x => x.freeDays).FirstOrDefaultAsync(x => x.id == userId);
+                if (userToRemove == null)
+                {
+                    return RepositoryResult<UserInfo>.FailureResult(ResultState.NotFound, null, new List<string> { "Cant Get User TO Remove" });
+                }
+                //_mainDb.UserInfos.Remove(userToRemove);
+
+                ////get supervsion and remove all meetings
+                List<SupervisionInfo> supervsions = null;
+                List<Meeting> meetings = null;
+                if (userToRemove.userRole == UserRole.Student || userToRemove.userRole == UserRole.Supervisor)
+                {
+
+                    if (userToRemove.userRole == UserRole.Student)
+                    {
+                        supervsions = await _mainDb.SupervisionInfo.Where(x => x.student.id == userId).ToListAsync();
+                    }
+                    if (userToRemove.userRole == UserRole.Supervisor)
+                    {
+                        supervsions = await _mainDb.SupervisionInfo.Where(x => x.supervisor.id == userId).ToListAsync();
+                    }
+                    if (supervsions is not null && supervsions.Count > 0)
+                    {
+                        meetings = await _mainDb.Meetings.Include(x => x.tasks).Where(m => supervsions.Contains(m.SupervisionInfo)).ToListAsync();
+                    }
+                }
+                if (userToRemove.freeDays is not null || userToRemove.freeDays.Count > 0)
+                {
+                    _mainDb.DayFrees.RemoveRange(userToRemove.freeDays);
+                }
+
+                if (meetings is not null && meetings.Count > 0)
+                {
+                    List<MeetingTask> allTasks = meetings.SelectMany(x => x.tasks).ToList();
+                    if (allTasks is not null && allTasks.Count > 0)
+                    {
+                        _mainDb.MeetingTasks.RemoveRange(allTasks);
+                    }
+                    _mainDb.RemoveRange(meetings);
+
+
+                }
+                if (supervsions is not null)
+                {
+                    _mainDb.SupervisionInfo.RemoveRange(supervsions);
+
+                }
+                _mainDb.UserInfos.Remove(userToRemove);
+
+                await _mainDb.SaveChangesAsync();
+                await transction.CommitAsync();
+                return RepositoryResult<UserInfo>.SuccessResult(ResultState.Seccess, userToRemove);
+
+
+            }
+            catch (Exception ex)
+            {
+                if (transction is not null)
+                {
+                    await transction.RollbackAsync();
+                }
+                _logger.LogError("Error Inside Remove User With id :{userId} , ex message {1}", userId, ex.ToString());
+
+                return RepositoryResult<UserInfo>.FailureResult(ResultState.DbError, null, new List<string> { RepositoryErrors.DbError });
             }
         }
     }

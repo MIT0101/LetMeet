@@ -5,7 +5,9 @@ global using LetMeet.Repositories;
 global using LetMeet.Repositories.Infrastructure;
 global using LetMeet.Repositories.Repository;
 using LetMeet.Configure;
+using LetMeet.Helpers;
 using Serilog;
+using System.Security.Claims;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -40,7 +42,8 @@ try
 
 
     //configure the login path
-    builder.Services.ConfigureApplicationCookie(options => {
+    builder.Services.ConfigureApplicationCookie(options =>
+    {
 
         options.LoginPath = "/Account/SignIn";
     });
@@ -48,7 +51,33 @@ try
 
     var app = builder.Build();
     //for logging
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging(options =>
+    {
+        // Attach additional properties to the request completion event
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+            diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
+            diagnosticContext.Set("RequestId", httpContext.TraceIdentifier); // Log request ID
+            // Get the user from the HttpContext
+            var user = httpContext.User;
+
+            if (user != null && user.Identity.IsAuthenticated)
+            {
+                diagnosticContext.Set("UserId", user.FindFirstValue(ClaimTypes.NameIdentifier));
+                diagnosticContext.Set("UserInfoId", user.FindFirstValue(ClaimsNameHelper.UserInfoId));
+
+
+                // Get the user's roles
+                var roles = user.FindAll(ClaimTypes.Role).Select(claim => claim.Value).ToList();
+                if (roles.Any())
+                {
+                    diagnosticContext.Set("Roles", string.Join(", ", roles));
+                }
+            }
+        };
+
+    });
     // Configure the HTTP request pipeline.
     if (!app.Environment.IsDevelopment())
     {

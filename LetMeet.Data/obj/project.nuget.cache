@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "MnET8Fj5qL+tEXlptBsX4ESdwExiaV5KGQm+Ric3LO1PObeA6cIWApYCd/D1LI94O+Gf0uGOFM/n6MBVV68ZhA==",
+  "dgSpecHash": "a8gqBQMyFCwZfwmgkAtDCKXGG4rsmuwRrrSCqfKEYg/wBW+ZApXfzYH3pqV03pf8IbNk8S/oAr7YI0zi4NSbDA==",
   "success": true,
   "projectFilePath": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet.Data\\LetMeet.Data.csproj",
   "expectedPackageFiles": [
@@ -90,6 +90,7 @@
     "C:\\Users\\M_IT_01\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\serilog.sinks.periodicbatching\\3.1.0\\serilog.sinks.periodicbatching.3.1.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\serilog.sinks.seq\\5.2.2\\serilog.sinks.seq.5.2.2.nupkg.sha512",
+    "C:\\Users\\M_IT_01\\.nuget\\packages\\serilogtimings\\3.0.1\\serilogtimings.3.0.1.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\system.codedom\\4.5.0\\system.codedom.4.5.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
     "C:\\Users\\M_IT_01\\.nuget\\packages\\system.collections.concurrent\\4.3.0\\system.collections.concurrent.4.3.0.nupkg.sha512",

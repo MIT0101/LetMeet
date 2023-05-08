@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetMeet.Data.Migrations
 {
     [DbContext(typeof(MainIdentityDbContext))]
-    [Migration("20230430193318_IdentityMigrations")]
+    [Migration("20230508193657_IdentityMigrations")]
     partial class IdentityMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,31 +58,31 @@ namespace LetMeet.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("be40c57a-60ad-437c-98fa-1bb35583cb04"),
-                            ConcurrencyStamp = "4f1fbf50-520f-49ac-ae5e-3b6b70059369",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = new Guid("7959c71f-1434-4baf-b605-d9caa69b7c4a"),
-                            ConcurrencyStamp = "5ece5bfa-7607-4199-b935-0714012392f2",
+                            Id = new Guid("31a1318b-3ba5-46a1-8807-020af4311a46"),
+                            ConcurrencyStamp = "8cd9ca35-d13f-49b6-8e68-d3c6fa45cb5c",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("9007426b-e2bd-409d-8727-7eedb9b9b4a0"),
-                            ConcurrencyStamp = "889886b5-230f-418e-9609-ec5c52d0bfcc",
+                            Id = new Guid("771da7b0-2eb9-44bf-b057-725bf715dbc8"),
+                            ConcurrencyStamp = "fc3f91dc-aad9-4552-8de2-6a3b7f53f431",
                             Name = "Supervisor",
                             NormalizedName = "SUPERVISOR"
                         },
                         new
                         {
-                            Id = new Guid("3bed67f3-f36c-4ba0-8d03-c65a37f884d2"),
-                            ConcurrencyStamp = "c3213bcf-140e-48c4-95aa-319f8a406d6b",
+                            Id = new Guid("19a20083-5e57-4080-a039-5e1e4f031393"),
+                            ConcurrencyStamp = "34cfb4ae-deab-4d33-805a-58516782bb3e",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
+                        },
+                        new
+                        {
+                            Id = new Guid("9e87e4cb-42eb-4da2-bd27-f4c7118ef344"),
+                            ConcurrencyStamp = "c9682019-58ad-4638-92df-dffaef3bca35",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -155,6 +155,25 @@ namespace LetMeet.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "d3456f1e-d89c-4c20-836c-f63dedc8bfe6",
+                            Email = "default@user.com",
+                            EmailConfirmed = true,
+                            FullName = "Default User",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "DEFAULT@USER.COM",
+                            NormalizedUserName = "DEFAULT@USER.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKzHYTPDHBmYbj9fjvOFhfpaGww3XExm2M4yeGxtqtDMkdRK276CpFm8Jimk238+/Q==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "f5d11bfe-0dbc-476c-8b93-1216b7c10a67",
+                            TwoFactorEnabled = false,
+                            UserName = "default@user.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -203,6 +222,22 @@ namespace LetMeet.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "Admin",
+                            UserId = new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "UserInfoId",
+                            ClaimValue = "dc734be3-598f-4056-9df6-9d80a86e679b",
+                            UserId = new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -239,6 +274,13 @@ namespace LetMeet.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4"),
+                            RoleId = new Guid("9e87e4cb-42eb-4da2-bd27-f4c7118ef344")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>

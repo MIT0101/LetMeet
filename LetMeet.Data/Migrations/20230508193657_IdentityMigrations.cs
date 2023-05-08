@@ -161,11 +161,31 @@ namespace LetMeet.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("3bed67f3-f36c-4ba0-8d03-c65a37f884d2"), "c3213bcf-140e-48c4-95aa-319f8a406d6b", null, "Employee", "EMPLOYEE" },
-                    { new Guid("7959c71f-1434-4baf-b605-d9caa69b7c4a"), "5ece5bfa-7607-4199-b935-0714012392f2", null, "Student", "STUDENT" },
-                    { new Guid("9007426b-e2bd-409d-8727-7eedb9b9b4a0"), "889886b5-230f-418e-9609-ec5c52d0bfcc", null, "Supervisor", "SUPERVISOR" },
-                    { new Guid("be40c57a-60ad-437c-98fa-1bb35583cb04"), "4f1fbf50-520f-49ac-ae5e-3b6b70059369", null, "Admin", "ADMIN" }
+                    { new Guid("19a20083-5e57-4080-a039-5e1e4f031393"), "34cfb4ae-deab-4d33-805a-58516782bb3e", null, "Employee", "EMPLOYEE" },
+                    { new Guid("31a1318b-3ba5-46a1-8807-020af4311a46"), "8cd9ca35-d13f-49b6-8e68-d3c6fa45cb5c", null, "Student", "STUDENT" },
+                    { new Guid("771da7b0-2eb9-44bf-b057-725bf715dbc8"), "fc3f91dc-aad9-4552-8de2-6a3b7f53f431", null, "Supervisor", "SUPERVISOR" },
+                    { new Guid("9e87e4cb-42eb-4da2-bd27-f4c7118ef344"), "c9682019-58ad-4638-92df-dffaef3bca35", null, "Admin", "ADMIN" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4"), 0, "d3456f1e-d89c-4c20-836c-f63dedc8bfe6", "default@user.com", true, "Default User", false, null, "DEFAULT@USER.COM", "DEFAULT@USER.COM", "AQAAAAEAACcQAAAAEKzHYTPDHBmYbj9fjvOFhfpaGww3XExm2M4yeGxtqtDMkdRK276CpFm8Jimk238+/Q==", null, false, "f5d11bfe-0dbc-476c-8b93-1216b7c10a67", false, "default@user.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserClaims",
+                columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
+                values: new object[] { 1, "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Admin", new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4") });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserClaims",
+                columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
+                values: new object[] { 2, "UserInfoId", "dc734be3-598f-4056-9df6-9d80a86e679b", new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4") });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { new Guid("9e87e4cb-42eb-4da2-bd27-f4c7118ef344"), new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

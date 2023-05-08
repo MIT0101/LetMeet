@@ -1,14 +1,8 @@
 ﻿
 using LetMeet.Data.Dtos.Supervision;
 using LetMeet.Data.Dtos.User;
+using LetMeet.Data.Entites.Identity;
 using LetMeet.Data.Entites.UsersInfo;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LetMeet.Repositories.Infrastructure
 {
@@ -34,6 +28,8 @@ namespace LetMeet.Repositories.Infrastructure
         Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAllStudents();
 
         Task<RepositoryResult<List<SupervisorOrStudentSelectDto>>> GetAllSupervisors();
+
+        Task<RepositoryResult<UserInfo>> RemoveEntireUser(Guid userId);
 
 
 

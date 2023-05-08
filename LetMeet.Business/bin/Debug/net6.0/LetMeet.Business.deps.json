@@ -13,7 +13,8 @@
           "OneOf": "3.0.243",
           "Serilog.AspNetCore": "6.1.0",
           "Serilog.Expressions": "3.4.1",
-          "Serilog.Sinks.Seq": "5.2.2"
+          "Serilog.Sinks.Seq": "5.2.2",
+          "SerilogTimings": "3.0.1"
         },
         "runtime": {
           "LetMeet.Business.dll": {}
@@ -1095,6 +1096,17 @@
           "lib/net5.0/Serilog.Sinks.Seq.dll": {
             "assemblyVersion": "5.2.2.0",
             "fileVersion": "5.2.2.0"
+          }
+        }
+      },
+      "SerilogTimings/3.0.1": {
+        "dependencies": {
+          "Serilog": "2.12.0"
+        },
+        "runtime": {
+          "lib/net6.0/SerilogTimings.dll": {
+            "assemblyVersion": "3.0.1.0",
+            "fileVersion": "3.0.1.0"
           }
         }
       },
@@ -2393,7 +2405,8 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.13",
           "Serilog.AspNetCore": "6.1.0",
           "Serilog.Expressions": "3.4.1",
-          "Serilog.Sinks.Seq": "5.2.2"
+          "Serilog.Sinks.Seq": "5.2.2",
+          "SerilogTimings": "3.0.1"
         },
         "runtime": {
           "LetMeet.Data.dll": {}
@@ -2410,7 +2423,8 @@
           "MimeKit": "3.5.0",
           "Serilog.AspNetCore": "6.1.0",
           "Serilog.Expressions": "3.4.1",
-          "Serilog.Sinks.Seq": "5.2.2"
+          "Serilog.Sinks.Seq": "5.2.2",
+          "SerilogTimings": "3.0.1"
         },
         "runtime": {
           "LetMeet.Repositories.dll": {}
@@ -3151,6 +3165,13 @@
       "sha512": "sha512-1Csmo5ua7NKUe0yXUx+zsRefjAniPWcXFhUXxXG8pwo0iMiw2gjn9SOkgYnnxbgWqmlGv236w0N/dHc2v5XwMg==",
       "path": "serilog.sinks.seq/5.2.2",
       "hashPath": "serilog.sinks.seq.5.2.2.nupkg.sha512"
+    },
+    "SerilogTimings/3.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Zs28eTgszAMwpIrbBnWHBI50yuxL50p/dmAUWmy75+axdZYK/Sjm5/5m1N/CisR8acJUhTVcjPZrsB1P5iv0Uw==",
+      "path": "serilogtimings/3.0.1",
+      "hashPath": "serilogtimings.3.0.1.nupkg.sha512"
     },
     "System.Buffers/4.5.0": {
       "type": "package",

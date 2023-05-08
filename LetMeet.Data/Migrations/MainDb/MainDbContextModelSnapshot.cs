@@ -72,6 +72,9 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
+                    b.Property<int?>("Meetingid")
+                        .HasColumnType("int");
+
                     b.Property<string>("decription")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -80,9 +83,6 @@ namespace LetMeet.Data.Migrations.MainDb
                     b.Property<bool>("isCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("meetingid")
-                        .HasColumnType("int");
-
                     b.Property<string>("title")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -90,7 +90,7 @@ namespace LetMeet.Data.Migrations.MainDb
 
                     b.HasKey("id");
 
-                    b.HasIndex("meetingid");
+                    b.HasIndex("Meetingid");
 
                     b.ToTable("MeetingTasks");
                 });
@@ -194,6 +194,18 @@ namespace LetMeet.Data.Migrations.MainDb
                         .IsUnique();
 
                     b.ToTable("UserInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            id = new Guid("dc734be3-598f-4056-9df6-9d80a86e679b"),
+                            emailAddress = "default@user.com",
+                            fullName = "Default User",
+                            identityId = new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4"),
+                            phoneNumber = "07823947489",
+                            stage = 3,
+                            userRole = 0
+                        });
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.Meeting", b =>
@@ -209,13 +221,10 @@ namespace LetMeet.Data.Migrations.MainDb
 
             modelBuilder.Entity("LetMeet.Data.Entites.Meetigs.MeetingTask", b =>
                 {
-                    b.HasOne("LetMeet.Data.Entites.Meetigs.Meeting", "meeting")
+                    b.HasOne("LetMeet.Data.Entites.Meetigs.Meeting", null)
                         .WithMany("tasks")
-                        .HasForeignKey("meetingid")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("meeting");
+                        .HasForeignKey("Meetingid")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("LetMeet.Data.Entites.UsersInfo.DayFree", b =>

@@ -55,23 +55,11 @@ namespace LetMeet.Data.Entites.UsersInfo
         public List<DayFree>? freeDays { get; set; }
 
     }
-
-
-    //public enum UserPostion
-    //{
-    //    Admin,
-    //    Employee,
-    //    Student,
-    //    Supervisor,
-    //    Unknown
-    //}
-
     public enum Stage
     {
         Fourth ,
         Master,
         Phd,
         Unknown,
-
     }
 }

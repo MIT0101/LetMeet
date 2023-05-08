@@ -379,3 +379,4 @@ C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.Deb
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.File.dll
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.PeriodicBatching.dll
 C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\Serilog.Sinks.Seq.dll
+C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Debug\net6.0\SerilogTimings.dll

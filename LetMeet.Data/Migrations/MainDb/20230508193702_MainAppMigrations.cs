@@ -110,17 +110,22 @@ namespace LetMeet.Data.Migrations.MainDb
                     title = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     decription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     isCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    meetingid = table.Column<int>(type: "int", nullable: false)
+                    Meetingid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MeetingTasks", x => x.id);
                     table.ForeignKey(
-                        name: "FK_MeetingTasks_Meetings_meetingid",
-                        column: x => x.meetingid,
+                        name: "FK_MeetingTasks_Meetings_Meetingid",
+                        column: x => x.Meetingid,
                         principalTable: "Meetings",
                         principalColumn: "id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "UserInfos",
+                columns: new[] { "id", "emailAddress", "fullName", "identityId", "phoneNumber", "profileImage", "stage", "userRole" },
+                values: new object[] { new Guid("dc734be3-598f-4056-9df6-9d80a86e679b"), "default@user.com", "Default User", new Guid("18376c6a-6c12-40a0-a6e9-66f769c05db4"), "07823947489", null, 3, 0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DayFrees_UserInfoid",
@@ -133,9 +138,9 @@ namespace LetMeet.Data.Migrations.MainDb
                 column: "SupervisionInfoid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MeetingTasks_meetingid",
+                name: "IX_MeetingTasks_Meetingid",
                 table: "MeetingTasks",
-                column: "meetingid");
+                column: "Meetingid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SupervisionInfo_studentid",

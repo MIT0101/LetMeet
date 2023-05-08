@@ -66,6 +66,10 @@
             "Serilog.Sinks.Seq": {
               "target": "Package",
               "version": "[5.2.2, )"
+            },
+            "SerilogTimings": {
+              "target": "Package",
+              "version": "[3.0.1, )"
             }
           },
           "imports": [
@@ -163,6 +167,10 @@
             "Serilog.Sinks.Seq": {
               "target": "Package",
               "version": "[5.2.2, )"
+            },
+            "SerilogTimings": {
+              "target": "Package",
+              "version": "[3.0.1, )"
             }
           },
           "imports": [
@@ -276,6 +284,10 @@
             "Serilog.Sinks.Seq": {
               "target": "Package",
               "version": "[5.2.2, )"
+            },
+            "SerilogTimings": {
+              "target": "Package",
+              "version": "[3.0.1, )"
             }
           },
           "imports": [
@@ -399,6 +411,10 @@
             "Serilog.Sinks.Seq": {
               "target": "Package",
               "version": "[5.2.2, )"
+            },
+            "SerilogTimings": {
+              "target": "Package",
+              "version": "[3.0.1, )"
             }
           },
           "imports": [
