@@ -46,7 +46,7 @@
                         </div>
                         <div class="card-body">
 
-                            <form method="post" id="editProfileForm" asp-controller="Profile" asp-action="EditProfile" asp-route-id="@Context.Request.RouteValues["id"]?">
+                            <form method="post" id="editProfileForm" asp-controller="@RouteNameHelper.AccountControllerName" asp-action="EditProfile" asp-route-id="@Context.Request.RouteValues["id"]">
                                 <div class="row">
                                     <input asp-for="id" hidden value="@Model.id">
                                     <div class="col-md-6">
@@ -60,9 +60,10 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group bmd-form-group d-flex flex-row">
-
+                                            
                                             @if (isAdmin)
                                             {
+                                                
                                                 <label asp-for="userRole">User Role</label>
                                                 <select class="form-control" asp-for="userRole" asp-items="@roleOptions"></select>
                                                 <span asp-validation-for="userRole"></span>
@@ -73,8 +74,8 @@
                                             {
                                                 //render stages here insted
 
-                                                //<label asp-for="stage">Stage</label>
-                                                <select class="form-control" asp-for="stage" asp-items="@stageOptions"></select>
+                                                <label asp-for="stage">User Stage</label>
+                                                <select class="form-control" asp-for="stage" asp-items="@stageOptions" readonly disabled></select>
                                                 <span asp-validation-for="stage"></span>
 
                                             }
@@ -100,7 +101,7 @@
                                             }
                                             else
                                             {
-                                                <input asp-for="emailAddress" type="email" class="form-control" disabled>
+                                                <input asp-for="emailAddress" type="email" class="form-control" readonly>
 
                                             }
 
@@ -117,23 +118,23 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                @*<div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group bmd-form-group">
                                             <label class="bmd-label-floating">Adress</label>
                                             <input type="text" class="form-control">
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group bmd-form-group ">
+                                    <div class="col-md-6">
+                                        <div class="form-group d-flex flex-row">
 
                                             @if (isAdmin)
                                             {
                                                 //render stages here
 
-                                                //<label  asp-for="stage">Stage</label>
+                                                <label  asp-for="stage">User Stage</label>
                                                 <select class="form-control" asp-for="stage" asp-items="@stageOptions"></select>
                                                 <span asp-validation-for="stage"></span>
 
@@ -141,7 +142,7 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                   @* <div class="col-md-4">
                                         <div class="form-group bmd-form-group">
                                             <label class="bmd-label-floating">Country</label>
                                             <input type="text" class="form-control">
@@ -152,9 +153,9 @@
                                             <label class="bmd-label-floating">Postal Code</label>
                                             <input type="text" class="form-control">
                                         </div>
-                                    </div>
+                                    </div>*@
                                 </div>
-                                <div class="row">
+                                @*<div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>About Me</label>
@@ -165,7 +166,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button id="editSubmitBtn" type="submit" class="btn btn-primary pull-right" disabled>Update Profile</button>
+                                *@
+                                <button id="editSubmitBtn" type="submit" onclick="return DisplayprogressMessage('editProfileForm',this, 'Saving...');" class="btn btn-primary pull-right" disabled>Update Profile</button>
                                 <div class="clearfix"></div>
                             </form>
                         </div>

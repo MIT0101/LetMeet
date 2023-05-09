@@ -73,7 +73,7 @@ namespace LetMeet.Controllers
             }
             if (profileRole == UserRole.Supervisor)
             {
-                SupervisorProfileDto foundSupervisorProfile =null;
+                SupervisorProfileDto foundSupervisorProfile = null;
                 var serviceResult = await _profileService.GetSupervisorProfile(
                     GenricControllerHelper.GetUserInfoId(User), GenricControllerHelper.GetUserRole(User), id);
                 serviceResult.Switch(
@@ -151,15 +151,6 @@ namespace LetMeet.Controllers
 
             return RedirectToAction(actionName: nameof(ProfileController.EditProfile), new { id, errors, messages });
 
-        }
-
-        [HttpPost]
-        [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
-        public async Task<IActionResult> EditProfile(Guid id, UserInfo userInfo)
-        {
-            throw new NotImplementedException();
-
-            return RedirectToAction(actionName: "EditProfile", new { id });
         }
 
         [HttpGet]

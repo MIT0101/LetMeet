@@ -18,7 +18,9 @@ namespace LetMeet.Controllers
         private readonly UserManager<AppIdentityUser> _userManager;
         private readonly RoleManager<AppIdentityRole> _roleManager;
         private readonly SignInManager<AppIdentityUser> _signInManager;
+
         private readonly MainIdentityDbContext _mainIdentityDb;
+        private readonly MainDbContext _mainDb;
 
         private readonly IGenericRepository<UserInfo, Guid> _userRepo;
         private readonly IUserProfileRepository _userProfileRepo;
@@ -37,7 +39,12 @@ namespace LetMeet.Controllers
         private readonly IWebHostEnvironment _env;
 
 
-        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager, RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository, IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env, IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger, ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, MainIdentityDbContext mainIdentityDb)
+        public AccountController(IPasswordGenrationRepository passwordGenrator, UserManager<AppIdentityUser> userManager
+            , RoleManager<AppIdentityRole> roleManager, IGenericRepository<UserInfo, Guid> userRepository
+            , IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env
+            , IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger
+            , ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, MainIdentityDbContext mainIdentityDb
+            , MainDbContext mainDb)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
@@ -52,6 +59,7 @@ namespace LetMeet.Controllers
             _selectionRepository = selectionRepository;
             _userProfileRepo = userProfileRepository;
             _mainIdentityDb = mainIdentityDb;
+            _mainDb = mainDb;
         }
         //AccessDenied endpoint
         [AllowAnonymous]
@@ -60,9 +68,104 @@ namespace LetMeet.Controllers
             ViewData[ViewStringHelper.ReturnUrl] = ReturnUrl;
             return View();
         }
+        //UPDATE User Info
+        [HttpPost("/[Controller]/EditProfile/{id}")]
+        [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
+        public async Task<IActionResult> EditProfile(Guid id, UserInfo userInfoReq)
+        {
+            List<string> errors = new List<string>();
+            List<string> messages = new List<string>();
+            //check if update data is valid
+            if (!ModelState.IsValid)
+            {
+                errors.Add("Invalid User Data");
+                errors = RepositoryValidationResult.DataAnnotationsValidation(userInfoReq).ValidationErrors
+                   .Select(e => e.ErrorMessage ?? string.Empty).ToList();
+                return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+
+            }
+            //try to get user 
+            var user = (await _userRepo.GetByIdAsync(id)).Result;
+            var identityUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == user.identityId);
+
+            if (user is null || identityUser is null)
+            {
+                errors.Add("Can't Found User To Update");
+                return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+            }
+            var userInfoTransction = await _mainDb.Database.BeginTransactionAsync();
+            var identityTransction = await _mainIdentityDb.Database.BeginTransactionAsync();
+            //update his data
+            user.fullName = userInfoReq.fullName;
+            user.phoneNumber = userInfoReq.phoneNumber;
+
+            identityUser.FullName = userInfoReq.fullName;
+            identityUser.PhoneNumber = userInfoReq.phoneNumber;
+
+            //update role and stage if current user is admin
+            if (GenricControllerHelper.GetUserRole(User) == UserRole.Admin)
+            {
+                user.stage = userInfoReq.stage;
+                // check if there are user with same new email
+                var userIdentityWithSameNewEmail = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == userInfoReq.emailAddress);
+                var userInfoWithSameNewEmail = (await _userRepo.FirstOrDefaultAsync(x => x.emailAddress == userInfoReq.emailAddress)).Result;
+                
+                if (userIdentityWithSameNewEmail is not null || userInfoWithSameNewEmail is not null) {
+                    await userInfoTransction.RollbackAsync();
+                    await identityTransction.RollbackAsync();
+                    errors.Add("There is User With Same New Email , Try Another Email");
+                    return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+                }
+                //update email
+                user.emailAddress = userInfoReq.emailAddress;
+                //update identity 
+                identityUser.Email = userInfoReq.emailAddress;
+                identityUser.UserName = userInfoReq.emailAddress;
+                //check if role is changed if its update it 
+                bool isRoleUpdated = user.userRole == userInfoReq.userRole;
+                if (user.userRole != userInfoReq.userRole)
+                {
+                    _logger.LogWarning("Change User Role FROM {oldRole} to {newRole}", user.userRole, userInfoReq.userRole);
+                    //remove from old role and add new role
+                    var removeRoleResult = await _userManager.RemoveFromRoleAsync(identityUser, user.userRole.ToString());
+                    var addRoleResult = await _userManager.AddToRoleAsync(identityUser, userInfoReq.userRole.ToString());
+                    user.userRole = userInfoReq.userRole;
+                    isRoleUpdated = removeRoleResult.Succeeded && addRoleResult.Succeeded;
+                }
+                if (!isRoleUpdated)
+                {
+                    await userInfoTransction.RollbackAsync();
+                    await identityTransction.RollbackAsync();
+                    errors.Add("Can't Update User Role");
+                    return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+
+                }
+
+
+            }
+
+
+            var repoUpdateResult = await _userRepo.UpdateAsync(user.id, user);
+            var identityUpdateResult = await _userManager.UpdateAsync(identityUser);
+
+            if (!repoUpdateResult.Success || !identityUpdateResult.Succeeded)
+            {
+                _logger.LogError("Can't Update User Profile ");
+                await userInfoTransction.RollbackAsync();
+                await identityTransction.RollbackAsync();
+                errors.Add("Can't Update User ");
+                return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+
+            }
+            _logger.LogInformation("Update User Profile Successfully with id : {id} , by {CurrentUserId}",user.id,GenricControllerHelper.GetUserInfoId(User));
+            await userInfoTransction.CommitAsync();
+            await identityTransction.CommitAsync();
+            messages.Add("User Updated Successfully ");
+            return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
+
+        }
 
         //for update user profile image
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [OwnerOrInRoleGuid(IdFieldName: "id", Role: "Admin")]
@@ -458,6 +561,7 @@ namespace LetMeet.Controllers
 
             if (!identityResult.Succeeded)
             {
+                await transction.RollbackAsync();
                 errors.AddRange(identityResult.Errors.Select(x => x.Description));
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
@@ -466,6 +570,7 @@ namespace LetMeet.Controllers
 
             if (identityUser is null)
             {
+                await transction.RollbackAsync();
                 errors.Add("Can't Register The User.");
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
@@ -475,6 +580,7 @@ namespace LetMeet.Controllers
 
             if (!roleResult.Succeeded)
             {
+                await transction.RollbackAsync();
                 errors.Add("Can't Register User Role.");
                 return RedirectToAction(nameof(ManageUsers), new { errors });
             }
