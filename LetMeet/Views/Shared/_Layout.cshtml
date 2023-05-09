@@ -156,13 +156,14 @@
                             <p class="side-nav-title">Meetings</p>
                         </a>
                     </li>
-                    @if (_contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role)==UserRole.Admin.ToString()) { 
-                    <li class="nav-item ">
-                        <a class="nav-link" href="/Report/Admin">
-                            <i class="material-icons">description</i>
-                            <p class="side-nav-title">Reports</p>
-                        </a>
-                    </li>
+                    @if (_contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role) == UserRole.Admin.ToString())
+                    {
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/Report/Admin">
+                                <i class="material-icons">description</i>
+                                <p class="side-nav-title">Reports</p>
+                            </a>
+                        </li>
                     }
                     <li class="nav-item ">
                         <a class="nav-link" href="./icons.html">
@@ -222,17 +223,31 @@
                         <span class="navbar-toggler-icon icon-bar"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-end">
-                        @* <form class="navbar-form">
-                        <span class="bmd-form-group">
-                        <div class="input-group no-border">
-                        <input type="text" value="" class="form-control" placeholder="Search...">
-                        <button type="submit" class="btn btn-white btn-round btn-just-icon">
-                        <i class="material-icons">search</i>
-                        <div class="ripple-container"></div>
-                        </button>
-                        </div>
-                        </span>
-                        </form>*@
+                        @if (_contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role) == UserRole.Admin.ToString())
+                        {
+                            string oldSearch = ViewData[ViewStringHelper.NameToSearchField] as string ?? string.Empty;
+                            <div id="nameSearchFrm" class="navbar-form">
+                                <div class="input-group no-border">
+                                    <input id="nameToSearch" type="text" value="@oldSearch" class="form-control" placeholder="Search By Name...">
+                                    <button id="nameSearchBtn" onclick="SearchByName()" type="button" class="btn btn-white btn-round btn-just-icon">
+                                        <i id="nameSearchBtnIcon" class="material-icons">search</i>
+                                        @*<div class="ripple-container"></div>*@
+                                    </button>
+                                </div>
+                            </div>
+
+                            <script defer>
+                                function SearchByName() {
+                                   let name = document.getElementById("nameToSearch").value;
+                                    if (name) {
+                                        window.location.href = "/Account/ManageUsers?name=" + name;
+
+                                    }
+                                }
+
+
+                            </script>
+                        }
                         <ul class="navbar-nav">
                             @if (userRole == UserRole.Admin.ToString())
                             {

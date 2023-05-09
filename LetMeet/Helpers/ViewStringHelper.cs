@@ -27,6 +27,8 @@
 
         public static string TabName= "tabName";
 
+        public static string NameToSearchField = "name";
+
 
         public static string RequestedMeetingQuery = "requestedMeetingQuery";
         public static string RequestedSupervisorName = "requestedSupervisorName";

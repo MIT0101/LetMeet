@@ -1,5 +1,6 @@
 ﻿@using LetMeet.Data.Dtos.Reports;
 @{
+    ViewData["Title"] = "Admin- Reports";
     ViewBag.currentPage = "Reports";
     var allSupervisors = ViewData[ViewStringHelper.AllSupervisors] as List<SupervisorOrStudentSelectDto> ?? new();
     var allStudents = ViewData[ViewStringHelper.AllStudents] as List<SupervisorOrStudentSelectDto> ?? new();
@@ -18,6 +19,10 @@
 @*Show Single (Student(all previous meetings and there presence , total previous tasks and their complement ) || Supervisor (all active students and the meetings and there presence , tasks count )) Report *@
 
 <div class="d-flex justify-content-end w-100">
+    <button onclick="PrintOnly('body')" type="button" title="" data-original-title="Print All Page" class="btn btn-primary">
+        <i class="material-icons">print</i>
+    </button>
+
     <button class="btn btn-primary dropdown-toggle" type="button" id="advanceReportBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Advance
     </button>
@@ -25,6 +30,7 @@
         <button style="cursor:pointer;" data-toggle="modal" data-target="#choseSupervisorModal" class=" dropdown-item">Supervisor Report</button>
         <button style="cursor:pointer;" data-toggle="modal" data-target="#choseStudentModal" class=" dropdown-item">Student Report</button>
     </div>
+
 </div>
 
 @*Chose Student Modal*@
@@ -126,8 +132,19 @@
     <div class="col-12">
         <div id="mostStudentsAbsence" class="card">
             <div class="card-header card-header-danger">
-                <h4 class="card-title">Most Absence Students </h4>
-                <p class="category">Total students are : @topStudentsAbsence.Count</p>
+                <div class="d-flex flex-row justify-content-between">
+                    <div>
+                        <h4 class="card-title">Most Absence Students </h4>
+
+                        <p class="category">Total students are : @topStudentsAbsence.Count</p>
+                    </div>
+
+                    <button onclick="PrintOnly('#mostStudentsAbsence')" type="button" title="" data-original-title="Print All Page" class="btn btn-danger p-3">
+                        <i class="material-icons">print</i>
+                    </button>
+                </div>
+
+
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
@@ -187,8 +204,19 @@
     <div class="col-12">
         <div id="mostSupervisorsAbsence" class="card">
             <div class="card-header card-header-warning">
-                <h4 class="card-title">Most Absence Supervisors </h4>
-                <p class="category">Total supervisors are : @topSupervisorsAbsence.Count</p>
+                <div class="d-flex flex-row justify-content-between">
+
+                    <div>
+                        <h4 class="card-title">Most Absence Supervisors </h4>
+                        <p class="category">Total supervisors are : @topSupervisorsAbsence.Count</p>
+
+                    </div>
+
+                    <button onclick="PrintOnly('#mostSupervisorsAbsence')" type="button" title="" data-original-title="Print All Page" class="btn btn-warning p-3">
+                        <i class="material-icons">print</i>
+                    </button>
+                </div>
+
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
@@ -240,8 +268,16 @@
     <div class="col-sm-12 col-md-12 col-lg-6">
         <div id="fullSupervisors" class="card">
             <div class="card-header card-header-primary">
-                <h4 class="card-title">Full Supervisors</h4>
-                <p class="category">Supervisors have archived max number of students</p>
+                <div class="d-flex flex-row justify-content-between">
+                    <div>
+                        <h4 class="card-title">Full Supervisors</h4>
+                        <p class="category">Supervisors have archived max number of students</p>
+                    </div>
+
+                    <button onclick="PrintOnly('#fullSupervisors')" type="button" title="" data-original-title="Print All Page" class="btn btn-primary p-3">
+                        <i class="material-icons">print</i>
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
@@ -293,10 +329,18 @@
 
     @*Supervisors don't have any active Students*@
     <div class="col-sm-12 col-md-12 col-lg-6">
-        <div id="fullSupervisors" class="card">
+        <div id="idleSupervisors" class="card">
             <div class="card-header card-header-primary">
-                <h4 class="card-title">Idle Supervisors</h4>
-                <p class="category">Supervisors don't have active students</p>
+                <div class="d-flex flex-row justify-content-between">
+                    <div>
+                        <h4 class="card-title">Idle Supervisors</h4>
+                        <p class="category">Supervisors don't have active students</p>
+                    </div>
+
+                    <button onclick="PrintOnly('#idleSupervisors')" type="button" title="" data-original-title="Print All Page" class="btn btn-primary p-3">
+                        <i class="material-icons">print</i>
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">

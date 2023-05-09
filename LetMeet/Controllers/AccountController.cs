@@ -109,8 +109,9 @@ namespace LetMeet.Controllers
                 // check if there are user with same new email
                 var userIdentityWithSameNewEmail = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == userInfoReq.emailAddress);
                 var userInfoWithSameNewEmail = (await _userRepo.FirstOrDefaultAsync(x => x.emailAddress == userInfoReq.emailAddress)).Result;
-                
-                if (userIdentityWithSameNewEmail is not null || userInfoWithSameNewEmail is not null) {
+
+                if (userIdentityWithSameNewEmail is not null || userInfoWithSameNewEmail is not null)
+                {
                     await userInfoTransction.RollbackAsync();
                     await identityTransction.RollbackAsync();
                     errors.Add("There is User With Same New Email , Try Another Email");
@@ -157,7 +158,7 @@ namespace LetMeet.Controllers
                 return RedirectToAction(actionName: nameof(ProfileController.EditProfile), RouteNameHelper.ProfileControllerName, new { id, errors, messages });
 
             }
-            _logger.LogInformation("Update User Profile Successfully with id : {id} , by {CurrentUserId}",user.id,GenricControllerHelper.GetUserInfoId(User));
+            _logger.LogInformation("Update User Profile Successfully with id : {id} , by {CurrentUserId}", user.id, GenricControllerHelper.GetUserInfoId(User));
             await userInfoTransction.CommitAsync();
             await identityTransction.CommitAsync();
             messages.Add("User Updated Successfully ");
@@ -418,6 +419,8 @@ namespace LetMeet.Controllers
             return RedirectToAction(nameof(ManageUsers), new { errors });
 
         }
+        /******************************************----------- SigIn [Post] ----------------*****************************************/
+
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -477,6 +480,7 @@ namespace LetMeet.Controllers
             return View();
 
         }
+        /******************************************----------- SIGIN [Get] ----------------*****************************************/
 
         [AllowAnonymous]
         [HttpGet]
@@ -487,15 +491,18 @@ namespace LetMeet.Controllers
 
             return await Task.FromResult(View());
         }
+        /******************************************----------- MANAGE USERES [GET] ----------------*****************************************/
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<ViewResult> ManageUsers(int pageIndex = 1, List<string> errors = null, List<string> messages = null)
+        public async Task<ViewResult> ManageUsers(string name = "", int pageIndex = 1, List<string> errors = null, List<string> messages = null)
         {
             ViewData[ViewStringHelper.Errors] = errors ?? new List<string>();
             ViewData[ViewStringHelper.Messages] = messages ?? new List<string>();
             //to show roles and users
             ViewData[ViewStringHelper.UserStages] = _selectionRepository.GetStages();
             ViewData[ViewStringHelper.UserRoles] = _selectionRepository.GetUserRoles();
+            ViewData[ViewStringHelper.NameToSearchField] = name;
 
             var countResult = await _userRepo.CountQueryAsync();
 
@@ -506,8 +513,16 @@ namespace LetMeet.Controllers
             }
 
             ViewBag.totalPages = (int)Math.Ceiling(countResult.value / (double)_settings.Value.MaxResponsesPerTime);
+            RepositoryResult<List<UserInfo>> repoResult;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                 repoResult = await _userRepo.QueryInRangeAsync(pageIndex);
+            }
+            else
+            {
+                repoResult=await _userRepo.QueryInRangeAsync(pageIndex,x=>x.fullName.ToLower().Replace(" ","").Contains(name.ToLower().Replace(" ", "")));
+            }
 
-            var repoResult = await _userRepo.QueryInRangeAsync(pageIndex);
 
             if (repoResult.State == ResultState.NotFound)
             {
@@ -526,6 +541,7 @@ namespace LetMeet.Controllers
             ViewData[ViewStringHelper.AllUsers] = allUsers;
             return View();
         }
+        /******************************************----------- REGISTER USER [POST] ----------------*****************************************/
 
         [Authorize(Roles = "Admin")]
         [HttpPost]

@@ -1,6 +1,20 @@
 
 /***********************************************----------JQuery is required-------------*******************************************/
 
+/***********************************************----------Print Elements -------------*******************************************/
+
+function PrintOnly(ItemSelector) {
+    let body = document.querySelector("body");
+    let bodyContent = body.innerHTML;
+
+    let itemToPrint = document.querySelector(ItemSelector);
+    itemToPrint.style.width = "100 % !important";
+    body.innerHTML = itemToPrint.innerHTML;
+    window.print();
+    body.innerHTML = bodyContent;
+
+}
+
 /***********************************************----------Show Message Modal -------------*******************************************/
 //Function to Create And show messages in modal
 function CreateAndshowMessagesModal(messages) {

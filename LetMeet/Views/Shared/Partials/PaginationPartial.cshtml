@@ -10,6 +10,7 @@
     int pageIndex = 1;
     string controllerName = "";
     string actionName = "";
+    string name = string.Empty;
     try
     {
         controllerName = _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
@@ -43,7 +44,7 @@
     {
 
     }
-
+    name = _httpContextAccessor.HttpContext.Request.Query["name"];
 
 }
 @*pagination*@
@@ -56,6 +57,7 @@
 asp-controller="@controllerName",
    asp-route-pageIndex="@(pageIndex - 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-name="@name"
    class="btn btn-outline-dark @prevDisabled">
     <span class="material-icons">
         arrow_back_ios_new
@@ -64,6 +66,7 @@ asp-controller="@controllerName",
 <a asp-action="@actionName"
    asp-controller="@controllerName" ,
    asp-route-pageIndex="@(pageIndex + 1)"
+   asp-route-name="@name"
    class="btn btn-outline-dark @nextDisabled">
     <span class="material-icons">
         arrow_forward_ios
