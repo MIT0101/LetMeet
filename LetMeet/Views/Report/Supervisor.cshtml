@@ -68,6 +68,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Student Name</th>
+                                        <th>Supervision Start Date</th>
                                         <th>Supervision End Date</th>
                                         <th>Supervision State</th>
 
@@ -79,10 +80,11 @@
                                         <tr>
                                             <td>@student.studentId.ToString("N").Substring(0,4)</td>
                                             <td><a target="_blank" href="/Profile/Student/@student.studentId">@student.FullName</a></td>
+                                            <td>@student.startDate.ToString("D")</td>
                                             <td>@student.endDate.ToString("D")</td>
                                             <td>
 
-                                                @if (student.endDate > _appTimeProvider.Now)
+                                                @if (student.startDate<=_appTimeProvider.Now&&student.endDate > _appTimeProvider.Now)
                                                 {
                                                     <span class="badge badge-success">Active</span>
 

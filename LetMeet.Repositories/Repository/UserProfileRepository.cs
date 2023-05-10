@@ -405,7 +405,7 @@ namespace LetMeet.Repositories.Repository
                         currentMounthMeetings = _mainDb.Meetings.Where(m => m.SupervisionInfo.supervisor.id == supervisorId && m.date >= startMonth && m.date <= endMounth)
                         .Select(m => new MeetingSummaryDto(m.id, m.description, m.SupervisionInfo.supervisor.id, m.SupervisionInfo.student.id, m.date, m.startHour, m.endHour
                         , m.tasks.Count, m.SupervisionInfo.student.fullName, m.SupervisionInfo.supervisor.fullName)).ToList(),
-                        allStudents = _mainDb.SupervisionInfo.Where(s => s.supervisor.id == supervisorId).Select(s => new StudentDatedSelectDto(s.student.id, s.student.fullName, s.endDate)).ToList(),
+                        allStudents = _mainDb.SupervisionInfo.Where(s => s.supervisor.id == supervisorId).Select(s => new StudentDatedSelectDto(s.student.id, s.student.fullName, s.startDate, s.endDate)).ToList(),
 
                     }).FirstOrDefaultAsync();
 

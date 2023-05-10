@@ -10,7 +10,6 @@ using System.ComponentModel.DataAnnotations;
 namespace LetMeet.Controllers
 {
     [Authorize(Roles ="Admin")]
-
     public class SupervisionController : Controller
     {
         private readonly ILogger<SupervisionController> _logger;

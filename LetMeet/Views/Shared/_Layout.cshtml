@@ -98,22 +98,22 @@
             <div class="sidebar-wrapper ps-container ps-theme-default" data-ps-id="06937b24-6def-4176-b002-d5b26197d731">
                 <ul class="nav">
                     @*admin*@
-
-                    <li class="nav-item ">
-                        <a class="nav-link" asp-controller="Account" asp-action="ManageUsers">
-                            <i class="material-icons">people</i>
-                            <p class="side-nav-title">Manage Users</p>
-                        </a>
-                    </li>
-
-
+                    @if (userRole==UserRole.Admin.ToString()) {
+                        <li class="nav-item ">
+                            <a class="nav-link" asp-controller="Account" asp-action="ManageUsers">
+                                <i class="material-icons">people</i>
+                                <p class="side-nav-title">Manage Users</p>
+                            </a>
+                        </li>
+                    }
+                    @*
                     <li class="nav-item ">
                         <a class="nav-link" href="#">
                             <i class="material-icons">dashboard</i>
                             <p class="side-nav-title">Dashboard</p>
                         </a>
                     </li>
-
+                    *@
 
                     <li class="nav-item ">
 
@@ -166,29 +166,43 @@
                         </li>
                     }
                     <li class="nav-item ">
-                        <a class="nav-link" href="./icons.html">
-                            <i class="material-icons">bubble_chart</i>
-                            <p class="side-nav-title">Icons</p>
+                        <a class="nav-link" href="mailto:alraym050@gmail.com">
+                            <i class="material-icons">bug_report</i>
+                            <p class="side-nav-title">Issues</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="./map.html">
-                            <i class="material-icons">location_ons</i>
-                            <p class="side-nav-title">Maps</p>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons ">notificatiobn</i>
+                            <span class="">Contact Us</span>
                         </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item " href="#">Instgram</a>
+                            <a class="dropdown-item " href="#">Telegram</a>
+@*                            <a class="dropdown-item " href="#"></a>
+*@                        </div>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="./notifications.html">
-                            <i class="material-icons">notifications</i>
-                            <p class="side-nav-title">Notifications</p>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a id="rtl1" class="nav-link" href="#">
-                            <i class="material-icons">language</i>
-                            <p class="side-nav-title">RTL Support</p>
-                        </a>
-                    </li>
+                    @*
+                    @*                    <li class="nav-item ">
+                    <a class="nav-link" href="./map.html">
+                    <i class="material-icons">location_ons</i>
+                    <p class="side-nav-title">Maps</p>
+                    </a>
+                    </li>*@
+                    @*                    <li class="nav-item ">
+                    <a class="nav-link" href="./notifications.html">
+                    <i class="material-icons">notifications</i>
+                    <p class="side-nav-title">Notifications</p>
+                    </a>
+                    </li>*@
+                    @*                    <li class="nav-item ">
+                    <a id="rtl1" class="nav-link" href="#">
+                    <i class="material-icons">language</i>
+                    <p class="side-nav-title">RTL Support</p>
+                    </a>
+                    </li>*@
                     <li class="nav-item active-pro ">
                         <a class="nav-link" href="./upgrade.html">
                             <i class="material-icons">unarchive</i>
@@ -238,7 +252,7 @@
 
                             <script defer>
                                 function SearchByName() {
-                                   let name = document.getElementById("nameToSearch").value;
+                                    let name = document.getElementById("nameToSearch").value;
                                     if (name) {
                                         window.location.href = "/Account/ManageUsers?name=" + name;
 

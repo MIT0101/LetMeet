@@ -12,12 +12,12 @@
 
     List<StudentDatedSelectDto> supervisorStudents = ViewData[ViewStringHelper.SupervisorStudents] as List<StudentDatedSelectDto> ?? new List<StudentDatedSelectDto>();
     string supervisorName = currentSupervisor?.FullName ?? "No Supervisor";
-    ViewData["Title"] = "Manage "+supervisorName +" Supervision";
+    ViewData["Title"] = "Manage " + supervisorName + " Supervision";
 
     ViewBag.currentPage = "Manage Supervision";
 
 }
-@inject AppTimeProvider TimeProvider;
+@inject AppTimeProvider _appTimeProvider;
 @inject IOptions<AppServiceOptions> serviceOptions;
 
 @if (currentSupervisor is null)
@@ -164,7 +164,7 @@
             </div>
             <div class="card-body">
                 @{
-                    int currentStudentsCount = supervisorStudents.Where(s => s.endDate > TimeProvider.Now).Count();
+                    int currentStudentsCount = supervisorStudents.Where(s => s.endDate > _appTimeProvider.Now).Count();
                 }
                 @if (currentStudentsCount >= serviceOptions.Value.MaxStudentsPerSupervisor)
                 {
@@ -192,6 +192,11 @@
                                     </th>
                                     <th>
                                         Full Name
+
+                                    </th>
+                                    
+                                    <th>
+                                        Start Date
 
                                     </th>
                                     <td>
@@ -226,9 +231,11 @@
 
                                             </a>
                                         </td>
-
                                         <td>
-                                            @if (student.endDate > TimeProvider.Now)
+                                            @Html.DisplayFor(modelItem => student.startDate)
+                                        </td>
+                                        <td>
+                                            @if (student.startDate <= _appTimeProvider.Now && student.endDate > _appTimeProvider.Now)
                                             {
                                                 <span class="badge badge-success">Active</span>
 
@@ -249,17 +256,17 @@
 
                                             <div class="d-flex flex-row justify-content-end">
 
-                                            <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="ExtendStudnetSupervisorTime" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
-                                                @Html.AntiForgeryToken()
+                                                <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="ExtendStudnetSupervisorTime" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
+                                                    @Html.AntiForgeryToken()
 
-                                                <input name="studentId" hidden value="@student.studentId">
+                                                    <input name="studentId" hidden value="@student.studentId">
 
 
-                                                <button rel="tooltip" title="" data-original-title="Extend Supervision" type="submit" onclick="return confirm('Are you sure you want to Extend @student.FullName Supervision with @serviceOptions.Value.NumberOfMonthsPerExtend Mouths ?');" class="btn btn-outline-info p-2">
-                                                    <i class="material-icons">add_box</i>
-                                                </button>
+                                                    <button rel="tooltip" title="" data-original-title="Extend Supervision" type="submit" onclick="return confirm('Are you sure you want to Extend @student.FullName Supervision with @serviceOptions.Value.NumberOfMonthsPerExtend Mouths ?');" class="btn btn-outline-info p-2">
+                                                        <i class="material-icons">add_box</i>
+                                                    </button>
 
-                                            </form>
+                                                </form>
 
                                                 <form asp-controller="@RouteNameHelper.SupervisionControllerName" asp-action="RemoveStudnetFromSupervisor" asp-route-id="@currentSupervisor?.id" class="d-inline m-1">
                                                     @Html.AntiForgeryToken()
@@ -273,7 +280,7 @@
 
                                                 </form>
 
-                                                
+
 
                                             </div>
 

@@ -123,7 +123,7 @@ namespace LetMeet.Repositories.Repository
             try
             {
                 var res = await  _mainDb.SupervisionInfo.Where(s => s.supervisor.id == supervisorId).
-                Select(u => new StudentDatedSelectDto(u.student.id, u.student.fullName,u.endDate)).ToListAsync();
+                Select(u => new StudentDatedSelectDto(u.student.id, u.student.fullName,u.startDate,u.endDate)).ToListAsync();
 
                 return RepositoryResult<IEnumerable<StudentDatedSelectDto>>.SuccessResult(ResultState.Seccess, res);
             
