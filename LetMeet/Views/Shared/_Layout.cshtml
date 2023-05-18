@@ -65,6 +65,10 @@
     <!--SHared Js Scripte To Show Messages And show loading wihle do some thing-->
     <script defer src="~/js/Shared.js"></script>
 
+    <!--Main Logo-->
+
+    <link rel="icon" href="~/img/LetMeetLogo.png" />
+
 
 </head>
 
@@ -98,7 +102,8 @@
             <div class="sidebar-wrapper ps-container ps-theme-default" data-ps-id="06937b24-6def-4176-b002-d5b26197d731">
                 <ul class="nav">
                     @*admin*@
-                    @if (userRole==UserRole.Admin.ToString()) {
+                    @if (userRole == UserRole.Admin.ToString())
+                    {
                         <li class="nav-item ">
                             <a class="nav-link" asp-controller="Account" asp-action="ManageUsers">
                                 <i class="material-icons">people</i>
@@ -108,10 +113,10 @@
                     }
                     @*
                     <li class="nav-item ">
-                        <a class="nav-link" href="#">
-                            <i class="material-icons">dashboard</i>
-                            <p class="side-nav-title">Dashboard</p>
-                        </a>
+                    <a class="nav-link" href="#">
+                    <i class="material-icons">dashboard</i>
+                    <p class="side-nav-title">Dashboard</p>
+                    </a>
                     </li>
                     *@
 
@@ -128,9 +133,12 @@
                         }
 
                     </li>
+
                     <li class="nav-item ">
                         @{
-                            string meetingsUrl = Url.Action("Student", "Meetings");
+                            //string meetingsUrl = Url.Action("Student", "Meetings");
+                            string meetingsUrl = string.Empty;
+
                             DateTime now = _appTimeProvider.Now;
                             //get this month start Date and end date
                             DateTime monthStart = new DateTime(now.Year, now.Month, 1);
@@ -156,6 +164,18 @@
                             <p class="side-nav-title">Meetings</p>
                         </a>
                     </li>
+                    <li class="nav-item ">
+
+
+                        <a class="nav-link" href="/Profile/EditProfile/@userInfoId">
+
+                            <i class="material-icons">engineering</i>
+                            <p class="side-nav-title">Profile Settings</p>
+                        </a>
+
+
+
+                    </li>
                     @if (_contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role) == UserRole.Admin.ToString())
                     {
                         <li class="nav-item ">
@@ -173,16 +193,17 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
-                            <i class="material-icons ">notificatiobn</i>
+                            <i class="material-icons ">contact_support</i>
                             <span class="">Contact Us</span>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item " href="#">Instgram</a>
                             <a class="dropdown-item " href="#">Telegram</a>
-@*                            <a class="dropdown-item " href="#"></a>
-*@                        </div>
+                            @*                            <a class="dropdown-item " href="#"></a>
+                            *@
+                        </div>
                     </li>
                     @*
                     @*                    <li class="nav-item ">
@@ -203,10 +224,17 @@
                     <p class="side-nav-title">RTL Support</p>
                     </a>
                     </li>*@
-                    <li class="nav-item active-pro ">
+                    @*<li class="nav-item active-pro ">
                         <a class="nav-link" href="./upgrade.html">
                             <i class="material-icons">unarchive</i>
                             <p class="side-nav-title">Upgrade to PRO</p>
+                        </a>
+                    </li>*@
+
+                    <li class="nav-item active-pro ">
+                        <a class="nav-link" href="/Account/logOut">
+                            <i class="material-icons">logout</i>
+                            <p class="side-nav-title">Log out</p>
                         </a>
                     </li>
                 </ul>
@@ -335,7 +363,7 @@
                 </div>
 
 
-                <button id="themeBtn">Theme Switching</button>
+                @*<button id="themeBtn">Theme Switching</button>*@
 
                 <!-- End Content Container -->
             </div>

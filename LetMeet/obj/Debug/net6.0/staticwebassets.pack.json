@@ -65,6 +65,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\LetMeetLogo.png",
+      "PackagePath": "staticwebassets\\img\\LetMeetLogo.png"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\loading.gif",
       "PackagePath": "staticwebassets\\img\\loading.gif"
     },

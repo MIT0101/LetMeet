@@ -337,10 +337,10 @@ namespace LetMeet.Controllers
 
             }
 
-            string message = "Password Changed Secsessfully";
+            string message = "Password Changed Successfully";
             messages.Add(message);
             _logger.LogInformation(message);
-
+            
             return RedirectToAction(actionName: nameof(ProfileController.EditProfile),
             controllerName: RouteNameHelper.ProfileControllerName, new { id, errors, messages });
         }
@@ -416,7 +416,7 @@ namespace LetMeet.Controllers
             _logger.LogWarning("User Removed With Id : {id} by admin with id {adminId}", id, adminId);
             messages.Add("User Removed Successfully");
             await transction.CommitAsync();
-            return RedirectToAction(nameof(ManageUsers), new { errors });
+            return RedirectToAction(nameof(ManageUsers), new { errors ,messages});
 
         }
         /******************************************----------- SigIn [Post] ----------------*****************************************/
