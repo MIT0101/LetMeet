@@ -1,16 +1,24 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\obj\\Release\\net6.0\\scopedcss\\projectbundle\\LetMeet.bundle.scp.css",
-      "PackagePath": "staticwebassets\\LetMeet.bundle.scp.css"
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\obj\\Release\\net6.0\\scopedcss\\projectbundle\\LetMeet.Web.bundle.scp.css",
+      "PackagePath": "staticwebassets\\LetMeet.Web.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg",
       "PackagePath": "staticwebassets\\UsersImages\\197ea313818f48b651d808db20cc506e.jpeg"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\367fe9f451254a04763c08db49b1d84e_0.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\367fe9f451254a04763c08db49b1d84e_0.jpeg"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\749faea72eb5454952d408db21775786.jpeg",
       "PackagePath": "staticwebassets\\UsersImages\\749faea72eb5454952d408db21775786.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\7cd969d73f83453586b608db47ce2769_7.jpeg",
+      "PackagePath": "staticwebassets\\UsersImages\\7cd969d73f83453586b608db47ce2769_7.jpeg"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\UsersImages\\855fba7180aa4bb419ec08db2c63c2b7_3.jpeg",
@@ -25,12 +33,20 @@
       "PackagePath": "staticwebassets\\UsersImages\\profile_empty_img.png"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\AccessDeniedStyle.css",
+      "PackagePath": "staticwebassets\\css\\Main\\AccessDeniedStyle.css"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\dark.css",
       "PackagePath": "staticwebassets\\css\\Main\\dark.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Main\\mainloadiersStyle.css",
       "PackagePath": "staticwebassets\\css\\Main\\mainloadiersStyle.css"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Meetings\\ShowAndRunMeetings.css",
+      "PackagePath": "staticwebassets\\css\\Meetings\\ShowAndRunMeetings.css"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\css\\Profile\\EditProfileStyle.css",
@@ -47,6 +63,10 @@
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\LetMeetLogo.png",
+      "PackagePath": "staticwebassets\\img\\LetMeetLogo.png"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\img\\loading.gif",
@@ -101,12 +121,24 @@
       "PackagePath": "staticwebassets\\js\\Main\\Theme.js"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\MeetringsSearch.js",
+      "PackagePath": "staticwebassets\\js\\Meetings\\MeetringsSearch.js"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Meetings\\ShowAndRunMeetings.js",
+      "PackagePath": "staticwebassets\\js\\Meetings\\ShowAndRunMeetings.js"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Profile\\EditProfile.js",
       "PackagePath": "staticwebassets\\js\\Profile\\EditProfile.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\RegisterUser.js",
       "PackagePath": "staticwebassets\\js\\RegisterUser.js"
+    },
+    {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\Shared.js",
+      "PackagePath": "staticwebassets\\js\\Shared.js"
     },
     {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\js\\site.js",
@@ -297,6 +329,10 @@
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
     },
     {
+      "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\font-awesome\\css\\fontawesome.min.css",
+      "PackagePath": "staticwebassets\\lib\\font-awesome\\css\\fontawesome.min.css"
+    },
+    {
       "Id": "C:\\Users\\M_IT_01\\source\\repos\\LetMeet\\LetMeet\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
     },
@@ -373,20 +409,20 @@
       "PackagePath": "staticwebassets\\lib\\material-dashboard\\js\\material-dashboard.min.js"
     },
     {
-      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.LetMeet.Microsoft.AspNetCore.StaticWebAssets.props",
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.LetMeet.Web.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
     {
-      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.build.LetMeet.props",
-      "PackagePath": "build\\LetMeet.props"
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.build.LetMeet.Web.props",
+      "PackagePath": "build\\LetMeet.Web.props"
     },
     {
-      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.LetMeet.props",
-      "PackagePath": "buildMultiTargeting\\LetMeet.props"
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.LetMeet.Web.props",
+      "PackagePath": "buildMultiTargeting\\LetMeet.Web.props"
     },
     {
-      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.buildTransitive.LetMeet.props",
-      "PackagePath": "buildTransitive\\LetMeet.props"
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.buildTransitive.LetMeet.Web.props",
+      "PackagePath": "buildTransitive\\LetMeet.Web.props"
     }
   ],
   "ElementsToRemove": []

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>E:\LetMeetPublish</_PublishTargetUrl>
+    <History>True|2023-05-19T21:24:46.5491741Z;False|2023-05-20T00:22:33.0365645+03:00;False|2023-05-20T00:18:41.7604657+03:00;False|2023-05-20T00:17:34.9469292+03:00;</History>
+    <LastFailureDetails />
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="IdentityConnection">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="MainDataConnection">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>

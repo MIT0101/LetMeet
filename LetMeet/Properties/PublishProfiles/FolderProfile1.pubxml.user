@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\M_IT_01\source\repos\LetMeet\LetMeet\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>False|2023-05-19T21:12:18.3667995Z;False|2023-05-19T23:56:20.1364824+03:00;False|2023-05-19T23:54:15.9794013+03:00;</History>
+    <LastFailureDetails />
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="IdentityConnection">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="MainDataConnection">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="PlanetClould">
+      <Value>
+      </Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="LetMeet.Data.MainDbContext">
+      <Value>
+      </Value>
+    </EFMigrations>
+    <EFMigrations Include="LetMeet.Data.MainIdentityDbContext">
+      <Value>
+      </Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

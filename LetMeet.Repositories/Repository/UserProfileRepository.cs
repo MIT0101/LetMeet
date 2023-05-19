@@ -5,7 +5,6 @@ using LetMeet.Repositories.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
 using System.ComponentModel.DataAnnotations;
 using System.Drawing.Imaging;
 using System.Drawing;
@@ -32,8 +31,6 @@ namespace LetMeet.Repositories.Repository
         private readonly RepositoryDataSettings _settings;
         private readonly IGenericRepository<UserInfo, Guid> _genericUserRepository;
         private readonly AppTimeProvider _appTimeProvider;
-
-        private readonly int MAX_IMAGE_SIZE_IN_KB = 300;
 
         private Random _random;
 
@@ -138,7 +135,7 @@ namespace LetMeet.Repositories.Repository
                 string imageFileName = userInfoId.ToString("N") + "_" + _random.Next(10) + ".jpeg";
 
                 // Check if the image exceeds the maximum size MAX_IMAGE_SIZE_IN_KB
-                if (size > MAX_IMAGE_SIZE_IN_KB)
+                if (size > _settings.MaxProfileImageSizeInKb)
                 {
                     List<ValidationResult> validationErrors = new List<ValidationResult>() {
                     new ValidationResult("Image Size Is Too Large , Try Another One")

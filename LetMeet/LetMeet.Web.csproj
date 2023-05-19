@@ -56,4 +56,10 @@
     </None>
   </ItemGroup>
 
+
+	<PropertyGroup>
+		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+	</PropertyGroup>
+
+
 </Project>
