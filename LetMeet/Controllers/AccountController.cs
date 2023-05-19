@@ -107,8 +107,8 @@ namespace LetMeet.Controllers
             {
                 user.stage = userInfoReq.stage;
                 // check if there are user with same new email
-                var userIdentityWithSameNewEmail = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == userInfoReq.emailAddress);
-                var userInfoWithSameNewEmail = (await _userRepo.FirstOrDefaultAsync(x => x.emailAddress == userInfoReq.emailAddress)).Result;
+                var userIdentityWithSameNewEmail = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == userInfoReq.emailAddress&&x.Id!=identityUser.Id);
+                var userInfoWithSameNewEmail = (await _userRepo.FirstOrDefaultAsync(x => x.emailAddress == userInfoReq.emailAddress&&x.id!=userInfoReq.id)).Result;
 
                 if (userIdentityWithSameNewEmail is not null || userInfoWithSameNewEmail is not null)
                 {
@@ -129,7 +129,12 @@ namespace LetMeet.Controllers
                     _logger.LogWarning("Change User Role FROM {oldRole} to {newRole}", user.userRole, userInfoReq.userRole);
                     //remove from old role and add new role
                     var removeRoleResult = await _userManager.RemoveFromRoleAsync(identityUser, user.userRole.ToString());
-                    var addRoleResult = await _userManager.AddToRoleAsync(identityUser, userInfoReq.userRole.ToString());
+                    IdentityResult addRoleResult=IdentityResult.Success;
+                    //check if he is not in role 
+                    if (!(await _userManager.IsInRoleAsync(identityUser,userInfoReq.userRole.ToString()))) {
+                        addRoleResult = await _userManager.AddToRoleAsync(identityUser, userInfoReq.userRole.ToString());
+                    }
+
                     user.userRole = userInfoReq.userRole;
                     isRoleUpdated = removeRoleResult.Succeeded && addRoleResult.Succeeded;
                 }

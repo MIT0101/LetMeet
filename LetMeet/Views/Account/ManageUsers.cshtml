@@ -211,7 +211,12 @@
                                         @Html.DisplayFor(modelItem => item.fullName)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.stage)
+                                        @if (item.userRole==UserRole.Student)
+                                        {
+                                            @Html.DisplayFor(modelItem => item.stage)
+
+                                        }
+
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.emailAddress)
