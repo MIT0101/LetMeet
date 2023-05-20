@@ -29,6 +29,7 @@ namespace LetMeet.Controllers
         private readonly IPasswordGenrationRepository _passwordGenrator;
         private readonly IErrorMessagesRepository _errorMessages;
         private readonly IOptions<RepositoryDataSettings> _settings;
+        private readonly IOptions<EmailRepositorySettings> _mailSeetings;
         private readonly IEmailRepository _mailRepository;
 
         private readonly ISelectionRepository _selectionRepository;
@@ -44,7 +45,7 @@ namespace LetMeet.Controllers
             , IErrorMessagesRepository errorMessages, IOptions<RepositoryDataSettings> settings, IWebHostEnvironment env
             , IEmailRepository mailRepository, SignInManager<AppIdentityUser> signInManager, ILogger<AccountController> logger
             , ISelectionRepository selectionRepository, IUserProfileRepository userProfileRepository, MainIdentityDbContext mainIdentityDb
-            , MainDbContext mainDb)
+            , MainDbContext mainDb, IOptions<EmailRepositorySettings> mailSeetings)
         {
             _passwordGenrator = passwordGenrator;
             _userManager = userManager;
@@ -60,6 +61,7 @@ namespace LetMeet.Controllers
             _userProfileRepo = userProfileRepository;
             _mainIdentityDb = mainIdentityDb;
             _mainDb = mainDb;
+            _mailSeetings = mailSeetings;
         }
         //AccessDenied endpoint
         [AllowAnonymous]
@@ -638,9 +640,14 @@ namespace LetMeet.Controllers
             {
                 using (Operation.Time("Sending Account Cridantionals for {Email}", identityUser.Email))
                 {
+                    string reciverEmail = userInfo.emailAddress;
+                    if (_mailSeetings.Value.SendToSystemAccountEmail) {
+                        reciverEmail = _mailSeetings.Value.Mail;
+                    }
 
-                    var emailResult = await _mailRepository.SendEmail(recipientEmail: "alraqym050@gmail.com", subject: "Acount Created",
-                         body: $"You Account Cridantionals are:<br>" +
+                    var emailResult = await _mailRepository.SendEmail(recipientEmail: reciverEmail, subject: "Account Created",
+                         body: "Welcome To Let Meet System <br>"+
+                         $"Your Account Cridantionals are:<br>" +
                          $"Email : {userToRegister.emailAddress} <br>" +
                          $"Password :{password} <br>" +
                          $"Please Change Your Password .");

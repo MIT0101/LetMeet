@@ -22,5 +22,7 @@ namespace LetMeet.Repositories
         public string Host { get; set; }
         [Required]
         public int Port { get; set; }
+        public bool SendToSystemAccountEmail { get; set; } = false;
+
     }
 }

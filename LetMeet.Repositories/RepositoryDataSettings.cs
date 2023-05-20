@@ -15,5 +15,6 @@ namespace LetMeet.Repositories
         public int MaxResponsesPerTime { get; init; } = int.MaxValue;
 
         public long MaxProfileImageSizeInKb { get; set; } = 300;
+
     }
 }
