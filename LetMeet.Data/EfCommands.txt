@@ -10,3 +10,8 @@ update-database -context MainIdentityDbContext
 Add-Migration IdentityMigrations -context MainIdentityDbContext
 
 Add-Migration MainAppMigrations -context MainDbContext
+
+
+Script-Migration -Context MainDbContext
+
+Script-Migration -Context MainIdentityDbContext
