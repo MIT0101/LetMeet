@@ -1,25 +1,81 @@
 ﻿@model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
+    Layout = "";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<!DOCTYPE html>
+<html lang="en">
 
-@if (Model.ShowRequestId)
-{
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - LetMeet</title>
+
+    @*<link rel="stylesheet" href="../css/material-dashboard.css">*@
+    <link rel="stylesheet" href="~/lib/material-dashboard/css/material-dashboard-mini.css" />
+
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">*@
+    <link rel="stylesheet" href="~/lib/font-awesome/css/fontawesome.min.css" />
+
+    <!-- For desgin js (boostrap and meaterial) -->
+    @*<script defer src="../js/material-dashboard.min.js"></script>*@
+    <script defer src="~/lib/material-dashboard/js/material-dashboard.min.js"></script>
+
+    @*<script defer src="../js/bootstrap-material-design.min.js"></script>*@
+    <script defer src="~/lib/material-dashboard/js/bootstrap-material-design.min.js"></script>
+
+    <!--Main Logo-->
+
+    <link rel="icon" href="~/img/LetMeetLogo.png" />
+
+
+</head>
+
+<!-- for dark mode add "dark-version" class to body and data-background-color="black"
+   for icons and check box also .md-dark -->
+
+<body class="">
+
+
+
+    @*its loaded befor css to show load and then load css *@
+    <partial name="Partials/MainLoadingPartial" />
+
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="mt-5">
+
+            <h1 class="text-danger">Error.</h1>
+            <h2 class="text-danger">An error occurred while processing your request.</h2>
+
+            @if (Model.ShowRequestId)
+            {
+                <p>
+                    <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                </p>
+            }
+
+        </div>
+
+    </div>
+
+
+    @*<h3>Development Mode</h3>
     <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
-
-<h3>Development Mode</h3>
-<p>
     Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
+    </p>
+    <p>
     <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
     It can result in displaying sensitive information from exceptions to end users.
     For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
     and restarting the app.
-</p>
+    </p>
+    *@
+
+</body>
+</html>
