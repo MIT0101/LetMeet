@@ -48,7 +48,6 @@ try
         options.LoginPath = "/Account/SignIn";
     });
 
-    aaa2
     var app = builder.Build();
     //for logging
     app.UseSerilogRequestLogging(options =>
